@@ -1,8 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
-  // Access API key via process.env which is defined in vite.config.ts
-  const apiKey = (process as any).env.API_KEY;
+  // Use the defined process.env.API_KEY or a fallback to handle Vite build environments
+  const apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : null;
   
   const isKeyValid = apiKey && apiKey !== "null" && apiKey !== "undefined" && apiKey.length > 10;
 
@@ -12,7 +12,7 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: apiKey as string });
     
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
