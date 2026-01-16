@@ -6,7 +6,10 @@ import { GoogleGenAI } from "@google/genai";
  * It enforces the use of Google Search grounding for real-time architectural validation.
  */
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
-  // Use the API_KEY provided by the environment
+  /**
+   * The API key must be obtained exclusively from the environment variable process.env.API_KEY.
+   * Vite replaces this string at build time via the 'define' configuration.
+   */
   const apiKey = process.env.API_KEY;
   
   if (!apiKey || apiKey === "null" || apiKey === "undefined" || apiKey === "") {
@@ -38,7 +41,7 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
       }
     });
 
-    // Property access .text (NOT a method call) as per latest SDK specs
+    // Access the .text property directly (per @google/genai documentation)
     let output = response.text || "SYSTEM_SILENCE: Cognitive core returned no data.";
     
     // Safely extract grounding chunks to display sources if they exist
@@ -46,12 +49,12 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
     const chunks = groundingMetadata?.groundingChunks;
     
     if (chunks && Array.isArray(chunks) && chunks.length > 0) {
-      output += "\n\n--- INTEGRATION PROTOCOLS & SOURCES ---\n";
+      output += "\n\n--- ARCHITECTURAL SOURCES ---\n";
       const uniqueLinks = new Set<string>();
       chunks.forEach((chunk: any) => {
         if (chunk.web && chunk.web.uri && !uniqueLinks.has(chunk.web.uri)) {
           uniqueLinks.add(chunk.web.uri);
-          const title = chunk.web.title || "Knowledge Base Module";
+          const title = chunk.web.title || "Knowledge Module";
           output += `• ${title}: ${chunk.web.uri}\n`;
         }
       });
@@ -60,6 +63,6 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
     return output;
   } catch (error: any) {
     console.error("NEURAL_STITCH_FAILED:", error);
-    return "CONNECTION_TERMINATED: The cognitive buffer encountered an unexpected parity error. Please retry the uplink.";
+    return "CONNECTION_TERMINATED: The cognitive buffer encountered an unexpected error. Please verify uplink connectivity and retry.";
   }
 };
