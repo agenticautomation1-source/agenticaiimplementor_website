@@ -5,7 +5,8 @@ import LogoMarquee from './components/LogoMarquee';
 import Features from './components/Features';
 import Curriculum from './components/Curriculum';
 import AIAdvisor from './components/AIAdvisor';
-/*import LMSDashboard from './components/LMSDashboard'; */ 
+import LMSDashboard from "./components/LMSDashboard";
+import CheckoutModal from "./components/CheckoutModal";
 
 import CheckoutModal from './components/CheckoutModal';
 import { Course } from './types';
