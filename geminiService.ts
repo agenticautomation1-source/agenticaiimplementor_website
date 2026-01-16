@@ -1,4 +1,4 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 /**
  * Lead Architect's Note:
@@ -9,7 +9,7 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
   // Use the API_KEY provided by the environment
   const apiKey = process.env.API_KEY;
   
-  if (!apiKey || apiKey === "null" || apiKey === "undefined") {
+  if (!apiKey || apiKey === "null" || apiKey === "undefined" || apiKey === "") {
     console.error("CRITICAL_UPLINK_ERROR: Neural interface credentials missing.");
     return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure the API_KEY is correctly configured in your secure environment settings.";
   }
@@ -18,7 +18,7 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
     const ai = new GoogleGenAI({ apiKey });
     
     // Using gemini-3-flash-preview for high-performance architectural reasoning
-    const response: GenerateContentResponse = await ai.models.generateContent({
+    const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [
         ...history.map(h => ({ 
@@ -41,8 +41,8 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
     // Property access .text (NOT a method call) as per latest SDK specs
     let output = response.text || "SYSTEM_SILENCE: Cognitive core returned no data.";
     
-    // Safely extract grounding chunks to display sources
-    const groundingMetadata = (response as any).candidates?.[0]?.groundingMetadata;
+    // Safely extract grounding chunks to display sources if they exist
+    const groundingMetadata = response.candidates?.[0]?.groundingMetadata;
     const chunks = groundingMetadata?.groundingChunks;
     
     if (chunks && Array.isArray(chunks) && chunks.length > 0) {

@@ -4,19 +4,24 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    // Vite performs static string replacement for process.env.API_KEY
-    'process.env.API_KEY': JSON.stringify(process.env.API_KEY || null)
+    // Vite performs static string replacement for process.env.API_KEY during build
+    'process.env.API_KEY': JSON.stringify(process.env.API_KEY || '')
   },
   build: {
-    sourcemap: false,
     outDir: 'dist',
-    // Ensures clean chunking for production deployment
+    sourcemap: false,
+    emptyOutDir: true,
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor': ['react', 'react-dom', '@google/genai']
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-genai': ['@google/genai']
         }
       }
     }
+  },
+  server: {
+    port: 3000,
+    host: true
   }
 });
