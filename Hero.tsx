@@ -62,7 +62,7 @@ const Hero: React.FC = () => {
         </div>
 
         <div className="lg:w-1/2 relative w-full flex justify-center lg:justify-end">
-          {/* Clean UI - Background Ambient Glow instead of Grid */}
+          {/* Ambient Glow Visual - Stripped of any Grid Lines */}
           <div className="absolute inset-0 bg-primary/10 blur-[120px] rounded-full"></div>
           
           <div className="relative w-full max-w-[560px] aspect-[4/5] glass-card rounded-[3rem] overflow-hidden flex items-center justify-center border-white/5 shadow-2xl">
@@ -79,11 +79,11 @@ const Hero: React.FC = () => {
                 </div>
              </div>
 
-             {/* Focal Visual Element */}
+             {/* Focal Visual Element (Clean SVG, no grid lines) */}
              <div className="absolute inset-0 z-10 flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-48 h-48 animate-spin-slow opacity-20">
-                  <path d="M50 15 L85 75 L15 75 Z" fill="none" stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="10 5" />
-                  <circle cx="50" cy="55" r="5" fill="#3b82f6" />
+                <svg viewBox="0 0 100 100" className="w-48 h-48 animate-spin-slow opacity-10">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="1 10" />
+                  <circle cx="50" cy="50" r="2" fill="#3b82f6" />
                 </svg>
              </div>
 
