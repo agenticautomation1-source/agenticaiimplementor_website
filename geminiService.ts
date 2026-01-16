@@ -1,18 +1,21 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
-  // Use the defined process.env.API_KEY or a fallback to handle Vite build environments
-  const apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : null;
+  /**
+   * Accessing the API key using process.env.API_KEY which is defined in vite.config.ts.
+   * Vite will replace this string with the actual value during the build process.
+   */
+  const apiKey = process.env.API_KEY;
   
   const isKeyValid = apiKey && apiKey !== "null" && apiKey !== "undefined" && apiKey.length > 10;
 
   if (!isKeyValid) {
     console.error("AI_UPLINK_FAILURE: No valid API_KEY detected.");
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. The system could not find a valid API key. Please check your Environment Variables.";
+    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. The system could not find a valid API key in your environment variables. Please ensure API_KEY is set in your deployment platform.";
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey: apiKey as string });
+    const ai = new GoogleGenAI({ apiKey });
     
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -35,7 +38,7 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
 
     let output = response.text || "SYSTEM_SILENCE: Re-calibrating neural buffer...";
     
-    const candidates = (response as any).candidates;
+    const candidates = response.candidates;
     const chunks = candidates?.[0]?.groundingMetadata?.groundingChunks;
     
     if (chunks && Array.isArray(chunks) && chunks.length > 0) {
@@ -52,6 +55,6 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
     return output;
   } catch (error: any) {
     console.error("Neural Interface Error:", error);
-    return "CONNECTION_TERMINATED: Neural link instability detected. Please try again later.";
+    return "CONNECTION_TERMINATED: Neural link instability detected. Please ensure your API key has the correct permissions.";
   }
 };
