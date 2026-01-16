@@ -1,16 +1,17 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
-  // Vite injects this at build time via the define block in vite.config.ts
   const apiKey = process.env.API_KEY;
   
-  if (!apiKey || apiKey === "undefined") {
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure your Vercel API_KEY environment variable is configured in the Vercel Project Settings.";
+  // Robust check for missing or placeholder keys
+  if (!apiKey || apiKey === "undefined" || apiKey.length < 10) {
+    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. The system could not detect a valid API_KEY. Please ensure your Vercel environment variables are configured correctly.";
   }
 
-  const ai = new GoogleGenAI({ apiKey });
-  
   try {
+    // Initializing inside the function prevents the SDK from throwing on app load
+    const ai = new GoogleGenAI({ apiKey });
+    
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [
@@ -32,7 +33,6 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
 
     let output = response.text || "SYSTEM_SILENCE: Re-calibrating neural buffer...";
     
-    // Process grounding chunks for source links
     const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
     if (chunks && chunks.length > 0) {
       output += "\n\n--- ARCHITECTURAL SOURCES ---\n";
@@ -48,6 +48,9 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
     return output;
   } catch (error: any) {
     console.error("Neural Interface Error:", error);
-    return "CONNECTION_TERMINATED: Neural link instability detected. Please ensure your API_KEY is valid and try again.";
+    if (error.message?.includes('API key')) {
+        return "CRITICAL_ERROR: INVALID_API_KEY. Please check your neural uplink credentials in Vercel settings.";
+    }
+    return "CONNECTION_TERMINATED: Neural link instability detected. Please try your query again later.";
   }
 };
