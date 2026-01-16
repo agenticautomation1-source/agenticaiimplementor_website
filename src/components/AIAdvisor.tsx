@@ -6,7 +6,7 @@ import { Message } from '../types';
 const AIAdvisor: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: "Hello! I'm your Elite AI Advisor. Ready to learn how to master autonomous systems? Ask me anything about our curriculum or agentic workflows." }
+    { role: 'model', text: "Hello! I'm your Masterstroke Elite AI Advisor. Ready to learn how to master autonomous systems? Ask me anything about our curriculum or agentic workflows." }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +45,7 @@ const AIAdvisor: React.FC = () => {
               <div className="size-8 bg-primary rounded-full flex items-center justify-center">
                 <span className="material-symbols-outlined text-white text-sm">smart_toy</span>
               </div>
-              <span className="text-white font-bold font-display">Elite AI Advisor</span>
+              <span className="text-white font-bold font-display">Masterstroke Elite AI Advisor</span>
             </div>
             <button 
               onClick={() => setIsOpen(false)}
