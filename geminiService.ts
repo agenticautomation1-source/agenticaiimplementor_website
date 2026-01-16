@@ -2,19 +2,19 @@ import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
   /**
-   * Statically replaced by Vite during build. 
-   * Reference: vite.config.ts define block.
+   * The API key must be obtained exclusively from the environment variable process.env.API_KEY.
+   * Vite replaces this string at build time via the 'define' configuration.
    */
   const apiKey = process.env.API_KEY;
   
-  const isKeyValid = apiKey && apiKey !== "null" && apiKey !== "undefined" && apiKey.length > 10;
-
-  if (!isKeyValid) {
-    console.warn("AI_UPLINK_STATUS: Waiting for valid API_KEY initialization...");
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. The system could not detect a valid API_KEY. Please ensure your environment variables are configured in the deployment dashboard.";
+  // Validate presence of key without exposing UI
+  if (!apiKey || apiKey === "null" || apiKey === "undefined") {
+    console.error("AI_UPLINK_FAILURE: API_KEY is not configured in the environment.");
+    return "UPLINK_FAILURE: The system could not detect a valid neural interface (API_KEY). Please ensure your environment variables are correctly configured.";
   }
 
   try {
+    // Initialize exactly as per SDK guidelines
     const ai = new GoogleGenAI({ apiKey });
     
     const response: GenerateContentResponse = await ai.models.generateContent({
@@ -29,16 +29,17 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
       config: {
         systemInstruction: `You are the Lead Systems Architect for 'Agentic AI Integrators'. 
         You specialize in neural stitching, multi-agent orchestration, and enterprise-scale AI integration.
-        TONE: Precise, architectural, authoritative.
-        FOCUS: Helping engineers bridge the gap between individual agents and cohesive swarms.`,
+        TONE: Precise, architectural, authoritative. 
+        CONTEXT: You are advising elite engineers. Use technical jargon where appropriate but remain clear.`,
         temperature: 0.7,
         tools: [{ googleSearch: {} }]
       }
     });
 
-    let output = response.text || "SYSTEM_SILENCE: Re-calibrating neural buffer...";
+    // Access the text property directly as per SDK requirements (not as a method)
+    let output = response.text || "SYSTEM_SILENCE: No response generated from cognitive core.";
     
-    // Safely extract grounding metadata if search was triggered
+    // Extract grounding sources for transparency and trust
     const groundingMetadata = (response as any).candidates?.[0]?.groundingMetadata;
     const chunks = groundingMetadata?.groundingChunks;
     
@@ -48,14 +49,14 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
       chunks.forEach((chunk: any) => {
         if (chunk.web && chunk.web.uri && !uniqueLinks.has(chunk.web.uri)) {
           uniqueLinks.add(chunk.web.uri);
-          output += `• ${chunk.web.title || 'Knowledge Base'}: ${chunk.web.uri}\n`;
+          output += `• ${chunk.web.title || 'Knowledge Module'}: ${chunk.web.uri}\n`;
         }
       });
     }
 
     return output;
   } catch (error: any) {
-    console.error("Neural Interface Uplink Error:", error);
-    return "CONNECTION_TERMINATED: Neural link instability detected. Please verify your project credentials or try again later.";
+    console.error("Neural Interface Error:", error);
+    return "CONNECTION_TERMINATED: The neural link encountered an unrecoverable error. Check uplink status and credentials.";
   }
 };
