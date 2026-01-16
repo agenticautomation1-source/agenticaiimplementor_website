@@ -85,12 +85,20 @@ const App: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="flex flex-col gap-6 md:col-span-2">
               <div className="flex items-center gap-3">
-                <div className="size-8 flex items-center justify-center">
-                  <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <path d="M48 15 L22 72 L32 72 L50 25 Z" fill="#3b82f6" />
-                    <path d="M52 15 L78 72 L68 72 L50 25 Z" fill="#3b82f6" />
-                    <path d="M25 78 L75 78 L75 88 L25 88 Z" fill="#1e3a8a" />
-                    <circle cx="48" cy="62" r="7" fill="#6366f1" />
+                <div className="size-10 flex items-center justify-center">
+                  <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]">
+                    <defs>
+                      <linearGradient id="footerBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{ stopColor: '#3b82f6', stopOpacity: 1 }} />
+                        <stop offset="100%" style={{ stopColor: '#2563eb', stopOpacity: 1 }} />
+                      </linearGradient>
+                    </defs>
+                    <path d="M46 15 L20 75 L32 75 L50 25 Z" fill="url(#footerBlueGrad)" />
+                    <path d="M54 15 L80 75 L70 75 L50 25 Z" fill="url(#footerBlueGrad)" />
+                    <path d="M58 45 L88 45 L88 52 L62 52 Z" fill="#2563eb" />
+                    <path d="M64 60 L88 60 L88 67 L68 67 Z" fill="#1e40af" />
+                    <path d="M25 80 L75 80 L75 90 L25 90 Z" fill="#1e3a8a" />
+                    <circle cx="48" cy="65" r="5" fill="#6366f1" />
                   </svg>
                 </div>
                 <h2 className="text-white text-xl font-bold font-display tracking-tight">Agentic AI <span className="text-slate-500 font-light">Integrators</span></h2>

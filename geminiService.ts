@@ -1,11 +1,11 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
   /**
    * Accessing the API key using process.env.API_KEY which is defined in vite.config.ts.
    * Vite will replace this string with the actual value during the build process.
    */
-  const apiKey = process.env.API_KEY;
+  const apiKey = (process as any).env.API_KEY;
   
   const isKeyValid = apiKey && apiKey !== "null" && apiKey !== "undefined" && apiKey.length > 10;
 
@@ -17,7 +17,7 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
   try {
     const ai = new GoogleGenAI({ apiKey });
     
-    const response = await ai.models.generateContent({
+    const response: GenerateContentResponse = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [
         ...history.map(h => ({ 
@@ -38,7 +38,8 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
 
     let output = response.text || "SYSTEM_SILENCE: Re-calibrating neural buffer...";
     
-    const candidates = response.candidates;
+    // Accessing candidates with 'as any' to avoid TS build errors on complex grounding metadata objects
+    const candidates = (response as any).candidates;
     const chunks = candidates?.[0]?.groundingMetadata?.groundingChunks;
     
     if (chunks && Array.isArray(chunks) && chunks.length > 0) {
@@ -55,6 +56,6 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
     return output;
   } catch (error: any) {
     console.error("Neural Interface Error:", error);
-    return "CONNECTION_TERMINATED: Neural link instability detected. Please ensure your API key has the correct permissions.";
+    return "CONNECTION_TERMINATED: Neural link instability detected. Please ensure your API key has the correct permissions and quotas.";
   }
 };
