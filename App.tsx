@@ -80,14 +80,16 @@ const App: React.FC = () => {
         </section>
       </main>
 
-      <footer className="border-t border-white/5 bg-charcoal/50 py-16">
+      <footer className="border-t border-white/5 bg-charcoal/50 py-20">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="flex flex-col gap-6 md:col-span-2">
               <div className="flex items-center gap-3">
                 <div className="size-8 flex items-center justify-center">
                   <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <path d="M50 10 L90 80 L75 80 L50 35 L25 80 L10 80 Z" fill="#3b82f6" />
+                    <path d="M45 15 L20 70 L30 70 L50 25 Z" fill="#3b82f6" />
+                    <path d="M55 15 L80 70 L70 70 L50 25 Z" fill="#3b82f6" />
+                    <path d="M25 75 L75 75 L75 85 L25 85 Z" fill="#1e3a8a" />
                     <circle cx="48" cy="62" r="7" fill="#6366f1" />
                   </svg>
                 </div>
@@ -99,7 +101,7 @@ const App: React.FC = () => {
             </div>
             
             <div className="flex flex-col gap-4">
-              <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Network</h4>
+              <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Company</h4>
               <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">About</a>
               <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Contact</a>
               <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">LinkedIn</a>
@@ -107,7 +109,7 @@ const App: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-              <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Legal</h4>
+              <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Policies</h4>
               <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Refund Policy</a>
               <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Disclaimer</a>
               <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Terms & Conditions</a>
@@ -117,7 +119,7 @@ const App: React.FC = () => {
           
           <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-slate-600 text-[10px] uppercase font-bold tracking-[0.2em] font-mono">
-              [SYSTEM_INTEGRITY_VERIFIED_V4.3]
+              [SYSTEM_INTEGRITY_VERIFIED_V4.4]
             </p>
             <p className="text-slate-600 text-xs font-medium">
               © {new Date().getFullYear()} Agentic AI Integrators. All rights reserved.

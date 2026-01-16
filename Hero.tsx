@@ -23,7 +23,7 @@ const Hero: React.FC = () => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
               </span>
               <span className="text-primary text-[10px] font-bold tracking-[0.6em] uppercase inline-block font-mono">
-                INTEGRATION_STATUS: NOMINAL // NODES: {nodes}
+                STATUS: NOMINAL // NODES_ACTIVE: {nodes}
               </span>
             </div>
             <h1 className="text-white text-5xl md:text-7xl font-bold leading-[0.95] tracking-tighter font-display">
@@ -31,14 +31,14 @@ const Hero: React.FC = () => {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-indigo-500 glow-text">Neural Masterstroke</span>
             </h1>
             <p className="text-slate-400 text-lg md:text-xl font-normal leading-relaxed max-w-lg">
-              Enterprise-grade autonomous system integration. We teach the architectures that bind disparate AI modules into unified, self-governing swarms.
+              Enterprise-grade autonomous system integration. We architect the protocols that bind disparate AI modules into unified, self-governing swarms.
             </p>
           </div>
           
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <button 
               onClick={() => document.getElementById('curriculum')?.scrollIntoView({ behavior: 'smooth' })}
-              className="w-full sm:w-auto flex min-w-[240px] cursor-pointer items-center justify-center rounded-xl h-16 px-8 bg-primary text-white text-sm font-bold tracking-widest uppercase transition-all hover:scale-105 glow-accent active:scale-95 group relative overflow-hidden"
+              className="w-full sm:w-auto flex min-w-[260px] cursor-pointer items-center justify-center rounded-xl h-16 px-8 bg-primary text-sm font-bold tracking-widest uppercase text-white transition-all hover:scale-105 glow-accent active:scale-95 group relative overflow-hidden"
             >
               <span className="relative flex items-center gap-2">
                 Join the Masterstroke
@@ -56,16 +56,16 @@ const Hero: React.FC = () => {
                  <span className="text-white font-bold text-sm">Top 1% Global Integrators</span>
                  <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider">Verified</span>
               </div>
-              <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-1">Orchestrating 1.2M autonomous loops daily</span>
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-1">Stitching 1.2M autonomous loops daily</span>
             </div>
           </div>
         </div>
 
         <div className="lg:w-1/2 relative w-full flex justify-center lg:justify-end">
-          {/* Subtle glow background without gridlines */}
-          <div className="absolute inset-0 bg-primary/10 blur-[150px] rounded-full"></div>
+          {/* Subtle glow background - Clean with no gridlines */}
+          <div className="absolute inset-0 bg-primary/5 blur-[120px] rounded-full"></div>
           
-          <div className="relative w-full max-w-[560px] aspect-[4/5] glass-card rounded-[3rem] overflow-hidden flex items-center justify-center border-white/10 shadow-2xl">
+          <div className="relative w-full max-w-[560px] aspect-[4/5] glass-card rounded-[3rem] overflow-hidden flex items-center justify-center border-white/5 shadow-2xl">
              
              {/* Integrator HUD Stats */}
              <div className="absolute top-12 left-12 right-12 flex justify-between items-start z-20 font-mono">
@@ -79,15 +79,15 @@ const Hero: React.FC = () => {
                 </div>
              </div>
 
-             {/* Focal Logo Element (Simplified & Clean) */}
+             {/* Focal Visual Element (Simplified) */}
              <div className="absolute inset-0 z-10 flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-48 h-48 animate-spin-slow opacity-30">
-                  <path d="M50 15 L85 75 L15 75 Z" fill="none" stroke="#3b82f6" strokeWidth="1" strokeDasharray="10 5" />
+                <svg viewBox="0 0 100 100" className="w-48 h-48 animate-spin-slow opacity-20">
+                  <path d="M50 15 L85 75 L15 75 Z" fill="none" stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="10 5" />
                   <circle cx="50" cy="55" r="5" fill="#3b82f6" />
                 </svg>
              </div>
 
-             <div className="absolute bottom-12 left-12 right-12 p-8 bg-black/60 backdrop-blur-3xl rounded-[2rem] border border-white/5 z-20">
+             <div className="absolute bottom-12 left-12 right-12 p-8 bg-black/40 backdrop-blur-3xl rounded-[2rem] border border-white/5 z-20">
                 <div className="flex justify-between items-center mb-4">
                    <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-primary text-sm">settings_input_component</span>
@@ -100,9 +100,9 @@ const Hero: React.FC = () => {
                 </div>
              </div>
 
-            {/* Clean background image without grid overlays */}
+            {/* Background image without grid overlays */}
             <div 
-              className="w-full h-full bg-cover bg-center transition-all duration-[20000ms] ease-out opacity-40 scale-110" 
+              className="w-full h-full bg-cover bg-center transition-all duration-[30s] ease-out opacity-40 scale-110" 
               style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200")' }}
             ></div>
             
