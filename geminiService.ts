@@ -3,13 +3,16 @@ import { GoogleGenAI } from "@google/genai";
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
   const apiKey = process.env.API_KEY;
   
-  // Robust check for missing, undefined string, or placeholder keys
-  if (!apiKey || apiKey === "undefined" || apiKey.length < 5) {
-    console.error("AI_UPLINK_ERROR: No valid API_KEY found in process.env.");
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. I cannot process this request because the system's API_KEY is missing or invalid. Please configure your environment variables in Vercel.";
+  // Validation for missing or invalid keys
+  const isValid = apiKey && apiKey !== "undefined" && apiKey !== "null" && apiKey.length > 10;
+
+  if (!isValid) {
+    console.error("AI_UPLINK_ERROR: Missing valid API_KEY in process.env.");
+    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure the API_KEY environment variable is set in Vercel and that you have triggered a new deployment.";
   }
 
   try {
+    // Initialize client inside the call to ensure the key is present
     const ai = new GoogleGenAI({ apiKey });
     
     const response = await ai.models.generateContent({
@@ -23,9 +26,8 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
       ],
       config: {
         systemInstruction: `You are the Lead Systems Architect for 'Elite Agentic AI'. 
-        You are an elite engineer specializing in cognitive architectures, multi-agent orchestration, and persistent autonomous loops.
-        TONE: Authority, technical, and forward-leaning.
-        GOAL: Provide architectural patterns (e.g., ReAct loops or Hierarchical Task Decomposition).`,
+        You are an elite engineer specializing in cognitive architectures.
+        TONE: Authority, technical, and forward-leaning.`,
         temperature: 0.7,
         tools: [{ googleSearch: {} }]
       }
@@ -33,14 +35,15 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
 
     let output = response.text || "SYSTEM_SILENCE: Re-calibrating neural buffer...";
     
+    // Extract grounding URLs if available
     const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
     if (chunks && chunks.length > 0) {
-      output += "\n\n--- ARCHITECTURAL SOURCES ---\n";
+      output += "\n\n--- SOURCES ---\n";
       const uniqueLinks = new Set();
       chunks.forEach((chunk: any) => {
         if (chunk.web && chunk.web.uri && !uniqueLinks.has(chunk.web.uri)) {
           uniqueLinks.add(chunk.web.uri);
-          output += `• ${chunk.web.title || 'Source'}: ${chunk.web.uri}\n`;
+          output += `• ${chunk.web.title || 'Architectural Link'}: ${chunk.web.uri}\n`;
         }
       });
     }
@@ -49,8 +52,8 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
   } catch (error: any) {
     console.error("Neural Interface Error:", error);
     if (error.message?.includes('API key')) {
-      return "CRITICAL_ERROR: INVALID_API_KEY. The neural uplink rejected the provided credentials. Please update your Vercel settings.";
+      return "CRITICAL_ERROR: INVALID_API_KEY. The uplink rejected credentials. Check Vercel settings.";
     }
-    return "CONNECTION_TERMINATED: Neural link instability detected. Please try your query again.";
+    return "CONNECTION_TERMINATED: Neural link instability. Please try again.";
   }
 };
