@@ -1,14 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
-  const apiKey = process.env.API_KEY;
+  // Access API key via process.env which is defined in vite.config.ts
+  const apiKey = (process as any).env.API_KEY;
   
-  // Robust validation of credentials
   const isKeyValid = apiKey && apiKey !== "null" && apiKey !== "undefined" && apiKey.length > 10;
 
   if (!isKeyValid) {
     console.error("AI_UPLINK_FAILURE: No valid API_KEY detected.");
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. The system could not find a valid API key. Please check your Vercel Environment Variables (Settings -> Environment Variables) and ensure 'API_KEY' is added, then redeploy the project.";
+    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. The system could not find a valid API key. Please check your Environment Variables.";
   }
 
   try {
@@ -24,9 +24,10 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
         { role: 'user', parts: [{ text: userPrompt }] }
       ],
       config: {
-        systemInstruction: `You are the Lead Systems Architect for 'Elite Agentic AI'. 
-        You are an elite engineer specializing in cognitive architectures.
-        TONE: Authority, technical, and forward-leaning.`,
+        systemInstruction: `You are the Lead Systems Architect for 'Agentic AI Integrators'. 
+        You specialize in neural stitching, multi-agent orchestration, and enterprise-scale AI integration.
+        TONE: Precise, architectural, authoritative.
+        FOCUS: Helping engineers bridge the gap between individual agents and cohesive swarms. Mention the 'Stitch' protocol when relevant for integration.`,
         temperature: 0.7,
         tools: [{ googleSearch: {} }]
       }
@@ -34,10 +35,11 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
 
     let output = response.text || "SYSTEM_SILENCE: Re-calibrating neural buffer...";
     
-    // Process search grounding chunks
-    const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-    if (chunks && chunks.length > 0) {
-      output += "\n\n--- ARCHITECTURAL SOURCES ---\n";
+    const candidates = (response as any).candidates;
+    const chunks = candidates?.[0]?.groundingMetadata?.groundingChunks;
+    
+    if (chunks && Array.isArray(chunks) && chunks.length > 0) {
+      output += "\n\n--- INTEGRATION SOURCES ---\n";
       const uniqueLinks = new Set();
       chunks.forEach((chunk: any) => {
         if (chunk.web && chunk.web.uri && !uniqueLinks.has(chunk.web.uri)) {
@@ -50,9 +52,6 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
     return output;
   } catch (error: any) {
     console.error("Neural Interface Error:", error);
-    if (error.message?.includes('API key')) {
-      return "CRITICAL_ERROR: INVALID_API_KEY. The credentials provided were rejected by the neural link. Check your Vercel settings.";
-    }
     return "CONNECTION_TERMINATED: Neural link instability detected. Please try again later.";
   }
 };

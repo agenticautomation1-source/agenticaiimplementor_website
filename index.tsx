@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 
-console.log("Elite Agentic AI: Initializing Cognitive Framework...");
+console.log("Agentic AI Integrators: Initializing Cognitive Framework...");
 
 const container = document.getElementById('root');
 if (container) {
