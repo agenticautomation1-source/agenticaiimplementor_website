@@ -7,10 +7,10 @@ import { GoogleGenAI } from "@google/genai";
  */
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
   /**
-   * The API key must be obtained exclusively from the environment variable process.env.API_KEY.
-   * Vite replaces this string at build time via the 'define' configuration in vite.config.ts.
+   * The API key is obtained from process.env.API_KEY, which Vite replaces
+   * with the actual value at build time via the 'define' config.
    */
-  const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : undefined;
+  const apiKey = process.env.API_KEY;
   
   if (!apiKey || apiKey === "null" || apiKey === "undefined" || apiKey === "") {
     console.warn("UPLINK_WARNING: Neural interface credentials missing. Using local fallback mode.");
@@ -41,7 +41,7 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
       }
     });
 
-    // Access the .text property directly (per @google/genai documentation)
+    // Access the .text property directly
     let output = response.text || "SYSTEM_SILENCE: Cognitive core returned no data.";
     
     // Safely extract grounding chunks to display sources if they exist
