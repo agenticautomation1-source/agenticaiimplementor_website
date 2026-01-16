@@ -7,14 +7,14 @@ import { GoogleGenAI } from "@google/genai";
  */
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
   /**
-   * The API key is obtained from process.env.API_KEY, which Vite replaces
-   * with the actual value at build time via the 'define' config.
+   * The API key must be obtained exclusively from the environment variable process.env.API_KEY.
+   * Vite replaces this string at build time via the 'define' configuration in vite.config.ts.
    */
   const apiKey = process.env.API_KEY;
   
   if (!apiKey || apiKey === "null" || apiKey === "undefined" || apiKey === "") {
-    console.warn("UPLINK_WARNING: Neural interface credentials missing. Using local fallback mode.");
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure the API_KEY is configured in your secure deployment environment. [ERROR_CODE: 401_UNAUTHORIZED]";
+    console.warn("UPLINK_WARNING: Neural interface credentials missing.");
+    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure the API_KEY is configured in your secure deployment environment.";
   }
 
   try {
@@ -41,7 +41,7 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
       }
     });
 
-    // Access the .text property directly
+    // Access the .text property directly (not a method)
     let output = response.text || "SYSTEM_SILENCE: Cognitive core returned no data.";
     
     // Safely extract grounding chunks to display sources if they exist
@@ -63,6 +63,6 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
     return output;
   } catch (error: any) {
     console.error("NEURAL_STITCH_FAILED:", error);
-    return "CONNECTION_TERMINATED: The cognitive buffer encountered an unexpected error. Please verify uplink connectivity and retry. [ERROR_CODE: 500_INTERNAL_ERROR]";
+    return "CONNECTION_TERMINATED: The cognitive buffer encountered an unexpected error. [CODE: 500_INTERNAL_ERROR]";
   }
 };
