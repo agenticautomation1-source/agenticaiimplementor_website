@@ -11,7 +11,7 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
 
   if (!isKeyValid) {
     console.warn("AI_UPLINK_STATUS: Waiting for valid API_KEY initialization...");
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure the API_KEY environment variable is configured in the deployment dashboard.";
+    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. The system could not detect a valid API_KEY. Please ensure your environment variables are configured in the deployment dashboard.";
   }
 
   try {
@@ -38,24 +38,24 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
 
     let output = response.text || "SYSTEM_SILENCE: Re-calibrating neural buffer...";
     
-    // Type-safe access to grounding metadata if available
+    // Safely extract grounding metadata if search was triggered
     const groundingMetadata = (response as any).candidates?.[0]?.groundingMetadata;
     const chunks = groundingMetadata?.groundingChunks;
     
     if (chunks && Array.isArray(chunks) && chunks.length > 0) {
-      output += "\n\n--- INTEGRATION SOURCES ---\n";
+      output += "\n\n--- ARCHITECTURAL SOURCES ---\n";
       const uniqueLinks = new Set<string>();
       chunks.forEach((chunk: any) => {
         if (chunk.web && chunk.web.uri && !uniqueLinks.has(chunk.web.uri)) {
           uniqueLinks.add(chunk.web.uri);
-          output += `• ${chunk.web.title || 'Source'}: ${chunk.web.uri}\n`;
+          output += `• ${chunk.web.title || 'Knowledge Base'}: ${chunk.web.uri}\n`;
         }
       });
     }
 
     return output;
   } catch (error: any) {
-    console.error("Neural Interface Connection Error:", error);
-    return "CONNECTION_TERMINATED: Neural link instability detected. Please try again later or verify project credentials.";
+    console.error("Neural Interface Uplink Error:", error);
+    return "CONNECTION_TERMINATED: Neural link instability detected. Please verify your project credentials or try again later.";
   }
 };
