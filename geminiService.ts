@@ -8,19 +8,19 @@ import { GoogleGenAI } from "@google/genai";
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
   /**
    * The API key must be obtained exclusively from the environment variable process.env.API_KEY.
-   * Vite replaces this string at build time via the 'define' configuration.
+   * Vite replaces this string at build time via the 'define' configuration in vite.config.ts.
    */
-  const apiKey = process.env.API_KEY;
+  const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : undefined;
   
   if (!apiKey || apiKey === "null" || apiKey === "undefined" || apiKey === "") {
-    console.error("CRITICAL_UPLINK_ERROR: Neural interface credentials missing.");
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure the API_KEY is correctly configured in your secure environment settings.";
+    console.warn("UPLINK_WARNING: Neural interface credentials missing. Using local fallback mode.");
+    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure the API_KEY is configured in your secure deployment environment. [ERROR_CODE: 401_UNAUTHORIZED]";
   }
 
   try {
     const ai = new GoogleGenAI({ apiKey });
     
-    // Using gemini-3-flash-preview for high-performance architectural reasoning
+    // Using gemini-3-flash-preview for high-performance architectural reasoning with grounding
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [
@@ -63,6 +63,6 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
     return output;
   } catch (error: any) {
     console.error("NEURAL_STITCH_FAILED:", error);
-    return "CONNECTION_TERMINATED: The cognitive buffer encountered an unexpected error. Please verify uplink connectivity and retry.";
+    return "CONNECTION_TERMINATED: The cognitive buffer encountered an unexpected error. Please verify uplink connectivity and retry. [ERROR_CODE: 500_INTERNAL_ERROR]";
   }
 };
