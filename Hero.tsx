@@ -62,8 +62,8 @@ const Hero: React.FC = () => {
         </div>
 
         <div className="lg:w-1/2 relative w-full flex justify-center lg:justify-end">
-          {/* Clean UI - No grid lines */}
-          <div className="absolute inset-0 bg-primary/5 blur-[120px] rounded-full"></div>
+          {/* Clean UI - Background Ambient Glow instead of Grid */}
+          <div className="absolute inset-0 bg-primary/10 blur-[120px] rounded-full"></div>
           
           <div className="relative w-full max-w-[560px] aspect-[4/5] glass-card rounded-[3rem] overflow-hidden flex items-center justify-center border-white/5 shadow-2xl">
              
@@ -100,7 +100,7 @@ const Hero: React.FC = () => {
                 </div>
              </div>
 
-            {/* Clean focal image */}
+            {/* Background Image - Scale and Fade for aesthetic depth */}
             <div 
               className="w-full h-full bg-cover bg-center transition-all duration-[30s] ease-out opacity-40 scale-110" 
               style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200")' }}
