@@ -1,79 +1,146 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import LogoMarquee from './components/LogoMarquee';
 import Features from './components/Features';
 import Curriculum from './components/Curriculum';
 import AIAdvisor from './components/AIAdvisor';
+import LMSDashboard from './components/LMSDashboard';
+import CheckoutModal from './components/CheckoutModal';
+import { Course } from './types';
 
 const App: React.FC = () => {
+  const [view, setView] = useState<'landing' | 'lms'>('landing');
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+
+  const handleEnroll = (course: Course) => {
+    setSelectedCourse(course);
+  };
+
+  const handlePaymentSuccess = () => {
+    setSelectedCourse(null);
+    setView('lms');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const toggleView = () => {
+    setView(prev => prev === 'landing' ? 'lms' : 'landing');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (view === 'lms') {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar onLogin={toggleView} isLoggedIn={true} />
+        <LMSDashboard onBack={() => setView('landing')} />
+        <AIAdvisor />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <Navbar onLogin={toggleView} isLoggedIn={false} />
       
       <main className="flex-1">
         <Hero />
         <LogoMarquee />
         <Features />
-        <Curriculum />
+        
+        <div id="curriculum">
+           <Curriculum onEnroll={handleEnroll} />
+        </div>
         
         {/* Final CTA Section */}
         <section className="max-w-[1200px] mx-auto px-6 py-24">
-          <div className="relative rounded-2xl overflow-hidden p-12 md:p-20 text-center border border-primary/30 group">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-primary/5 pointer-events-none"></div>
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-[radial-gradient(circle_at_center,rgba(19,73,236,0.1)_0%,transparent_70%)] pointer-events-none"></div>
+          <div className="relative rounded-3xl overflow-hidden p-12 md:p-20 text-center border border-primary/20 bg-charcoal/40 backdrop-blur-xl group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 pointer-events-none"></div>
             
             <div className="relative z-10 flex flex-col items-center gap-8">
               <h2 className="text-white text-4xl md:text-5xl font-bold font-display max-w-2xl">
-                Ready to Join the Top 1% of AI Engineers?
+                The Future is Agentic. <br/>Are You Integrated?
               </h2>
               <p className="text-slate-400 text-lg max-w-xl">
-                Applications are currently open for the Q4 Cohort. Secure your spot in the most advanced agentic AI training program.
+                Join the Q4 Cohort of the Agentic AI Integrators network. Master the protocols used by top-tier engineering firms to stitch intelligence into enterprise value.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="px-10 py-4 bg-primary text-white font-bold rounded-lg glow-accent hover:scale-105 transition-all active:scale-95">
-                  Apply for Admission
+                <button 
+                  onClick={() => document.getElementById('curriculum')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="px-10 py-5 bg-primary text-white font-bold rounded-xl glow-accent hover:scale-105 transition-all active:scale-95 uppercase tracking-widest text-sm"
+                >
+                  Join the Masterstroke
                 </button>
-                <button className="px-10 py-4 bg-transparent border border-white/20 text-white font-bold rounded-lg hover:bg-white/5 transition-all active:scale-95">
-                  Download Brochure
+                <button className="px-10 py-5 bg-transparent border border-white/10 text-white font-bold rounded-xl hover:bg-white/5 transition-all active:scale-95 uppercase tracking-widest text-sm">
+                  View Case Studies
                 </button>
-              </div>
-              
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <span className="material-symbols-outlined text-green-500 text-base">verified</span>
-                Verified Certification upon completion
               </div>
             </div>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 bg-background-dark py-12">
-        <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-3 text-white opacity-60 hover:opacity-100 transition-opacity cursor-default">
-            <div className="size-6 bg-primary/50 rounded flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-xs">deployed_code</span>
+      <footer className="border-t border-white/5 bg-charcoal/50 py-16">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-16">
+            <div className="flex flex-col gap-6 max-w-sm">
+              <div className="flex items-center gap-3">
+                <div className="size-8 flex items-center justify-center">
+                  <svg viewBox="0 0 100 100" className="w-full h-full">
+                    <path d="M50 10 L90 80 L75 80 L50 35 L25 80 L10 80 Z" fill="#3b82f6" />
+                    <circle cx="48" cy="62" r="7" fill="#6366f1" />
+                  </svg>
+                </div>
+                <h2 className="text-white text-xl font-bold font-display tracking-tight">Agentic AI <span className="text-slate-500 font-light">Integrators</span></h2>
+              </div>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                Empowering the next generation of engineers to build robust, autonomous, and ethically stitched AI ecosystems for the global enterprise.
+              </p>
             </div>
-            <h2 className="text-white text-lg font-bold font-display">Elite Agentic AI</h2>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-12">
+              <div className="flex flex-col gap-4">
+                <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Network</h4>
+                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">About</a>
+                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Contact</a>
+                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Partnerships</a>
+              </div>
+              <div className="flex flex-col gap-4">
+                <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Compliance</h4>
+                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Refund Policy</a>
+                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Disclaimer</a>
+                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Terms & Conditions</a>
+                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Cookie Policy</a>
+              </div>
+              <div className="flex flex-col gap-4">
+                <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Connect</h4>
+                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">LinkedIn</a>
+                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">X (Twitter)</a>
+                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Discord</a>
+              </div>
+            </div>
           </div>
           
-          <div className="flex gap-8 text-slate-500 text-sm font-medium">
-            <a className="hover:text-white transition-colors" href="#">Privacy Policy</a>
-            <a className="hover:text-white transition-colors" href="#">Terms of Service</a>
-            <a className="hover:text-white transition-colors" href="#">Contact</a>
+          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-slate-600 text-[10px] uppercase font-bold tracking-[0.2em] font-mono">
+              [SYSTEM_INTEGRITY_VERIFIED_V4.2]
+            </p>
+            <p className="text-slate-600 text-xs font-medium">
+              © {new Date().getFullYear()} Agentic AI Integrators. All rights reserved. Built for the autonomous age.
+            </p>
           </div>
-          
-          <p className="text-slate-600 text-sm">
-            © {new Date().getFullYear()} Elite Agentic AI. All rights reserved.
-          </p>
         </div>
       </footer>
 
-      {/* Interactive AI Assistant */}
       <AIAdvisor />
+
+      {selectedCourse && (
+        <CheckoutModal 
+          course={selectedCourse} 
+          onClose={() => setSelectedCourse(null)}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
     </div>
   );
 };
