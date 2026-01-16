@@ -11,24 +11,24 @@ const Navbar: React.FC<NavbarProps> = ({ onLogin, isLoggedIn }) => {
       <header className="w-full max-w-[1200px] pointer-events-auto flex items-center justify-between border border-white/10 bg-background-dark/80 backdrop-blur-md rounded-xl px-6 md:px-8 py-3 shadow-2xl">
         <div className="flex items-center gap-3 text-white">
           <div className="size-9 flex items-center justify-center">
-            {/* Custom SVG Logo based on the user's provided image */}
-            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]">
+            {/* Custom SVG Logo modeled after the user provided image */}
+            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">
               <defs>
                 <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: '#1e40af', stopOpacity: 1 }} />
+                  <stop offset="0%" style={{ stopColor: '#2563eb', stopOpacity: 1 }} />
                   <stop offset="100%" style={{ stopColor: '#3b82f6', stopOpacity: 1 }} />
                 </linearGradient>
               </defs>
-              {/* Outer triangle segments */}
+              {/* Main triangular frame */}
               <path d="M50 10 L90 80 L75 80 L50 35 L25 80 L10 80 Z" fill="url(#logoGrad)" />
-              {/* Right horizontal segments */}
-              <path d="M55 45 L85 45 L85 55 L58 55 Z" fill="#1d4ed8" />
-              <path d="M60 62 L85 62 L85 72 L64 72 Z" fill="#1e3a8a" />
-              {/* Central node */}
-              <circle cx="48" cy="62" r="7" fill="#6366f1" className="animate-pulse" />
+              {/* Horizontal segments on the right side of the triangle */}
+              <rect x="58" y="45" width="28" height="8" rx="2" fill="#1e40af" />
+              <rect x="62" y="60" width="24" height="8" rx="2" fill="#1e3a8a" />
+              {/* Central node dot */}
+              <circle cx="48" cy="62" r="6" fill="#6366f1" className="animate-pulse" />
             </svg>
           </div>
-          <h2 className="text-white text-lg font-bold leading-tight tracking-tight font-display whitespace-nowrap">
+          <h2 className="text-white text-lg md:text-xl font-bold leading-tight tracking-tight font-display whitespace-nowrap">
             Agentic AI <span className="text-slate-400 font-light">Integrators</span>
           </h2>
         </div>

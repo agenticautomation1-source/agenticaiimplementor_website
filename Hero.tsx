@@ -46,7 +46,7 @@ const Hero: React.FC = () => {
               </span>
             </button>
             <button className="w-full sm:w-auto flex min-w-[200px] cursor-pointer items-center justify-center rounded-xl h-16 px-8 border border-white/10 bg-white/5 text-white text-[10px] font-bold font-mono tracking-[0.3em] hover:bg-white/10 transition-all active:scale-95 uppercase">
-              Download Manifest
+              Download Protocol
             </button>
           </div>
 
@@ -54,7 +54,7 @@ const Hero: React.FC = () => {
              <div className="flex flex-col">
               <div className="flex items-center gap-2">
                  <span className="text-white font-bold text-sm">Top 1% Global Integrators</span>
-                 <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider">Validated</span>
+                 <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider">Verified</span>
               </div>
               <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-1">Orchestrating 1.2M autonomous loops daily</span>
             </div>
@@ -67,11 +67,11 @@ const Hero: React.FC = () => {
           
           <div className="relative w-full max-w-[560px] aspect-[4/5] glass-card rounded-[3rem] overflow-hidden flex items-center justify-center border-white/10 shadow-2xl">
              
-             {/* Integrator HUD Stats - Simplified */}
+             {/* Integrator HUD Stats */}
              <div className="absolute top-12 left-12 right-12 flex justify-between items-start z-20 font-mono">
                 <div className="flex flex-col gap-1">
                    <div className="text-[10px] text-primary font-bold tracking-[0.3em] uppercase opacity-70">Uplink</div>
-                   <div className="text-white/90 text-[11px] font-bold tracking-tight uppercase">STITCH_V4_SECURE</div>
+                   <div className="text-white/90 text-[11px] font-bold tracking-tight uppercase">STITCH_V4_CORE</div>
                 </div>
                 <div className="text-right">
                    <div className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Sync</div>
@@ -79,7 +79,7 @@ const Hero: React.FC = () => {
                 </div>
              </div>
 
-             {/* Focal Logo Element */}
+             {/* Focal Logo Element (Simplified & Clean) */}
              <div className="absolute inset-0 z-10 flex items-center justify-center">
                 <svg viewBox="0 0 100 100" className="w-48 h-48 animate-spin-slow opacity-30">
                   <path d="M50 15 L85 75 L15 75 Z" fill="none" stroke="#3b82f6" strokeWidth="1" strokeDasharray="10 5" />
@@ -93,10 +93,10 @@ const Hero: React.FC = () => {
                       <span className="material-symbols-outlined text-primary text-sm">settings_input_component</span>
                       <span className="text-[10px] text-white font-bold tracking-[0.2em] uppercase font-mono">Neural_Affinity</span>
                    </div>
-                   <span className="text-[11px] text-primary font-bold font-mono">99.8%</span>
+                   <span className="text-[11px] text-primary font-bold font-mono">99.9%</span>
                 </div>
                 <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                   <div className="h-full bg-gradient-to-r from-primary via-blue-400 to-indigo-500" style={{ width: '99.8%' }}></div>
+                   <div className="h-full bg-gradient-to-r from-primary via-blue-400 to-indigo-500" style={{ width: '99.9%' }}></div>
                 </div>
              </div>
 

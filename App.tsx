@@ -82,8 +82,8 @@ const App: React.FC = () => {
 
       <footer className="border-t border-white/5 bg-charcoal/50 py-16">
         <div className="max-w-[1200px] mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-16">
-            <div className="flex flex-col gap-6 max-w-sm">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div className="flex flex-col gap-6 md:col-span-2">
               <div className="flex items-center gap-3">
                 <div className="size-8 flex items-center justify-center">
                   <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -93,40 +93,34 @@ const App: React.FC = () => {
                 </div>
                 <h2 className="text-white text-xl font-bold font-display tracking-tight">Agentic AI <span className="text-slate-500 font-light">Integrators</span></h2>
               </div>
-              <p className="text-slate-500 text-sm leading-relaxed">
+              <p className="text-slate-500 text-sm leading-relaxed max-w-sm">
                 Empowering the next generation of engineers to build robust, autonomous, and ethically stitched AI ecosystems for the global enterprise.
               </p>
             </div>
             
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-12">
-              <div className="flex flex-col gap-4">
-                <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Network</h4>
-                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">About</a>
-                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Contact</a>
-                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Partnerships</a>
-              </div>
-              <div className="flex flex-col gap-4">
-                <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Compliance</h4>
-                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Refund Policy</a>
-                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Disclaimer</a>
-                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Terms & Conditions</a>
-                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Cookie Policy</a>
-              </div>
-              <div className="flex flex-col gap-4">
-                <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Connect</h4>
-                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">LinkedIn</a>
-                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">X (Twitter)</a>
-                <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Discord</a>
-              </div>
+            <div className="flex flex-col gap-4">
+              <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Network</h4>
+              <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">About</a>
+              <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Contact</a>
+              <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">LinkedIn</a>
+              <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">X (Twitter)</a>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Legal</h4>
+              <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Refund Policy</a>
+              <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Disclaimer</a>
+              <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Terms & Conditions</a>
+              <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Cookie Policy</a>
             </div>
           </div>
           
           <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-slate-600 text-[10px] uppercase font-bold tracking-[0.2em] font-mono">
-              [SYSTEM_INTEGRITY_VERIFIED_V4.2]
+              [SYSTEM_INTEGRITY_VERIFIED_V4.3]
             </p>
             <p className="text-slate-600 text-xs font-medium">
-              © {new Date().getFullYear()} Agentic AI Integrators. All rights reserved. Built for the autonomous age.
+              © {new Date().getFullYear()} Agentic AI Integrators. All rights reserved.
             </p>
           </div>
         </div>
