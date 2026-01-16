@@ -1,11 +1,11 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
-  // Accessing API_KEY via process.env which is defined in vite.config.ts
+  // Vite injects this at build time via the define block in vite.config.ts
   const apiKey = process.env.API_KEY;
   
   if (!apiKey || apiKey === "undefined") {
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure your Vercel API_KEY environment variable is configured in Project Settings.";
+    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure your Vercel API_KEY environment variable is configured in the Vercel Project Settings.";
   }
 
   const ai = new GoogleGenAI({ apiKey });
@@ -32,6 +32,7 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
 
     let output = response.text || "SYSTEM_SILENCE: Re-calibrating neural buffer...";
     
+    // Process grounding chunks for source links
     const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
     if (chunks && chunks.length > 0) {
       output += "\n\n--- ARCHITECTURAL SOURCES ---\n";
