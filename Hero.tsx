@@ -77,9 +77,9 @@ const Hero: React.FC = () => {
                 </div>
              </div>
 
-             <div className="absolute inset-0 z-10 flex items-center justify-center">
+             <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
                 <svg viewBox="0 0 100 100" className="w-48 h-48 animate-spin-slow opacity-10">
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="1 10" />
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" strokeWidth="0.2" />
                   <circle cx="50" cy="50" r="2" fill="#3b82f6" />
                 </svg>
              </div>
