@@ -3,16 +3,15 @@ import { GoogleGenAI } from "@google/genai";
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
   const apiKey = process.env.API_KEY;
   
-  // Validation for missing or invalid keys
-  const isValid = apiKey && apiKey !== "undefined" && apiKey !== "null" && apiKey.length > 10;
+  // Robust validation of credentials
+  const isKeyValid = apiKey && apiKey !== "null" && apiKey !== "undefined" && apiKey.length > 10;
 
-  if (!isValid) {
-    console.error("AI_UPLINK_ERROR: Missing valid API_KEY in process.env.");
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. Please ensure the API_KEY environment variable is set in Vercel and that you have triggered a new deployment.";
+  if (!isKeyValid) {
+    console.error("AI_UPLINK_FAILURE: No valid API_KEY detected.");
+    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. The system could not find a valid API key. Please check your Vercel Environment Variables (Settings -> Environment Variables) and ensure 'API_KEY' is added, then redeploy the project.";
   }
 
   try {
-    // Initialize client inside the call to ensure the key is present
     const ai = new GoogleGenAI({ apiKey });
     
     const response = await ai.models.generateContent({
@@ -35,15 +34,15 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
 
     let output = response.text || "SYSTEM_SILENCE: Re-calibrating neural buffer...";
     
-    // Extract grounding URLs if available
+    // Process search grounding chunks
     const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
     if (chunks && chunks.length > 0) {
-      output += "\n\n--- SOURCES ---\n";
+      output += "\n\n--- ARCHITECTURAL SOURCES ---\n";
       const uniqueLinks = new Set();
       chunks.forEach((chunk: any) => {
         if (chunk.web && chunk.web.uri && !uniqueLinks.has(chunk.web.uri)) {
           uniqueLinks.add(chunk.web.uri);
-          output += `• ${chunk.web.title || 'Architectural Link'}: ${chunk.web.uri}\n`;
+          output += `• ${chunk.web.title || 'Source'}: ${chunk.web.uri}\n`;
         }
       });
     }
@@ -52,8 +51,8 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
   } catch (error: any) {
     console.error("Neural Interface Error:", error);
     if (error.message?.includes('API key')) {
-      return "CRITICAL_ERROR: INVALID_API_KEY. The uplink rejected credentials. Check Vercel settings.";
+      return "CRITICAL_ERROR: INVALID_API_KEY. The credentials provided were rejected by the neural link. Check your Vercel settings.";
     }
-    return "CONNECTION_TERMINATED: Neural link instability. Please try again.";
+    return "CONNECTION_TERMINATED: Neural link instability detected. Please try again later.";
   }
 };
