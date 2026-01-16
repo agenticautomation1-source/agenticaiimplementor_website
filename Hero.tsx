@@ -62,12 +62,10 @@ const Hero: React.FC = () => {
         </div>
 
         <div className="lg:w-1/2 relative w-full flex justify-center lg:justify-end">
-          {/* Ambient Glow Visual - Stripped of any Grid Lines */}
           <div className="absolute inset-0 bg-primary/10 blur-[120px] rounded-full"></div>
           
           <div className="relative w-full max-w-[560px] aspect-[4/5] glass-card rounded-[3rem] overflow-hidden flex items-center justify-center border-white/5 shadow-2xl">
              
-             {/* Integrator HUD Stats */}
              <div className="absolute top-12 left-12 right-12 flex justify-between items-start z-20 font-mono">
                 <div className="flex flex-col gap-1">
                    <div className="text-[10px] text-primary font-bold tracking-[0.3em] uppercase opacity-70">Uplink</div>
@@ -79,7 +77,6 @@ const Hero: React.FC = () => {
                 </div>
              </div>
 
-             {/* Focal Visual Element (Clean SVG, no grid lines) */}
              <div className="absolute inset-0 z-10 flex items-center justify-center">
                 <svg viewBox="0 0 100 100" className="w-48 h-48 animate-spin-slow opacity-10">
                   <circle cx="50" cy="50" r="40" fill="none" stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="1 10" />
@@ -100,7 +97,6 @@ const Hero: React.FC = () => {
                 </div>
              </div>
 
-            {/* Background Image - Scale and Fade for aesthetic depth */}
             <div 
               className="w-full h-full bg-cover bg-center transition-all duration-[30s] ease-out opacity-40 scale-110" 
               style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200")' }}

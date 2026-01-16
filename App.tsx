@@ -51,7 +51,6 @@ const App: React.FC = () => {
            <Curriculum onEnroll={handleEnroll} />
         </div>
         
-        {/* Final CTA Section */}
         <section className="max-w-[1200px] mx-auto px-6 py-24">
           <div className="relative rounded-3xl overflow-hidden p-12 md:p-20 text-center border border-primary/20 bg-charcoal/40 backdrop-blur-xl group">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 pointer-events-none"></div>
