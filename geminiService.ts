@@ -3,13 +3,13 @@ import { GoogleGenAI } from "@google/genai";
 export const getAIAdvisorResponse = async (userPrompt: string, history: {role: 'user'|'model', text: string}[]) => {
   const apiKey = process.env.API_KEY;
   
-  // Robust check for missing or placeholder keys
-  if (!apiKey || apiKey === "undefined" || apiKey.length < 10) {
-    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. The system could not detect a valid API_KEY. Please ensure your Vercel environment variables are configured correctly.";
+  // Robust check for missing, undefined string, or placeholder keys
+  if (!apiKey || apiKey === "undefined" || apiKey.length < 5) {
+    console.error("AI_UPLINK_ERROR: No valid API_KEY found in process.env.");
+    return "UPLINK_FAILURE: NEURAL_INTERFACE_REQUIRED. I cannot process this request because the system's API_KEY is missing or invalid. Please configure your environment variables in Vercel.";
   }
 
   try {
-    // Initializing inside the function prevents the SDK from throwing on app load
     const ai = new GoogleGenAI({ apiKey });
     
     const response = await ai.models.generateContent({
@@ -49,8 +49,8 @@ export const getAIAdvisorResponse = async (userPrompt: string, history: {role: '
   } catch (error: any) {
     console.error("Neural Interface Error:", error);
     if (error.message?.includes('API key')) {
-        return "CRITICAL_ERROR: INVALID_API_KEY. Please check your neural uplink credentials in Vercel settings.";
+      return "CRITICAL_ERROR: INVALID_API_KEY. The neural uplink rejected the provided credentials. Please update your Vercel settings.";
     }
-    return "CONNECTION_TERMINATED: Neural link instability detected. Please try your query again later.";
+    return "CONNECTION_TERMINATED: Neural link instability detected. Please try your query again.";
   }
 };
