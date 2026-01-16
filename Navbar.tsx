@@ -11,7 +11,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogin, isLoggedIn }) => {
       <header className="w-full max-w-[1200px] pointer-events-auto flex items-center justify-between border border-white/10 bg-background-dark/80 backdrop-blur-md rounded-xl px-6 md:px-8 py-3 shadow-2xl">
         <div className="flex items-center gap-3 text-white">
           <div className="size-10 flex items-center justify-center">
-            {/* Precise reproduction of the provided triangle logo */}
+            {/* Custom triangle logo based on user requirements */}
             <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_8px_rgba(59,130,246,0.4)]">
               <defs>
                 <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -19,15 +19,15 @@ const Navbar: React.FC<NavbarProps> = ({ onLogin, isLoggedIn }) => {
                   <stop offset="100%" style={{ stopColor: '#2563eb', stopOpacity: 1 }} />
                 </linearGradient>
               </defs>
-              {/* Left Bar */}
-              <path d="M45 15 L20 70 L30 70 L50 25 Z" fill="url(#blueGrad)" />
-              {/* Right Bar Segments */}
-              <path d="M55 15 L80 70 L70 70 L50 25 Z" fill="url(#blueGrad)" />
-              <path d="M58 45 L85 45 L85 53 L62 53 Z" fill="#2563eb" />
-              <path d="M64 60 L85 60 L85 68 L68 68 Z" fill="#1e40af" />
-              {/* Bottom Dark Bar */}
-              <path d="M25 75 L75 75 L75 85 L25 85 Z" fill="#1e3a8a" />
-              {/* Central Circle */}
+              {/* Left Segment */}
+              <path d="M48 15 L22 72 L32 72 L50 25 Z" fill="url(#blueGrad)" />
+              {/* Right Segment with internal cutouts */}
+              <path d="M52 15 L78 72 L68 72 L50 25 Z" fill="url(#blueGrad)" />
+              <path d="M58 42 L88 42 L88 50 L61 50 Z" fill="#2563eb" />
+              <path d="M64 58 L88 58 L88 66 L67 66 Z" fill="#1e40af" />
+              {/* Bottom Foundation Bar */}
+              <path d="M25 78 L75 78 L75 88 L25 88 Z" fill="#1e3a8a" />
+              {/* Core Node */}
               <circle cx="48" cy="62" r="6" fill="#6366f1" className="animate-pulse" />
             </svg>
           </div>

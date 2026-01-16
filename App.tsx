@@ -87,9 +87,9 @@ const App: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="size-8 flex items-center justify-center">
                   <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <path d="M45 15 L20 70 L30 70 L50 25 Z" fill="#3b82f6" />
-                    <path d="M55 15 L80 70 L70 70 L50 25 Z" fill="#3b82f6" />
-                    <path d="M25 75 L75 75 L75 85 L25 85 Z" fill="#1e3a8a" />
+                    <path d="M48 15 L22 72 L32 72 L50 25 Z" fill="#3b82f6" />
+                    <path d="M52 15 L78 72 L68 72 L50 25 Z" fill="#3b82f6" />
+                    <path d="M25 78 L75 78 L75 88 L25 88 Z" fill="#1e3a8a" />
                     <circle cx="48" cy="62" r="7" fill="#6366f1" />
                   </svg>
                 </div>
@@ -101,7 +101,7 @@ const App: React.FC = () => {
             </div>
             
             <div className="flex flex-col gap-4">
-              <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Company</h4>
+              <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-2">Network</h4>
               <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">About</a>
               <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">Contact</a>
               <a href="#" className="text-slate-500 hover:text-primary text-sm transition-colors">LinkedIn</a>
@@ -119,7 +119,7 @@ const App: React.FC = () => {
           
           <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-slate-600 text-[10px] uppercase font-bold tracking-[0.2em] font-mono">
-              [SYSTEM_INTEGRITY_VERIFIED_V4.4]
+              [SYSTEM_INTEGRITY_VERIFIED_V4.7]
             </p>
             <p className="text-slate-600 text-xs font-medium">
               © {new Date().getFullYear()} Agentic AI Integrators. All rights reserved.
