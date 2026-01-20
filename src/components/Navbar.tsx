@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 
 interface NavbarProps {
   onLogin?: () => void;
@@ -7,11 +8,16 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ onLogin, isLoggedIn }) => {
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center py-4 px-6 pointer-events-none">
-      <header className="w-full max-w-[1200px] pointer-events-auto flex items-center justify-between border border-white/10 bg-background-dark/80 backdrop-blur-md rounded-xl px-6 md:px-8 py-3 shadow-2xl">
+    <div className="fixed top-0 left-20 right-0 z-50 py-4 px-2 pointer-events-none">
+      <header className="w-full pointer-events-auto flex items-center justify-between border border-white/10 bg-background-dark/80 backdrop-blur-md rounded-xl px-3 md:px-4 py-3 shadow-2xl">
+        
+        {/* BRAND — HARD LEFT ANCHORED */}
         <div className="flex items-center gap-3 text-white">
           <div className="size-10 flex items-center justify-center">
-            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_8px_rgba(59,130,246,0.4)]">
+            <svg
+              viewBox="0 0 100 100"
+              className="w-full h-full drop-shadow-[0_0_8px_rgba(59,130,246,0.4)]"
+            >
               <defs>
                 <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" style={{ stopColor: '#3b82f6', stopOpacity: 1 }} />
@@ -26,12 +32,14 @@ const Navbar: React.FC<NavbarProps> = ({ onLogin, isLoggedIn }) => {
               <circle cx="48" cy="65" r="5" fill="#6366f1" className="animate-pulse" />
             </svg>
           </div>
-          <h2 className="text-white text-lg md:text-xl font-bold leading-tight tracking-tight font-display whitespace-nowrap">
+
+          <h2 className="text-white text-lg md:text-xl font-semibold leading-tight tracking-tight font-display whitespace-nowrap">
             Agentic AI <span className="text-slate-400 font-light">Integrators</span>
           </h2>
         </div>
-        
-        <div className="flex flex-1 justify-end items-center gap-4 md:gap-8">
+
+        {/* NAV + CTA — RIGHT ALIGNED */}
+        <div className="flex items-center gap-4 md:gap-8">
           <nav className="hidden lg:flex items-center gap-6">
             <a className="text-slate-400 hover:text-white text-[11px] font-bold uppercase tracking-widest transition-colors" href="#">Programs</a>
             <a className="text-slate-400 hover:text-white text-[11px] font-bold uppercase tracking-widest transition-colors" href="#">Learning Paths</a>
@@ -39,13 +47,23 @@ const Navbar: React.FC<NavbarProps> = ({ onLogin, isLoggedIn }) => {
             <a className="text-slate-400 hover:text-white text-[11px] font-bold uppercase tracking-widest transition-colors" href="#">About</a>
             <a className="text-slate-400 hover:text-white text-[11px] font-bold uppercase tracking-widest transition-colors" href="#">Contact</a>
           </nav>
-          <button 
+
+          <button
             onClick={onLogin}
-            className="flex min-w-[100px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-[10px] font-bold tracking-widest uppercase hover:brightness-110 transition-all glow-accent"
+            className="
+              flex min-w-[110px] cursor-pointer items-center justify-center
+              rounded-lg h-10 px-4
+              bg-primary text-white text-[10px] font-bold tracking-widest uppercase
+              hover:brightness-110 hover:shadow-[0_0_20px_rgba(59,130,246,0.45)]
+              active:scale-[0.96]
+              transition-all duration-300
+              glow-accent
+            "
           >
             {isLoggedIn ? 'Dashboard' : 'Secure Entry'}
           </button>
         </div>
+
       </header>
     </div>
   );

@@ -2,15 +2,149 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global resets */
-html, body, #root {
+/* =========================
+   Global resets & base
+   ========================= */
+html,
+body,
+#root {
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  background: #020203;
+  background-color: #020203;
 }
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+body {
+  color: #f1f5f9;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+}
+
+/* =========================
+   Gradient glow animation
+   ========================= */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* =========================
+   Reusable glowing gradient text
+   ========================= */
+.glow-gradient {
+  background-image: linear-gradient(
+    90deg,
+    #2563eb,  /* deep blue */
+    #3b82f6,  /* primary blue */
+    #22d3ee   /* cyan */
+  );
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease-in-out infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 22px rgba(59, 130, 246, 0.35);
+}
+
+/* =========================
+   Glass card utility
+   ========================= */
+.glass-card {
+  background: rgba(10, 10, 12, 0.55);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* =========================
+   Accent glow (buttons, CTAs)
+   ========================= */
+.glow-accent {
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.25);
+}
+
+/* =========================
+   Slow rotation (Hero visual)
+   ========================= */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 14s linear infinite;
+}
+
+/* =========================
+   TRUST MARQUEE SCROLL
+   ========================= */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+/* =========================
+   Utility: hide scrollbars
+   ========================= */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes hero-breathe {
+  0% {
+    transform: scale(1.01);
+  }
+  50% {
+    transform: scale(1.09);
+  }
+  100% {
+    transform: scale(1.01);
+  }
+}
+
+
+@keyframes metal-shimmer {
+  0% {
+    transform: translateX(-35%);
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(35%);
+    opacity: 0.3;
+  }
+}
+

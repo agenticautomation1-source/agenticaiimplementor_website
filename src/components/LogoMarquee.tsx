@@ -1,17 +1,20 @@
-
-import React from 'react';
-import { LOGOS } from '../constants';
+import React from "react";
+import { LOGOS } from "../constants";
 
 const LogoMarquee: React.FC = () => {
   return (
-    <section className="py-12 border-y border-white/5 bg-charcoal/30 overflow-hidden">
-      <h4 className="text-slate-500 text-[10px] md:text-xs font-bold leading-normal tracking-[0.2em] uppercase text-center mb-8">
+    <section className="relative overflow-hidden border-y border-white/5 bg-charcoal/40 py-12">
+      <h4 className="text-center text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-8">
         Trusted by engineers at industry leaders
       </h4>
-      <div className="flex relative w-full opacity-40 grayscale hover:opacity-80 transition-opacity">
-        <div className="flex items-center gap-12 whitespace-nowrap animate-marquee">
-          {[...LOGOS, ...LOGOS, ...LOGOS].map((logo, idx) => (
-            <span key={idx} className="text-xl md:text-2xl font-black text-white px-8">
+
+      <div className="relative w-full overflow-hidden">
+        <div className="flex w-max animate-marquee items-center gap-16 px-8">
+          {[...LOGOS, ...LOGOS].map((logo, idx) => (
+            <span
+              key={idx}
+              className="text-xl md:text-2xl font-black text-slate-500 transition-colors duration-300 hover:text-white cursor-default"
+            >
               {logo}
             </span>
           ))}

@@ -8,7 +8,7 @@ const Features: React.FC = () => {
       <div className="text-center mb-16">
         <h2 className="text-white text-3xl md:text-4xl font-bold font-display">The Agentic Pillar Framework</h2>
         <p className="text-slate-400 mt-4 max-w-2xl mx-auto">
-          Beyond basic prompting. We teach you how to build self-healing, goal-oriented autonomous systems.
+          Beyond basic prompting. A systems-first framework for designing, orchestrating, and operating autonomous AI at scale.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
