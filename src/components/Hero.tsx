@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import heroImage from "../assets/hero.png";
 
 const Hero: React.FC = () => {
@@ -25,14 +26,14 @@ const Hero: React.FC = () => {
           </div>
 
           {/* HEADLINE */}
-<h1 className="text-white text-5xl md:text-7xl font-display font-semibold leading-[1.0]">
-  Build Agentic AI Systems
-</h1>
-<div className="mt-2">
-  <span className="text-4xl md:text-5xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">
-    Masterstroke
-  </span>
-</div>
+          <h1 className="text-white text-5xl md:text-7xl font-display font-semibold leading-[1.0]">
+            Build Agentic AI Systems
+          </h1>
+          <div className="mt-2">
+            <span className="text-4xl md:text-5xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">
+              Masterstroke
+            </span>
+          </div>
 
           {/* SUBTEXT */}
           <p className="font-body text-base md:text-lg text-slate-400 leading-relaxed max-w-xl">
@@ -43,21 +44,18 @@ const Hero: React.FC = () => {
 
           {/* CTA */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={() =>
-                document
-                  .getElementById("curriculum")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="group relative inline-flex items-center justify-center h-14 px-8 rounded-xl bg-primary text-white font-body font-semibold text-sm transition-all hover:scale-[1.04] glow-accent"
+            <Link
+              to="/courses"
+              className="group relative inline-flex items-center justify-center h-14 px-8 rounded-xl bg-primary text-white font-body font-semibold text-sm transition-all hover:scale-[1.04] glow-accent active:scale-[0.96]"
             >
               <span className="flex items-center gap-2">
                 Join the Masterstroke
                 <span className="material-symbols-outlined text-lg">bolt</span>
               </span>
-            </button>
+            </Link>
 
-            <button
+            <Link
+              to="/contact"
               className="
                 relative inline-flex items-center justify-center
                 h-14 px-8 rounded-xl
@@ -65,10 +63,11 @@ const Hero: React.FC = () => {
                 transition-all duration-300 ease-out
                 hover:bg-primary
                 hover:shadow-[0_0_20px_rgba(59,130,246,0.45),0_0_45px_rgba(59,130,246,0.3)]
+                active:scale-[0.96]
               "
             >
               Book a Program Consultation Call
-            </button>
+            </Link>
           </div>
         </div>
 

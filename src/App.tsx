@@ -141,45 +141,47 @@ const App: React.FC = () => {
 
 {/* ================= FOOTER ================= */}
 <footer className="border-t border-white/5 bg-charcoal/50 py-20">
-  <div className="max-w-[1200px] ml-20 px-6 md:px-8">
+<div className="relative pl-20 pr-6 md:pr-8 w-full">
 
     <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
 
-      {/* BRAND */}
-      <div className="flex items-start gap-4 md:col-span-2">
-        <div className="size-10 flex items-center justify-center shrink-0">
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            <defs>
-              <linearGradient id="footerBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#3b82f6" />
-                <stop offset="100%" stopColor="#2563eb" />
-              </linearGradient>
-            </defs>
-            <path d="M46 15 L20 75 L32 75 L50 25 Z" fill="url(#footerBlueGrad)" />
-            <path d="M54 15 L80 75 L70 75 L50 25 Z" fill="url(#footerBlueGrad)" />
-            <path d="M58 45 L88 45 L88 52 L62 52 Z" fill="#2563eb" />
-            <path d="M64 60 L88 60 L88 67 L68 67 Z" fill="#1e40af" />
-            <path d="M25 80 L75 80 L75 90 L25 90 Z" fill="#1e3a8a" />
-<circle
-  cx="48"
-  cy="65"
-  r="5"
-  fill="#6366f1"
-  className="animate-pulse"
-/>
-          </svg>
-        </div>
+  {/* BRAND */}
+<Link
+  to="/"
+  className="flex items-start gap-4 hover:opacity-90 transition-opacity cursor-pointer"
+>
+  <div className="size-10 flex items-center justify-center shrink-0">
+    <svg viewBox="0 0 100 100" className="w-full h-full">
+      <defs>
+        <linearGradient id="footerBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="100%" stopColor="#2563eb" />
+        </linearGradient>
+      </defs>
+      <path d="M46 15 L20 75 L32 75 L50 25 Z" fill="url(#footerBlueGrad)" />
+      <path d="M54 15 L80 75 L70 75 L50 25 Z" fill="url(#footerBlueGrad)" />
+      <path d="M58 45 L88 45 L88 52 L62 52 Z" fill="#2563eb" />
+      <path d="M64 60 L88 60 L88 67 L68 67 Z" fill="#1e40af" />
+      <path d="M25 80 L75 80 L75 90 L25 90 Z" fill="#1e3a8a" />
+      <circle
+        cx="48"
+        cy="65"
+        r="7"
+        fill="#6366f1"
+        className="animate-pulse"
+      />
+    </svg>
+  </div>
 
-        <div className="flex flex-col gap-3">
-          <h2 className="text-white text-lg font-semibold font-display leading-tight">
-            Agentic AI <span className="text-slate-500 font-light">Integrators</span>
-          </h2>
-          <p className="text-slate-500 text-sm max-w-sm">
-            Building production-grade agentic systems through the Masterstroke program.
-          </p>
-        </div>
-      </div>
-
+  <div className="flex flex-col gap-3">
+    <h2 className="text-white text-lg font-semibold font-display leading-tight">
+      Agentic AI <span className="text-slate-500 font-light">Integrators</span>
+    </h2>
+    <p className="text-slate-500 text-sm max-w-sm">
+      Building production-grade agentic systems through the Masterstroke program.
+    </p>
+  </div>
+</Link>
       {/* NETWORK */}
       <div className="flex flex-col gap-4">
         <h4 className="text-white font-bold text-xs uppercase tracking-widest">

@@ -7,7 +7,13 @@ export default function CourseCard({ course }) {
   const [loading, setLoading] = useState(false);
 
   const handleEnrollClick = () => {
-    if (!course?.enrollUrl) return;
+    if (!course?.enrollUrl) {
+      console.error(
+        "[CourseCard] Missing enrollUrl for course:",
+        course?.title
+      );
+      return;
+    }
 
     setLoading(true);
 
