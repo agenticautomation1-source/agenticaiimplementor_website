@@ -27,7 +27,7 @@ const supabase = createClient(
  * =========================
  */
 router.post("/create-order", async (req, res) => {
-  console.log("CREATE ORDER HIT", req.body);
+  
 
   try {
     const { programSlug, userId } = req.body;
@@ -70,8 +70,8 @@ router.post("/create-order", async (req, res) => {
  */
 
 router.post("/verify", async (req, res) => {
-  console.log("===== VERIFY START =====");
-  console.log("VERIFY BODY:", req.body);
+  
+  
 
   try {
     const {
@@ -94,7 +94,7 @@ router.post("/verify", async (req, res) => {
       return res.status(400).json({ error: "Missing payment details" });
     }
 
-    console.log("STEP 1 OK: Validation passed");
+    
 
     // ---- STEP 2: Idempotency check ----
     const { data: existing, error: fetchError } = await supabase
@@ -113,7 +113,7 @@ router.post("/verify", async (req, res) => {
       return res.json({ success: true });
     }
 
-    console.log("STEP 2 OK: No existing enrollment");
+    
 
     // ---- STEP 3: Signature verification ----
 const body = `${razorpay_order_id}|${razorpay_payment_id}`;
@@ -128,7 +128,7 @@ if (expectedSignature !== razorpay_signature) {
   return res.status(400).json({ error: "Invalid signature" });
 }
 
-console.log("STEP 3 OK: Signature verified");
+
 
 // ---- INSERT PAYLOAD CHECK (DEBUG — DO NOT REMOVE YET) ----
 console.log("INSERT PAYLOAD CHECK", {
@@ -174,7 +174,7 @@ if (error) {
 }
 
 console.log("STEP 4 OK: ENROLLMENT INSERTED", data);
-console.log("===== VERIFY END: SUCCESS =====");
+
 
 return res.json({ success: true });
 } catch (err) {
