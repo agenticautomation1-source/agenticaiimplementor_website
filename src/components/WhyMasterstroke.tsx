@@ -56,7 +56,7 @@ const WhyMasterstroke: React.FC = () => {
           </h3>
           <p className="text-slate-400 text-sm leading-relaxed">
             Exceptional agentic applications are actively promoted through
-            the Agentic AI Integrators network. Strong builds are surfaced
+            the Agentic AI Implementors network. Strong builds are surfaced
             to enterprises, partners, and early adopters seeking
             production-ready agentic solutions.
           </p>

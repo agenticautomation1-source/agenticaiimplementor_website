@@ -27,14 +27,11 @@ export default function SystemsEngineer() {
 
       if (userData?.user && mounted) {
         const { data: sessionData } = await supabase.auth.getSession();
-
         setSession(sessionData.session ?? { user: userData.user });
         await storeLead(userData.user);
-
-        // Redirect only after confirmed session
-        navigate("/dashboard");
+        // ❌ DO NOT REDIRECT FROM PROGRAM PAGE
       }
-    }; // ✅ FIX 1: this was missing
+    };
 
     initAuth();
 
@@ -51,7 +48,7 @@ export default function SystemsEngineer() {
       mounted = false;
       listener.subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, []);
 
   const signInWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
@@ -88,8 +85,9 @@ export default function SystemsEngineer() {
 
       {/* ================= HERO ================= */}
       <section className="relative pt-36 pb-32 px-6 overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-[520px] bg-gradient-to-b from-cyan-500/10 to-transparent blur-[140px]" />
-        <div className="relative z-10 max-w-5xl mx-auto text-center">
+        <div className="absolute inset-x-0 top-0 h-[520px] bg-gradient-to-b from-cyan-500/10 to-transparent blur-[140px] pointer-events-none" />
+
+        <div className="relative z-10 max-w-5xl mx-auto text-center pointer-events-auto">
           <h1 className="text-5xl lg:text-7xl font-bold text-white mb-8">
             Masterstroke <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-400">
@@ -103,12 +101,18 @@ export default function SystemsEngineer() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/lms/courses/masterstroke-agentic-ai-systems-engineer"
+            <button
+              onClick={() => {
+                if (!session) {
+                  alert("Please sign in to continue");
+                  return;
+                }
+                navigate("/dashboard");
+              }}
               className="px-10 py-4 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-sm hover:brightness-110"
             >
               Secure Your Spot
-            </a>
+            </button>
 
             <button
               onClick={() => {
@@ -130,8 +134,10 @@ export default function SystemsEngineer() {
       </section>
 
       {/* ================= TARGET AUDIENCE ================= */}
-      <section className="py-28 px-6">
-        <div className="max-w-7xl mx-auto text-center mb-20">
+      <section className="py-28 px-6 relative">
+        <div className="absolute inset-0 pointer-events-none" />
+
+        <div className="relative max-w-7xl mx-auto text-center mb-20 pointer-events-auto">
           <p className="text-cyan-400 text-xs font-bold uppercase tracking-[0.3em] mb-4">
             Who This Program Is For
           </p>
@@ -140,7 +146,7 @@ export default function SystemsEngineer() {
           </h2>
         </div>
 
-        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-10">
+        <div className="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-10 pointer-events-auto">
           {[
             ["school", "Fresh Graduates", "Move beyond basic tools into structured AI systems."],
             ["engineering", "Working Professionals", "Apply agentic logic to real operational workflows."],
@@ -150,13 +156,13 @@ export default function SystemsEngineer() {
               key={title}
               className="relative rounded-2xl border border-cyan-400/30 bg-white/[0.02] overflow-hidden"
             >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,220,246,0.22),transparent_65%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,220,246,0.22),transparent_65%)] pointer-events-none" />
 
               <span className="absolute top-4 left-4 px-3 py-1 text-[10px] rounded-full bg-emerald-500/10 text-emerald-400 font-bold tracking-widest">
                 INTERMEDIATE
               </span>
 
-              <div className="relative p-10 text-center">
+              <div className="relative p-10 text-center pointer-events-auto">
                 <span className="material-symbols-outlined text-5xl text-[#00dcf6] mb-6">
                   {icon}
                 </span>
@@ -169,8 +175,11 @@ export default function SystemsEngineer() {
       </section>
 
       {/* ================= WHAT YOU LEARN TO SOLVE ================= */}
-      <section className="py-28 px-6 bg-[#0c0f14]">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-20 items-start">
+      <section className="py-28 px-6 bg-[#0c0f14] relative">
+        <div className="absolute inset-0 pointer-events-none" />
+
+        <div className="relative max-w-6xl mx-auto grid lg:grid-cols-2 gap-20 items-start pointer-events-auto">
+          {/* LEFT */}
           <div>
             <p className="text-cyan-400 text-xs font-bold uppercase tracking-[0.3em] mb-4">
               What You Learn to Solve
@@ -189,7 +198,7 @@ export default function SystemsEngineer() {
                   key={n}
                   className="relative p-6 rounded-2xl border border-cyan-400/30 bg-white/[0.02] overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,220,246,0.22),transparent_65%)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,220,246,0.22),transparent_65%)] pointer-events-none" />
                   <div className="relative">
                     <span className="text-cyan-400 font-mono text-xl font-bold">
                       {n}
@@ -201,6 +210,7 @@ export default function SystemsEngineer() {
             </div>
           </div>
 
+          {/* RIGHT */}
           <div className="space-y-6 mt-[92px]">
             {[
               ["hub", "Hybrid Automation Architecture"],
@@ -210,8 +220,8 @@ export default function SystemsEngineer() {
                 key={title}
                 className="relative p-8 rounded-2xl border border-cyan-400/30 bg-white/[0.02] overflow-hidden"
               >
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,220,246,0.22),transparent_65%)]" />
-                <div className="relative text-center">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,220,246,0.22),transparent_65%)] pointer-events-none" />
+                <div className="relative text-center pointer-events-auto">
                   <span className="material-symbols-outlined text-4xl text-[#00dcf6] mb-3">
                     {icon}
                   </span>

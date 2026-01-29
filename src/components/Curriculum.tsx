@@ -3,13 +3,26 @@ import { Link } from "react-router-dom";
 import { COURSES } from "../constants";
 
 interface CurriculumProps {
-  onEnroll?: (course: any) => void;
+  onEnroll?: (course: any) => void; // kept for compatibility, NOT USED
 }
 
-const Curriculum: React.FC<CurriculumProps> = ({ onEnroll }) => {
+const Curriculum: React.FC<CurriculumProps> = () => {
+  /**
+   * 🔑 EXPLICIT ROUTE MAP
+   * This guarantees CTA → correct route
+   * regardless of how course.id is defined.
+   */
+  const COURSE_ROUTE_MAP: Record<string, string> = {
+    "agentic-ai-systems-engineer": "/courses/agentic-ai-systems-engineer",
+    "genai-platform-architect": "/courses/genai-platform-architect",
+    "ai-validation-governance-engineer":
+      "/courses/ai-validation-governance-engineer",
+  };
+
   return (
     <section className="bg-charcoal/50 py-24 border-y border-white/5">
       <div className="max-w-[1200px] mx-auto px-6">
+        
         {/* SECTION HEADER */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
           <div>
@@ -74,11 +87,14 @@ const Curriculum: React.FC<CurriculumProps> = ({ onEnroll }) => {
                   {course.description}
                 </p>
 
-                {/* CTA */}
-                <button
-                  onClick={() => onEnroll?.(course)}
+                {/* CTA — ROUTED TO CORRECT COURSE PAGE */}
+                <Link
+                  to={
+                    COURSE_ROUTE_MAP[course.id] ||
+                    `/courses/${course.id}` // fallback (safe)
+                  }
                   className="
-                    relative w-full py-3 rounded-lg
+                    relative w-full py-3 rounded-lg text-center
                     bg-blue-600 text-white text-sm font-bold
                     transition-all duration-300 ease-out
                     hover:shadow-[0_0_0_1px_rgba(59,130,246,0.6),0_0_20px_rgba(59,130,246,0.55),0_0_40px_rgba(59,130,246,0.35)]
@@ -86,11 +102,12 @@ const Curriculum: React.FC<CurriculumProps> = ({ onEnroll }) => {
                   "
                 >
                   View Program
-                </button>
+                </Link>
               </div>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

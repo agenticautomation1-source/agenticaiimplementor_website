@@ -1,4 +1,3 @@
-import TempSystemsEngineer from "./pages/courses/temp_SystemsEngineer";
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequireAuth from "./components/RequireAuth";
@@ -11,12 +10,12 @@ import AgenticAISystemsEngineer from "./pages/programs/AgenticAISystemsEngineer"
 import GenAIPlatformArchitect from "./pages/programs/GenAIPlatformArchitect";
 import AIValidationGovernanceEngineer from "./pages/programs/AIValidationGovernanceEngineer";
 
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Routes, Route, Link } from "react-router-dom";
 
 import CookiePolicy from "./pages/CookiePolicy";
 import Contact from "./pages/Contact";
-import Courses from "./pages/Courses";
+import Courses from "./pages/Courses"; // ✅ ADDED
 
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -31,7 +30,6 @@ import Disclaimer from "./pages/Disclaimer";
 import TermsConditions from "./pages/TermsAndConditions";
 
 import { Course } from "./types";
-import { supabase } from "./lib/supabaseClient";
 
 /**
  * TEMPORARILY DISABLED (WILL RE-ENABLE LATER)
@@ -41,10 +39,6 @@ import { supabase } from "./lib/supabaseClient";
  */
 
 const App: React.FC = () => {
-const [paymentOpen, setPaymentOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-
   // ⚠️ LEGACY UI STATE — NO LONGER USED FOR AUTH
   const [view, setView] = useState<"landing" | "lms">("landing");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -64,38 +58,6 @@ const [paymentOpen, setPaymentOpen] = useState(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /**
-   * ✅ GLOBAL AUTH HANDLER (FIXED — NO FORCED REDIRECT)
-   * - Hydrates Supabase session
-   * - Cleans auth tokens from URL
-   * - DOES NOT override page-level navigation
-   */
-  useEffect(() => {
-    const handleAuthRedirect = async () => {
-      const url = window.location.href;
-
-      if (
-        url.includes("access_token") ||
-        url.includes("refresh_token") ||
-        url.includes("code=")
-      ) {
-        const { data, error } =
-          await supabase.auth.exchangeCodeForSession(url);
-
-        if (data?.session) {
-          // ✅ Clean URL ONLY — stay on same page
-          window.history.replaceState(
-            {},
-            document.title,
-            location.pathname
-          );
-        }
-      }
-    };
-
-    handleAuthRedirect();
-  }, [location.pathname]);
-
   return (
     <div className="min-h-screen flex flex-col bg-background-dark text-slate-100 pointer-events-auto">
 
@@ -110,13 +72,13 @@ const [paymentOpen, setPaymentOpen] = useState(false);
 
           {/* ================= DASHBOARD (AUTH REQUIRED) ================= */}
           <Route
-  path="/dashboard"
-  element={
-    <RequireAuth>
-      <Dashboard setPaymentOpen={setPaymentOpen} />
-    </RequireAuth>
-  }
-/>
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            }
+          />
 
           {/* ================= HOME ================= */}
           <Route
@@ -128,7 +90,7 @@ const [paymentOpen, setPaymentOpen] = useState(false);
                 <div id="curriculum">
                   <Curriculum onEnroll={handleEnroll} />
                 </div>
-                {/* <Features /> */}
+                { /* <Features /> */ }
                 <WhyMasterstroke />
 
                 {/* ================= CTA ================= */}
@@ -182,15 +144,14 @@ const [paymentOpen, setPaymentOpen] = useState(false);
           <Route path="/terms-and-conditions" element={<TermsConditions />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="/contact" element={<Contact />} />
+		  
+		  <Route path="/test-auth" element={<TestAuth />} />
 
-          {/* ================= TEST AUTH ================= */}
-          <Route path="/test-auth" element={<TestAuth />} />
-
-          {/* ================= PROGRAM / COURSE PAGES ================= */}
-<Route
-  path="/courses/agentic-ai-systems-engineer"
-  element={<TempSystemsEngineer />}
-/>
+          {/* ================= PROGRAM PAGES ================= */}
+          <Route
+            path="/courses/agentic-ai-systems-engineer"
+            element={<SystemsEngineer />}
+          />
 
           <Route
             path="/courses/genai-platform-architect"
@@ -291,7 +252,7 @@ const [paymentOpen, setPaymentOpen] = useState(false);
         </div>
       </footer>
 
-{!paymentOpen && <AIAdvisor />}
+      <AIAdvisor />
     </div>
   );
 };
