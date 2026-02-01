@@ -26,11 +26,11 @@ const goToDashboard = () => {
     setEmailLoading(true);
 
     const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+  email,
+  options: {
+    emailRedirectTo: "https://agenticaiimplementors.com/#/auth/callback",
+  },
+});
 
     setEmailLoading(false);
 
@@ -49,7 +49,7 @@ const signInWithGoogleFresh = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/#/auth/callback`,
+      redirectTo: "https://agenticaiimplementors.com/#/auth/callback",
       queryParams: {
         prompt: "select_account",
       },
