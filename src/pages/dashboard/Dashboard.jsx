@@ -33,15 +33,6 @@ const from =
   init();
 }, []);
   
-  
-// ================= CLEAR DASHBOARD ORIGIN (ONE-TIME) =================
-useEffect(() => {
-  if (from) {
-    sessionStorage.removeItem("dashboard_from");
-  }
-}, []);
-
-  
   // ================= FETCH ENROLLMENTS =================
 const fetchEnrollments = async (userId) => {
   const { data, error } = await supabase

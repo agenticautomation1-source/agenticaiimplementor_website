@@ -1,3 +1,4 @@
+import AuthCallback from "./pages/AuthCallback";
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
 
@@ -34,7 +35,7 @@ import { supabase } from "./lib/supabaseClient";
 
 const App: React.FC = () => {
 const [paymentOpen, setPaymentOpen] = useState(false);
-const [session, setSession] = useState<any>(null);
+
 
 const navigate = useNavigate();
 const location = useLocation();
@@ -42,15 +43,6 @@ const location = useLocation();
   // ⚠️ LEGACY UI STATE — NO LONGER USED FOR AUTH
   const [view, setView] = useState<"landing" | "lms">("landing");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  
-  
-  // ================= AUTH SESSION HYDRATION =================
-useEffect(() => {
-  supabase.auth.getSession().then(({ data }) => {
-    setSession(data.session);
-  });
-}, []);
-
 
   const handleEnroll = (course: Course) => {
     setSelectedCourse(course);
@@ -75,6 +67,7 @@ useEffect(() => {
 
       <main className="flex-1">
         <Routes>
+		<Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* ================= DASHBOARD (AUTH REQUIRED) ================= */}
  <Route

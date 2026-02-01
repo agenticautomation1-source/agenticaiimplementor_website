@@ -7,7 +7,7 @@ export default function ProgramEnrollment({
 }) {
   const [email, setEmail] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
-  const [session, setSession] = useState(null);
+  
 
 const navigate = useNavigate();
 
@@ -20,64 +20,9 @@ const goToDashboard = () => {
   });
 };
 
-useEffect(() => {
-  let mounted = true;
-
-  const initSession = async () => {
-    // ✅ OAuth callback ONLY
-    // ✅ OAuth callback ONLY
-if (window.location.search.includes("code=")) {
-  const { data, error } =
-    await supabase.auth.exchangeCodeForSession(window.location.href);
-
-  if (error) {
-    console.error("Auth exchange error:", error.message);
-  }
-
-  if (data?.session && mounted) {
-    setSession(data.session);
-
-    const from =
-      sessionStorage.getItem("dashboard_from") ||
-      `/courses/${programSlug}`;
-
-    navigate("/dashboard", {
-      replace: true,
-      state: { from },
-    });
-  }
-
-  // clean URL
-  window.history.replaceState(
-    {},
-    document.title,
-    window.location.pathname
-  );
-  return;
-}
-
-
-    // ✅ normal page load
-    const { data } = await supabase.auth.getSession();
-    if (data?.session && mounted) {
-      setSession(data.session);
-
-     }
-  };
-
-  initSession();
-
-  return () => {
-    mounted = false;
-  };
-}, []);
   // ================= EMAIL LOGIN =================
   const signInWithEmail = async () => {
 	  
-	  if (session) {
-  goToDashboard();
-  return;
-}
     if (!email) {
       alert("Please enter your email address");
       return;
@@ -88,7 +33,7 @@ if (window.location.search.includes("code=")) {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
@@ -108,15 +53,11 @@ const signInWithGoogleFresh = async () => {
   );
 
   // If already signed in → skip OAuth
-  if (session) {
-    goToDashboard();
-    return;
-  }
-
+  
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: window.location.origin,
+      redirectTo: `${window.location.origin}/auth/callback`,
       queryParams: {
         prompt: "select_account",
       },
@@ -141,11 +82,9 @@ const signInWithGoogleFresh = async () => {
           Pricing and Content Details
         </div>
 
-        <div className="text-2xl font-semibold text-slate-300 mb-6">
-          {session
-            ? "Program pricing and syllabus unlocked"
-            : "Sign in to view pricing and download the syllabus"}
-        </div>
+ <div className="text-2xl font-semibold text-slate-300 mb-6">
+  Sign in to view pricing and download the syllabus
+</div>
 
         <ul className="text-left space-y-3 text-slate-400 mb-8 text-sm">
           <li>• Core transition track + advanced modules</li>
