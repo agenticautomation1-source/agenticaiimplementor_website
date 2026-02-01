@@ -49,9 +49,16 @@ if (data?.session && mounted) {
     // ✅ Normal page load — read session only
     const { data } = await supabase.auth.getSession();
     if (data?.session && mounted) {
-      setSession(data.session);
-    }
-  };
+  setSession(data.session);
+
+  // ✅ OAuth JUST completed → go to dashboard
+  navigate("/dashboard", {
+    replace: true,
+    state: {
+      from: sessionStorage.getItem("dashboard_from") || `/courses/${programSlug}`,
+    },
+  });
+}
 
   initSession();
 
