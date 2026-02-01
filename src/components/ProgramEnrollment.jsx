@@ -25,27 +25,37 @@ useEffect(() => {
 
   const initSession = async () => {
     // ✅ OAuth callback ONLY
-    if (window.location.search.includes("code=")) {
-      const { data, error } =
-        await supabase.auth.exchangeCodeForSession(window.location.href);
+    // ✅ OAuth callback ONLY
+if (window.location.search.includes("code=")) {
+  const { data, error } =
+    await supabase.auth.exchangeCodeForSession(window.location.href);
 
-      if (error) {
-        console.error("Auth exchange error:", error.message);
-      }
+  if (error) {
+    console.error("Auth exchange error:", error.message);
+  }
 
-      if (data?.session && mounted) {
-        setSession(data.session);
-        // ❌ do NOT redirect here
-      }
+  if (data?.session && mounted) {
+    setSession(data.session);
 
-      // clean URL
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname
-      );
-      return;
-    }
+    const from =
+      sessionStorage.getItem("dashboard_from") ||
+      `/courses/${programSlug}`;
+
+    navigate("/dashboard", {
+      replace: true,
+      state: { from },
+    });
+  }
+
+  // clean URL
+  window.history.replaceState(
+    {},
+    document.title,
+    window.location.pathname
+  );
+  return;
+}
+
 
     // ✅ normal page load
     const { data } = await supabase.auth.getSession();
