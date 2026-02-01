@@ -11,94 +11,62 @@ export default function ProgramEnrollment({
 
 const navigate = useNavigate();
 
-  useEffect(() => {
-    let mounted = true;
+const goToDashboard = () => {
+  navigate("/dashboard", {
+    replace: true,
+    state: {
+      from: `/courses/${programSlug}`,
+    },
+  });
+};
 
-    const initSession = async () => {
-      // Handle magic link callback
-      if (window.location.search.includes("code=")) {
-        const { data, error } =
-          await supabase.auth.exchangeCodeForSession(window.location.href);
+useEffect(() => {
+  let mounted = true;
 
-        if (error) {
-          console.error("Auth exchange error:", error.message);
-        }
+  const initSession = async () => {
+    // ✅ OAuth / magic-link callback ONLY
+    if (window.location.search.includes("code=")) {
+      const { data, error } =
+        await supabase.auth.exchangeCodeForSession(window.location.href);
+
+      if (error) {
+        console.error("Auth exchange error:", error.message);
+      }
 
 if (data?.session && mounted) {
   setSession(data.session);
-
-  // ✅ HARD REDIRECT TO DASHBOARD AFTER LOGIN
-  navigate("/dashboard", { replace: true });
+  // ❌ DO NOT redirect here
 }
-{/*
-		if (data?.session && mounted) {
-          setSession(data.session);
-        }
-*/}
-        // Clean URL
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
-        return;
-      }
-
-      const { data } = await supabase.auth.getSession();
-      if (data?.session && mounted) {
-        setSession(data.session);
-      }
-    };
-
-    initSession();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-  if (mounted && session) {
-    setSession(session);
-
-    // ✅ ENSURE POST-LOGIN LANDING
-    navigate("/dashboard", { replace: true });
-  }
-});
-
-{/*
-      if (mounted) {
-        setSession(session);
-      }
-    });
-
-*/}
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  // ================= GOOGLE LOGIN (HARD REDIRECT) =================
-  const signInWithGoogle = async () => {
-    const { data, error } = await supabase.auth.getOAuthSignInUrl({
-      provider: "google",
-      options: {
-        redirectTo:
-          window.location.origin + "/courses/agentic-ai-systems-engineer",
-      },
-    });
-
-    if (error) {
-      console.error("Google OAuth error:", error.message);
-      alert("Google sign-in failed. Check console.");
+      // Clean URL after auth
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+      );
       return;
     }
 
-    // FORCE browser navigation (cannot be intercepted)
-    window.location.href = data.url;
+    // ✅ Normal page load — read session only
+    const { data } = await supabase.auth.getSession();
+    if (data?.session && mounted) {
+      setSession(data.session);
+    }
   };
+
+  initSession();
+
+  return () => {
+    mounted = false;
+  };
+}, []);
 
   // ================= EMAIL LOGIN =================
   const signInWithEmail = async () => {
+	  
+	  if (session) {
+  goToDashboard();
+  return;
+}
     if (!email) {
       alert("Please enter your email address");
       return;
@@ -109,8 +77,7 @@ if (data?.session && mounted) {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo:
-          window.location.origin + `/courses/${programSlug}`,
+        emailRedirectTo: window.location.origin,
       },
     });
 
@@ -122,20 +89,26 @@ if (data?.session && mounted) {
       alert("Check your email for the login link");
     }
   };
-
-
-
-
-
-
-
 const signInWithGoogleFresh = async () => {
-  console.log("FRESH GOOGLE CTA CLICKED");
+  // ✅ CRITICAL: persist origin BEFORE OAuth redirect
+  sessionStorage.setItem(
+    "dashboard_from",
+    `/courses/${programSlug}`
+  );
+
+  // If already signed in → skip OAuth
+  if (session) {
+    goToDashboard();
+    return;
+  }
 
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: window.location.origin + "/dashboard",
+      redirectTo: window.location.origin,
+      queryParams: {
+        prompt: "select_account",
+      },
     },
   });
 
@@ -144,11 +117,6 @@ const signInWithGoogleFresh = async () => {
     alert(error.message);
   }
 };
-
-
-
-
-
 
   return (
     <section className="relative z-10 py-32 px-6 text-center pointer-events-auto">

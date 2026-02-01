@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
 const RequireAuth = ({ children }: Props) => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -26,16 +27,10 @@ const RequireAuth = ({ children }: Props) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background-dark flex items-center justify-center">
-        <span className="text-white/60 text-sm">Authenticating…</span>
-      </div>
-    );
-  }
+  if (loading) return null;
 
-  if (!session || !session.user) {
-    return <Navigate to="/" replace />;
+  if (!session) {
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;

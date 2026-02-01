@@ -7,22 +7,35 @@ import { supabase } from "../../lib/supabaseClient";
 export default function PlatformArchitect() {
   const [email, setEmail] = useState("");
 
+
+
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-    });
-  };
+
 
   const signInWithEmail = async () => {
-    if (!email) return;
-    await supabase.auth.signInWithOtp({
-      email,
-    });
-  };
+  if (!email) {
+    alert("Please enter your email");
+    return;
+  }
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: window.location.origin,
+    },
+  });
+
+  if (error) {
+    alert("Email sign-in failed");
+    return;
+  }
+
+  alert("Check your email for the login link");
+};
 
   return (
     <main className="bg-[#050608] text-slate-200 font-display">

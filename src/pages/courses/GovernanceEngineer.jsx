@@ -1,9 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function AIValidationGovernanceEngineer() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // ================= EMAIL STATE =================
+  const [email, setEmail] = useState("");
+
+  // ================= GOOGLE SIGN-IN =================
+  
+  // ================= EMAIL OTP SIGN-IN =================
+  
 
   return (
     <main className="bg-[#050608] text-slate-200 font-display">
@@ -30,13 +39,38 @@ export default function AIValidationGovernanceEngineer() {
             in enterprise environments.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-10 py-4 bg-red-500 text-black font-bold uppercase tracking-widest text-sm rounded-lg hover:brightness-110">
-              Secure Your Spot
+          {/* ================= AUTH CTA ================= */}
+          <div className="flex flex-col items-center gap-4 justify-center">
+
+            <button
+              onClick={signInWithGoogle}
+              className="px-10 py-4 bg-red-500 text-black font-bold uppercase tracking-widest text-sm rounded-lg hover:brightness-110"
+            >
+              Continue with Google
             </button>
-            <button className="px-10 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-sm rounded-lg hover:bg-white/5">
+
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-sm text-white focus:outline-none"
+              />
+              <button
+                onClick={signInWithEmail}
+                className="px-6 py-3 border border-white/20 rounded-lg font-bold uppercase tracking-widest text-xs hover:bg-white/5"
+              >
+                Email Login
+              </button>
+            </div>
+
+            <button
+              className="px-10 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-sm rounded-lg hover:bg-white/5"
+            >
               Download Syllabus
             </button>
+
           </div>
         </div>
       </section>
@@ -61,7 +95,6 @@ export default function AIValidationGovernanceEngineer() {
                                px-3 py-1 rounded border border-red-500/40 text-red-400 bg-red-500/10">
                 Advanced
               </span>
-
               <div className="relative p-10 text-center">
                 <span className="material-symbols-outlined text-5xl text-red-500 mb-6">
                   shield_lock
@@ -84,7 +117,6 @@ export default function AIValidationGovernanceEngineer() {
                                px-3 py-1 rounded border border-red-500/40 text-red-400 bg-red-500/10">
                 Advanced
               </span>
-
               <div className="relative p-10 text-center">
                 <span className="material-symbols-outlined text-5xl text-red-500 mb-6">
                   task_alt
@@ -107,7 +139,6 @@ export default function AIValidationGovernanceEngineer() {
                                px-3 py-1 rounded border border-red-500/40 text-red-400 bg-red-500/10">
                 Advanced
               </span>
-
               <div className="relative p-10 text-center">
                 <span className="material-symbols-outlined text-5xl text-red-500 mb-6">
                   gavel
@@ -145,8 +176,10 @@ export default function AIValidationGovernanceEngineer() {
                 ["02", "Explainability & Auditability", "Decision traceability and legally defensible AI behavior."],
                 ["03", "Human-in-the-loop Governance", "Controlled intervention points for high-risk autonomy."],
               ].map(([n, title, desc]) => (
-                <div key={n}
-                     className="relative p-6 rounded-2xl border border-red-500/30 bg-white/[0.02] overflow-hidden">
+                <div
+                  key={n}
+                  className="relative p-6 rounded-2xl border border-red-500/30 bg-white/[0.02] overflow-hidden"
+                >
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(120,0,0,0.25),transparent_65%)]" />
                   <div className="relative">
                     <span className="text-red-400 font-mono text-xl font-bold">{n}</span>
@@ -158,7 +191,6 @@ export default function AIValidationGovernanceEngineer() {
             </div>
           </div>
 
-          {/* RIGHT GRID */}
           <div className="grid sm:grid-cols-2 gap-6">
             {[
               ["policy", "Regulatory Readiness"],
@@ -166,8 +198,10 @@ export default function AIValidationGovernanceEngineer() {
               ["shield", "Production Governance"],
               ["auto_graph", "12+ Industry Case Studies"],
             ].map(([icon, label]) => (
-              <div key={label}
-                   className="relative p-8 rounded-2xl border border-red-500/30 bg-white/[0.02] text-center overflow-hidden">
+              <div
+                key={label}
+                className="relative p-8 rounded-2xl border border-red-500/30 bg-white/[0.02] text-center overflow-hidden"
+              >
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(120,0,0,0.25),transparent_65%)]" />
                 <div className="relative">
                   <span className="material-symbols-outlined text-4xl text-red-500 mb-4">

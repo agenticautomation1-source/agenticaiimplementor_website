@@ -1,17 +1,58 @@
 import { useEffect, useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function Dashboard() {
+const navigate = useNavigate();
+const location = useLocation();
   const [user, setUser] = useState(null);
   const [razorpayReady, setRazorpayReady] = useState(false);
   const [paymentInProgress, setPaymentInProgress] = useState(false);
+  const [enrolledPrograms, setEnrolledPrograms] = useState(new Set());
+ const paymentHandledRef = useRef(false);
 
+  
   // ================= FETCH USER =================
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data?.user ?? null);
-    });
-  }, []);
+  const init = async () => {
+    const { data } = await supabase.auth.getUser();
+    const currentUser = data?.user ?? null;
+    setUser(currentUser);
+	
+	if (location.state?.from) {
+  sessionStorage.setItem("dashboard_from", location.state.from);
+}
+
+    if (currentUser) {
+      const enrolled = await fetchEnrollments(currentUser.id);
+      setEnrolledPrograms(enrolled);
+    }
+  };
+
+  init();
+}, []);
+  
+  
+  // ================= FETCH ENROLLMENTS =================
+const fetchEnrollments = async (userId) => {
+  const { data, error } = await supabase
+    .from("enrollments")
+    .select("program_id, status")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Failed to fetch enrollments", error);
+    return new Set();
+  }
+
+  return new Set(
+    data
+      .filter((e) => e.status === "active")
+      .map((e) => e.program_id)
+  );
+};
+
+
 
   // ================= LOAD RAZORPAY SCRIPT =================
   useEffect(() => {
@@ -33,9 +74,15 @@ export default function Dashboard() {
 
   // ================= LOGOUT HANDLER =================
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/";
-  };
+  await supabase.auth.signOut();
+
+  // 🔴 CRITICAL: clear any remembered redirect
+  sessionStorage.removeItem("dashboard_from");
+
+  // 🔴 FORCE hard reload to kill Supabase cache
+  window.location.replace("/");
+};
+
 
   // ================= RAZORPAY ENROLL HANDLER =================
   const handleEnroll = async (programId) => {
@@ -141,6 +188,9 @@ const options = {
 
 console.log("PAYMENT VERIFIED SUCCESSFULLY");
 
+const enrolled = await fetchEnrollments(user.id);
+setEnrolledPrograms(enrolled);
+
 // TEMP: do not navigate yet
 alert("Payment verified. Check backend logs and Supabase.");
 
@@ -162,6 +212,8 @@ alert("Payment verified. Check backend logs and Supabase.");
     }
   };
 
+const isGenAIArchitectEnrolled = enrolledPrograms.has("genai-platform-architect");
+
   return (
     <main className="min-h-screen bg-[#050608] text-slate-200 px-6 py-24 font-display">
 
@@ -173,6 +225,20 @@ alert("Payment verified. Check backend logs and Supabase.");
             <p className="text-slate-400 text-sm">
               Program access and next actions
             </p>
+			
+			{(location.state?.from || sessionStorage.getItem("dashboard_from")) && (
+  <button
+    onClick={() =>
+      navigate(
+        location.state?.from ||
+        sessionStorage.getItem("dashboard_from")
+      )
+    }
+    className="mt-4 text-xs uppercase tracking-widest text-cyan-400 hover:underline"
+  >
+    ← Back to Program
+  </button>
+)}
           </div>
 
           <div className="flex items-center gap-4">
@@ -183,13 +249,7 @@ alert("Payment verified. Check backend logs and Supabase.");
               </span>
             </div>
 
-            <button
-              onClick={handleLogout}
-              className="text-xs uppercase tracking-widest text-slate-400 hover:text-cyan-400 transition"
-            >
-              Logout ↗
-            </button>
-          </div>
+		  </div>
         </div>
       </section>
 

@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 import ProgramEnrollment from "../../components/ProgramEnrollment";
 
 export default function SystemsEngineer() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
   const [session, setSession] = useState(null);
+  
+  useEffect(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    setSession(data.session);
+  });
+}, []);
 
   const storeLead = async (user) => {
     if (!user?.email) return;
@@ -17,70 +21,6 @@ export default function SystemsEngineer() {
       provider: user.app_metadata?.provider || "email",
       program: "agentic-ai-systems-engineer",
     });
-  };
-
-  useEffect(() => {
-    let mounted = true;
-
-    const initAuth = async () => {
-      const { data: userData } = await supabase.auth.getUser();
-
-      if (userData?.user && mounted) {
-        const { data: sessionData } = await supabase.auth.getSession();
-
-        setSession(sessionData.session ?? { user: userData.user });
-        await storeLead(userData.user);
-
-        // Redirect only after confirmed session
-        navigate("/dashboard");
-      }
-    }; // ✅ FIX 1: this was missing
-
-    initAuth();
-
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (session && mounted) {
-          setSession(session);
-          await storeLead(session.user);
-        }
-      }
-    );
-
-    return () => {
-      mounted = false;
-      listener.subscription.unsubscribe();
-    };
-  }, [navigate]);
-
-  const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo:
-          window.location.origin + "/courses/agentic-ai-systems-engineer",
-      },
-    });
-  };
-
-  const signInWithEmail = async () => {
-    if (!email) {
-      alert("Please enter your email address");
-      return;
-    }
-
-    setEmailLoading(true);
-
-    await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo:
-          window.location.origin + "/courses/agentic-ai-systems-engineer",
-      },
-    });
-
-    setEmailLoading(false);
-    alert("Check your email for the login link");
   };
 
   return (
@@ -103,12 +43,12 @@ export default function SystemsEngineer() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/lms/courses/masterstroke-agentic-ai-systems-engineer"
-              className="px-10 py-4 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-sm hover:brightness-110"
-            >
-              Secure Your Spot
-            </a>
+           <a
+			  href="/courses/agentic-ai-systems-engineer"
+			  className="px-10 py-4 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-sm hover:brightness-110"
+			>
+			  Secure Your Spot
+			</a>
 
             <button
               onClick={() => {

@@ -1,4 +1,3 @@
-import TempSystemsEngineer from "./pages/courses/temp_SystemsEngineer";
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequireAuth from "./components/RequireAuth";
@@ -33,12 +32,6 @@ import TermsConditions from "./pages/TermsAndConditions";
 import { Course } from "./types";
 import { supabase } from "./lib/supabaseClient";
 
-/**
- * TEMPORARILY DISABLED (WILL RE-ENABLE LATER)
- *
- * import LMSDashboard from "./components/LMSDashboard";
- * import CheckoutModal from "./components/CheckoutModal";
- */
 
 const App: React.FC = () => {
 const [paymentOpen, setPaymentOpen] = useState(false);
@@ -64,58 +57,19 @@ const [paymentOpen, setPaymentOpen] = useState(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /**
-   * ✅ GLOBAL AUTH HANDLER (FIXED — NO FORCED REDIRECT)
-   * - Hydrates Supabase session
-   * - Cleans auth tokens from URL
-   * - DOES NOT override page-level navigation
-   */
-  useEffect(() => {
-    const handleAuthRedirect = async () => {
-      const url = window.location.href;
-
-      if (
-        url.includes("access_token") ||
-        url.includes("refresh_token") ||
-        url.includes("code=")
-      ) {
-        const { data, error } =
-          await supabase.auth.exchangeCodeForSession(url);
-
-        if (data?.session) {
-          // ✅ Clean URL ONLY — stay on same page
-          window.history.replaceState(
-            {},
-            document.title,
-            location.pathname
-          );
-        }
-      }
-    };
-
-    handleAuthRedirect();
-  }, [location.pathname]);
-
   return (
     <div className="min-h-screen flex flex-col bg-background-dark text-slate-100 pointer-events-auto">
 
-      {/* ❌ OLD (BROKEN AUTH SIGNAL — DO NOT USE) */}
-      {/* <Navbar onLogin={toggleView} isLoggedIn={false} /> */}
-
-      {/* ✅ NEW — AUTH-AWARE NAVBAR (SESSION-DRIVEN INTERNALLY) */}
+       {/* ✅ NEW — AUTH-AWARE NAVBAR (SESSION-DRIVEN INTERNALLY) */}
       <Navbar />
 
       <main className="flex-1">
         <Routes>
 
           {/* ================= DASHBOARD (AUTH REQUIRED) ================= */}
-          <Route
+ <Route
   path="/dashboard"
-  element={
-    <RequireAuth>
-      <Dashboard setPaymentOpen={setPaymentOpen} />
-    </RequireAuth>
-  }
+  element={<Dashboard setPaymentOpen={setPaymentOpen} />}
 />
 
           {/* ================= HOME ================= */}
@@ -189,7 +143,7 @@ const [paymentOpen, setPaymentOpen] = useState(false);
           {/* ================= PROGRAM / COURSE PAGES ================= */}
 <Route
   path="/courses/agentic-ai-systems-engineer"
-  element={<TempSystemsEngineer />}
+  element={<SystemsEngineer />}
 />
 
           <Route
@@ -205,16 +159,20 @@ const [paymentOpen, setPaymentOpen] = useState(false);
         </Routes>
       </main>
 
+	
       {/* ================= FOOTER ================= */}
+
       <footer className="border-t border-white/5 bg-charcoal/50 py-20">
         <div className="relative pl-20 pr-6 md:pr-8 w-full">
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
 
             {/* BRAND */}
-            <Link
+  
+			<Link
               to="/"
-              className="flex items-start gap-4 hover:opacity-90 transition-opacity cursor-pointer"
+
+			  className="md:col-span-2 flex items-start gap-4 hover:opacity-90 transition-opacity cursor-pointer"
             >
               <div className="size-10 flex items-center justify-center shrink-0">
                 <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -250,7 +208,8 @@ const [paymentOpen, setPaymentOpen] = useState(false);
             </Link>
 
             {/* NETWORK */}
-            <div className="flex flex-col gap-4">
+
+           <div className="md:col-start-3 flex flex-col gap-4">
               <h4 className="text-white font-bold text-xs uppercase tracking-widest">
                 Network
               </h4>
@@ -263,7 +222,8 @@ const [paymentOpen, setPaymentOpen] = useState(false);
             </div>
 
             {/* POLICIES */}
-            <div className="flex flex-col gap-4">
+
+          <div className="md:col-start-4 flex flex-col gap-4">
               <h4 className="text-white font-bold text-xs uppercase tracking-widest">
                 Policies
               </h4>
@@ -283,7 +243,7 @@ const [paymentOpen, setPaymentOpen] = useState(false);
 
           </div>
 
-          <div className="pt-8 border-t border-white/5 flex justify-between text-slate-600 text-xs">
+           <div className="pt-8 border-t border-white/5 flex justify-between text-slate-600 text-xs">
             <p>Built for production-grade agentic systems.</p>
             <p>© {new Date().getFullYear()} Agentic AI Implementors</p>
           </div>
@@ -291,9 +251,10 @@ const [paymentOpen, setPaymentOpen] = useState(false);
         </div>
       </footer>
 
-{!paymentOpen && <AIAdvisor />}
+      {!paymentOpen && <AIAdvisor />}
     </div>
   );
 };
+
 
 export default App;
