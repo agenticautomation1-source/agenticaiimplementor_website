@@ -41,18 +41,15 @@ const goToDashboard = () => {
     }
   };
 const signInWithGoogleFresh = async () => {
-  // ✅ CRITICAL: persist origin BEFORE OAuth redirect
   sessionStorage.setItem(
     "dashboard_from",
     `/courses/${programSlug}`
   );
 
-  // If already signed in → skip OAuth
-  
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: `${window.location.origin}/#/auth/callback`,
       queryParams: {
         prompt: "select_account",
       },
