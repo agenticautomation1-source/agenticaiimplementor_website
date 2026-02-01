@@ -35,12 +35,33 @@ import { supabase } from "./lib/supabaseClient";
 
 const App: React.FC = () => {
 const [paymentOpen, setPaymentOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+const [session, setSession] = useState<any>(null);
+
+const navigate = useNavigate();
+const location = useLocation();
 
   // ⚠️ LEGACY UI STATE — NO LONGER USED FOR AUTH
   const [view, setView] = useState<"landing" | "lms">("landing");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  
+  
+  // ================= AUTH SESSION HYDRATION =================
+useEffect(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    setSession(data.session);
+  });
+}, []);
+// ================= POST-AUTH HOME REDIRECT =================
+useEffect(() => {
+  if (
+    session &&
+    location.pathname === "/" &&
+    !location.state?.from &&
+    !sessionStorage.getItem("dashboard_from")
+  ) {
+    navigate("/dashboard", { replace: true });
+  }
+}, [session, location.pathname]);
 
   const handleEnroll = (course: Course) => {
     setSelectedCourse(course);
