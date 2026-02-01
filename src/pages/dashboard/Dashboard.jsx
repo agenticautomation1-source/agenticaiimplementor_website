@@ -19,18 +19,40 @@ const from =
   
   // ================= FETCH USER =================
   useEffect(() => {
-  const init = async () => {
+  let mounted = true;
+
+  const loadUser = async () => {
     const { data } = await supabase.auth.getUser();
-    const currentUser = data?.user ?? null;
-    setUser(currentUser);
-	
-    if (currentUser) {
-      const enrolled = await fetchEnrollments(currentUser.id);
+    if (!mounted) return;
+
+    if (data?.user) {
+      setUser(data.user);
+      const enrolled = await fetchEnrollments(data.user.id);
       setEnrolledPrograms(enrolled);
     }
   };
 
-  init();
+  loadUser();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (!mounted) return;
+
+  if (session?.user) {
+  setUser(session.user);
+
+  // 🔴 IMPORTANT: refetch enrollments on late auth hydration
+  fetchEnrollments(session.user.id).then(setEnrolledPrograms);
+} else {
+  setUser(null);
+  setEnrolledPrograms(new Set());
+}
+
+  return () => {
+    mounted = false;
+    subscription.unsubscribe();
+  };
 }, []);
   
   // ================= FETCH ENROLLMENTS =================
@@ -86,11 +108,16 @@ const fetchEnrollments = async (userId) => {
 
   // ================= RAZORPAY ENROLL HANDLER =================
   const handleEnroll = async (programId) => {
-    if (paymentInProgress) {
-      console.warn("Payment already in progress, blocking duplicate call");
-      return;
-    }
+  // 🛑 GUARD: user must be ready
+  if (!user) {
+    alert("Session not ready yet. Please wait 1–2 seconds and try again.");
+    return;
+  }
 
+  if (paymentInProgress) {
+    console.warn("Payment already in progress, blocking duplicate call");
+    return;
+  }
     if (!razorpayReady) {
       alert("Payment system is still loading. Please try again.");
       return;
