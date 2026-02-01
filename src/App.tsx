@@ -1,6 +1,5 @@
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
-import RequireAuth from "./components/RequireAuth";
 
 import SystemsEngineer from "./pages/courses/SystemsEngineer";
 import PlatformArchitect from "./pages/courses/PlatformArchitect";
@@ -51,17 +50,7 @@ useEffect(() => {
     setSession(data.session);
   });
 }, []);
-// ================= POST-AUTH HOME REDIRECT =================
-useEffect(() => {
-  if (
-    session &&
-    location.pathname === "/" &&
-    !location.state?.from &&
-    !sessionStorage.getItem("dashboard_from")
-  ) {
-    navigate("/dashboard", { replace: true });
-  }
-}, [session, location.pathname]);
+
 
   const handleEnroll = (course: Course) => {
     setSelectedCourse(course);
