@@ -80,7 +80,7 @@ const fetchEnrollments = async (userId) => {
   sessionStorage.removeItem("dashboard_from");
 
   // 🔴 FORCE hard reload to kill Supabase cache
-  window.location.replace("/");
+  window.location.replace("/#/");
 };
 
 
@@ -228,7 +228,8 @@ const isGenAIArchitectEnrolled = enrolledPrograms.has("genai-platform-architect"
 			
 			{from && (
   <button
-    onClick={() => navigate(from)}
+    onClick={() => window.location.replace(`/#${from}`)}
+
     className="mt-4 text-xs uppercase tracking-widest text-cyan-400 hover:underline"
   >
     ← Back to Program

@@ -12,12 +12,7 @@ export default function ProgramEnrollment({
 const navigate = useNavigate();
 
 const goToDashboard = () => {
-  navigate("/dashboard", {
-    replace: true,
-    state: {
-      from: `/courses/${programSlug}`,
-    },
-  });
+  window.location.replace(`/#/dashboard`);
 };
 
   // ================= EMAIL LOGIN =================
