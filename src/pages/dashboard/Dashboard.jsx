@@ -5,6 +5,11 @@ import { supabase } from "../../lib/supabaseClient";
 export default function Dashboard() {
 const navigate = useNavigate();
 const location = useLocation();
+
+const from =
+  location.state?.from ||
+  sessionStorage.getItem("dashboard_from");
+  
   const [user, setUser] = useState(null);
   const [razorpayReady, setRazorpayReady] = useState(false);
   const [paymentInProgress, setPaymentInProgress] = useState(false);
@@ -19,10 +24,6 @@ const location = useLocation();
     const currentUser = data?.user ?? null;
     setUser(currentUser);
 	
-	if (location.state?.from) {
-  sessionStorage.setItem("dashboard_from", location.state.from);
-}
-
     if (currentUser) {
       const enrolled = await fetchEnrollments(currentUser.id);
       setEnrolledPrograms(enrolled);
@@ -32,6 +33,14 @@ const location = useLocation();
   init();
 }, []);
   
+  
+// ================= CLEAR DASHBOARD ORIGIN (ONE-TIME) =================
+useEffect(() => {
+  if (from) {
+    sessionStorage.removeItem("dashboard_from");
+  }
+}, []);
+
   
   // ================= FETCH ENROLLMENTS =================
 const fetchEnrollments = async (userId) => {
@@ -226,19 +235,15 @@ const isGenAIArchitectEnrolled = enrolledPrograms.has("genai-platform-architect"
               Program access and next actions
             </p>
 			
-			{(location.state?.from || sessionStorage.getItem("dashboard_from")) && (
+			{from && (
   <button
-    onClick={() =>
-      navigate(
-        location.state?.from ||
-        sessionStorage.getItem("dashboard_from")
-      )
-    }
+    onClick={() => navigate(from)}
     className="mt-4 text-xs uppercase tracking-widest text-cyan-400 hover:underline"
   >
     ← Back to Program
   </button>
 )}
+
           </div>
 
           <div className="flex items-center gap-4">
