@@ -5,6 +5,7 @@ import { supabase } from "../lib/supabaseClient";
 
 const Navbar: React.FC = () => {
   const [session, setSession] = useState<any>(null);
+const [user, setUser] = useState<any>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const location = useLocation();
@@ -13,15 +14,17 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-    });
+  setSession(data.session);
+  setUser(data.session?.user ?? null);
+});
 
     // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+  setSession(session);
+  setUser(session?.user ?? null);
+});
 
     return () => subscription.unsubscribe();
   }, []);
@@ -148,15 +151,23 @@ const Navbar: React.FC = () => {
             )}
 
             {session && (
-              <>
-                <Link to="/dashboard" className="text-xs uppercase">
-                  Dashboard
-                </Link>
-                <button onClick={logout} className="text-xs uppercase text-white/60">
-                  Logout
-                </button>
-              </>
-            )}
+  <>
+    <span className="text-xs text-white/70">
+      Signed in as <strong>{user?.email}</strong>
+    </span>
+
+    <Link to="/dashboard" className="text-xs uppercase">
+      Dashboard
+    </Link>
+
+    <button
+      onClick={logout}
+      className="text-xs uppercase text-white/60"
+    >
+      Logout
+    </button>
+  </>
+)}
           </div>
         </header>
       </div>

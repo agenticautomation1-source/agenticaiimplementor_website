@@ -37,17 +37,17 @@ const fetchEnrollments = async (userId) => {
   );
 };
 
-// ================= FETCH USER =================
+// ================= FETCH USER (CORRECT WAY) =================
 useEffect(() => {
   let mounted = true;
 
-  const loadUser = async () => {
-    const { data } = await supabase.auth.getUser();
+  const loadSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
     if (!mounted) return;
 
-    if (data?.user) {
-      setUser(data.user);
-      const enrolled = await fetchEnrollments(data.user.id);
+    if (session?.user) {
+      setUser(session.user);
+      const enrolled = await fetchEnrollments(session.user.id);
       setEnrolledPrograms(enrolled);
     } else {
       setUser(null);
@@ -57,15 +57,16 @@ useEffect(() => {
     setAuthLoading(false);
   };
 
-  loadUser();
+  loadSession();
 
   const { data: authListener } = supabase.auth.onAuthStateChange(
-    (_event, session) => {
+    async (_event, session) => {
       if (!mounted) return;
 
       if (session?.user) {
         setUser(session.user);
-        fetchEnrollments(session.user.id).then(setEnrolledPrograms);
+        const enrolled = await fetchEnrollments(session.user.id);
+        setEnrolledPrograms(enrolled);
       } else {
         setUser(null);
         setEnrolledPrograms(new Set());
@@ -80,7 +81,6 @@ useEffect(() => {
     authListener?.subscription.unsubscribe();
   };
 }, []);
-
 
   // ================= LOAD RAZORPAY SCRIPT =================
   useEffect(() => {
@@ -245,6 +245,10 @@ if (authLoading) {
   );
 }
 
+if (!authLoading && !user) {
+  window.location.replace("/#/login");
+  return null;
+}
 
   return (
     <main className="min-h-screen bg-[#050608] text-slate-200 px-6 py-24 font-display">
