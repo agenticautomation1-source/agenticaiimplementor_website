@@ -11,6 +11,30 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
+  useEffect(() => {
+  let mounted = true;
+
+  const loadSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!mounted) return;
+    setUser(session?.user ?? null);
+  };
+
+  loadSession();
+
+  const { data: listener } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      if (!mounted) return;
+      setUser(session?.user ?? null);
+    }
+  );
+
+  return () => {
+    mounted = false;
+    listener.subscription.unsubscribe();
+  };
+}, []);
+
 
  
   const signInWithGoogle = async () => {
@@ -126,7 +150,6 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
     Secure Entry
   </button>
 )}
-)}
 
 {user && (
   <>
@@ -138,10 +161,7 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
       Dashboard
     </Link>
 
-    <button
-      onClick={logout}
-      className="text-xs uppercase text-white/60"
-    >
+    <button onClick={logout} className="text-xs uppercase text-white/60">
       Logout
     </button>
   </>
