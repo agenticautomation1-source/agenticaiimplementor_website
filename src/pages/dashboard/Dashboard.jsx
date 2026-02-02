@@ -275,8 +275,13 @@ if (!authLoading && !user) {
           </div>
 
           <div className="flex items-center gap-4">
-            
-		  </div>
+  {user && (
+    <span className="text-xs text-white/70">
+      Signed in as <strong>{user.email}</strong>
+    </span>
+  )}
+</div>
+
         </div>
       </section>
 

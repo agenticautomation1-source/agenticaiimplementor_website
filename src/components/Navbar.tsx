@@ -6,35 +6,13 @@ import { supabase } from "../lib/supabaseClient";
 const Navbar: React.FC = () => {
   
 const [user, setUser] = useState<any>(null);
-const [authReady, setAuthReady] = useState(false); // ✅ REQUIRED
+
 const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
 
- useEffect(() => {
-  let mounted = true;
-
-  const loadUser = async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (!mounted) return;
-    setUser(error ? null : data.user);
-  };
-
-  loadUser();
-
-  const { data: listener } = supabase.auth.onAuthStateChange(async () => {
-    const { data } = await supabase.auth.getUser();
-    if (!mounted) return;
-    setUser(data.user ?? null);
-  });
-
-  return () => {
-    mounted = false;
-    listener.subscription.unsubscribe();
-  };
-}, []);
-
+ 
   const signInWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -143,10 +121,11 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
               <Link to="/contact" className="nav-link">Contact</Link>
             </nav>
 
-            {authReady && !user && (
+            {!user && (
   <button onClick={signInWithGoogle}>
     Secure Entry
   </button>
+)}
 )}
 
 {user && (
