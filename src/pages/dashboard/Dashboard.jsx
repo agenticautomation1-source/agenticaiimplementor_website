@@ -275,13 +275,7 @@ if (!authLoading && !user) {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/10 text-xs text-slate-300">
-              Signed in as&nbsp;
-              <span className="text-white font-semibold">
-                {user?.email ?? "—"}
-              </span>
-            </div>
-
+            
 		  </div>
         </div>
       </section>

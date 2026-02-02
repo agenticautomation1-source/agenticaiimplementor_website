@@ -12,30 +12,26 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
+ useEffect(() => {
   let mounted = true;
 
-  const loadSession = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+  const loadUser = async () => {
+    const { data, error } = await supabase.auth.getUser();
     if (!mounted) return;
-
-    setUser(session?.user ?? null);
-    setAuthReady(true);
+    setUser(error ? null : data.user);
   };
 
-  loadSession();
+  loadUser();
 
-  const { data: authListener } = supabase.auth.onAuthStateChange(
-    (_event, session) => {
-      if (!mounted) return;
-      setUser(session?.user ?? null);
-      setAuthReady(true);
-    }
-  );
+  const { data: listener } = supabase.auth.onAuthStateChange(async () => {
+    const { data } = await supabase.auth.getUser();
+    if (!mounted) return;
+    setUser(data.user ?? null);
+  });
 
   return () => {
     mounted = false;
-    authListener.subscription.unsubscribe();
+    listener.subscription.unsubscribe();
   };
 }, []);
 
@@ -43,7 +39,7 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.origin,
+        redirectTo: `${window.location.origin}/#/dashboard`,
         queryParams: {
           prompt: "login",
         },
