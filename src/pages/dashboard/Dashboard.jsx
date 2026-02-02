@@ -1,9 +1,10 @@
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 import { useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function Dashboard() {
-const navigate = useNavigate();
+
 const location = useLocation();
 
 const from =
@@ -11,51 +12,13 @@ const from =
   sessionStorage.getItem("dashboard_from");
   
   const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [razorpayReady, setRazorpayReady] = useState(false);
   const [paymentInProgress, setPaymentInProgress] = useState(false);
   const [enrolledPrograms, setEnrolledPrograms] = useState(new Set());
  const paymentHandledRef = useRef(false);
 
-  
-  // ================= FETCH USER =================
-  useEffect(() => {
-  let mounted = true;
-
-  const loadUser = async () => {
-    const { data } = await supabase.auth.getUser();
-    if (!mounted) return;
-
-    if (data?.user) {
-      setUser(data.user);
-      const enrolled = await fetchEnrollments(data.user.id);
-      setEnrolledPrograms(enrolled);
-    }
-  };
-
-  loadUser();
-
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange((_event, session) => {
-    if (!mounted) return;
-
-  if (session?.user) {
-  setUser(session.user);
-
-  // 🔴 IMPORTANT: refetch enrollments on late auth hydration
-  fetchEnrollments(session.user.id).then(setEnrolledPrograms);
-} else {
-  setUser(null);
-  setEnrolledPrograms(new Set());
-}
-
-  return () => {
-    mounted = false;
-    subscription.unsubscribe();
-  };
-}, []);
-  
-  // ================= FETCH ENROLLMENTS =================
+   // ================= FETCH ENROLLMENTS =================
 const fetchEnrollments = async (userId) => {
   const { data, error } = await supabase
     .from("enrollments")
@@ -74,6 +37,49 @@ const fetchEnrollments = async (userId) => {
   );
 };
 
+// ================= FETCH USER =================
+useEffect(() => {
+  let mounted = true;
+
+  const loadUser = async () => {
+    const { data } = await supabase.auth.getUser();
+    if (!mounted) return;
+
+    if (data?.user) {
+      setUser(data.user);
+      const enrolled = await fetchEnrollments(data.user.id);
+      setEnrolledPrograms(enrolled);
+    } else {
+      setUser(null);
+      setEnrolledPrograms(new Set());
+    }
+
+    setAuthLoading(false);
+  };
+
+  loadUser();
+
+  const { data: authListener } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      if (!mounted) return;
+
+      if (session?.user) {
+        setUser(session.user);
+        fetchEnrollments(session.user.id).then(setEnrolledPrograms);
+      } else {
+        setUser(null);
+        setEnrolledPrograms(new Set());
+      }
+
+      setAuthLoading(false);
+    }
+  );
+
+  return () => {
+    mounted = false;
+    authListener?.subscription.unsubscribe();
+  };
+}, []);
 
 
   // ================= LOAD RAZORPAY SCRIPT =================
@@ -124,7 +130,7 @@ const fetchEnrollments = async (userId) => {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/payments/create-order", {
+      const res = await fetch(`${API_BASE}/payments/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -173,23 +179,12 @@ const options = {
 
   handler: async (response) => {
     console.log("RAZORPAY HANDLER FIRED", response);
-
-   /*
-    if (paymentHandledRef.current) {
-      console.warn("Duplicate Razorpay handler ignored");
-      return;
-    }
-
-    paymentHandledRef.current = true;
-    */
-    
+ 
     setPaymentInProgress(false);
     document.documentElement.classList.remove("razorpay-open");
 
     try {
-      const verifyRes = await fetch(
-        "http://localhost:4000/payments/verify",
-        {
+      const verifyRes = await fetch(`${API_BASE}/payments/verify`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -239,7 +234,17 @@ alert("Payment verified. Check backend logs and Supabase.");
     }
   };
 
+
 const isGenAIArchitectEnrolled = enrolledPrograms.has("genai-platform-architect");
+
+if (authLoading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center text-slate-400">
+      Loading dashboard…
+    </div>
+  );
+}
+
 
   return (
     <main className="min-h-screen bg-[#050608] text-slate-200 px-6 py-24 font-display">
@@ -255,7 +260,7 @@ const isGenAIArchitectEnrolled = enrolledPrograms.has("genai-platform-architect"
 			
 			{from && (
   <button
-    onClick={() => window.location.replace(`/#${from}`)}
+    onClick={() => window.location.replace(`/#${from.replace(/^\/+/, "")}`)}
 
     className="mt-4 text-xs uppercase tracking-widest text-cyan-400 hover:underline"
   >
