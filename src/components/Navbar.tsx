@@ -35,8 +35,6 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
   };
 }, []);
 
-
- 
   const signInWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
