@@ -4,30 +4,42 @@ import { createPortal } from "react-dom";
 import { supabase } from "../lib/supabaseClient";
 
 const Navbar: React.FC = () => {
-  const [session, setSession] = useState<any>(null);
+  
 const [user, setUser] = useState<any>(null);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+const [authReady, setAuthReady] = useState(false); // ✅ REQUIRED
+const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data }) => {
-  setSession(data.session);
-  setUser(data.session?.user ?? null);
-});
+  let mounted = true;
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-  setSession(session);
+  const loadUser = async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!mounted) return;
+
   setUser(session?.user ?? null);
-});
+  setAuthReady(true); // ✅ REQUIRED
+};
 
-    return () => subscription.unsubscribe();
-  }, []);
+  loadUser();
+
+  const { data: authListener } = supabase.auth.onAuthStateChange(
+  (_event, session) => {
+    if (!mounted) return;
+    setUser(session?.user ?? null);
+    setAuthReady(true); // ✅ REQUIRED
+  }
+);
+
+
+  return () => {
+    mounted = false;
+    authListener.subscription.unsubscribe();
+  };
+}, []);
 
   const signInWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
@@ -137,23 +149,16 @@ const [user, setUser] = useState<any>(null);
               <Link to="/contact" className="nav-link">Contact</Link>
             </nav>
 
-            {!session && (
-              <button
-                onClick={signInWithGoogle}
-                className="
-                  flex min-w-[110px] items-center justify-center
-                  rounded-lg h-10 px-4
-                  bg-primary text-white text-[10px] font-bold tracking-widest uppercase
-                "
-              >
-                Secure Entry
-              </button>
-            )}
+            {authReady && !user && (
+  <button onClick={signInWithGoogle}>
+    Secure Entry
+  </button>
+)}
 
-            {session && (
+{user && (
   <>
     <span className="text-xs text-white/70">
-      Signed in as <strong>{user?.email}</strong>
+      Signed in as <strong>{user.email}</strong>
     </span>
 
     <Link to="/dashboard" className="text-xs uppercase">
