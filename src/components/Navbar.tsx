@@ -6,7 +6,6 @@ import { supabase } from "../lib/supabaseClient";
 const Navbar: React.FC = () => {
   
 const [user, setUser] = useState<any>(null);
-
 const [authReady, setAuthReady] = useState(false); // ✅ REQUIRED
 const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -16,24 +15,23 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
   useEffect(() => {
   let mounted = true;
 
-  const loadUser = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!mounted) return;
+  const loadSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!mounted) return;
 
-  setUser(session?.user ?? null);
-  setAuthReady(true); // ✅ REQUIRED
-};
+    setUser(session?.user ?? null);
+    setAuthReady(true);
+  };
 
-  loadUser();
+  loadSession();
 
   const { data: authListener } = supabase.auth.onAuthStateChange(
-  (_event, session) => {
-    if (!mounted) return;
-    setUser(session?.user ?? null);
-    setAuthReady(true); // ✅ REQUIRED
-  }
-);
-
+    (_event, session) => {
+      if (!mounted) return;
+      setUser(session?.user ?? null);
+      setAuthReady(true);
+    }
+  );
 
   return () => {
     mounted = false;
