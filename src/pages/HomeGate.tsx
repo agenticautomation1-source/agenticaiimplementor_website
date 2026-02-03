@@ -10,26 +10,32 @@ export default function HomeGate({ children }: Props) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
+  let mounted = true;
 
-    const run = async () => {
-      if (checkedRef.current) return;
-      checkedRef.current = true;
+  const run = async () => {
+    if (checkedRef.current) return;
+    checkedRef.current = true;
 
-      // Just check session to avoid home-page flash.
-      // DO NOT redirect from here.
-      await supabase.auth.getSession();
+    const { data } = await supabase.auth.getSession();
 
-      if (!mounted) return;
-      setReady(true);
-    };
+    if (!mounted) return;
 
-    run();
+    // 🔴 THIS IS THE MISSING LOGIC
+    if (data.session) {
+      window.location.replace("/#/dashboard");
+      return;
+    }
 
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    setReady(true);
+  };
+
+  run();
+
+  return () => {
+    mounted = false;
+  };
+}, []);
+
 
   // prevent home flash while checking session
   if (!ready) return null;
