@@ -36,25 +36,7 @@ const App: React.FC = () => {
 
   // 🔴 ABSOLUTE RULE:
   // Logged-in users must NEVER stay on "/"
-  useEffect(() => {
-    let mounted = true;
-
-    const enforceDashboardRedirect = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!mounted) return;
-
-      if (data.session && location.pathname === "/") {
-        window.location.replace("/#/dashboard");
-      }
-    };
-
-    enforceDashboardRedirect();
-
-    return () => {
-      mounted = false;
-    };
-  }, [location.pathname]);
-
+  
   // ========= ENROLL (kept exactly as before) =========
   const handleEnroll = (course: Course) => {
     console.log("Enroll clicked:", course);
