@@ -1,28 +1,44 @@
-import { useEffect, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
-const HomeGate = ({ children }: { children: React.ReactNode }) => {
-  const location = useLocation();
-  const [checked, setChecked] = useState(false);
-  const [hasSession, setHasSession] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setHasSession(!!data.session);
-      setChecked(true);
-    });
-  }, []);
-
-  if (!checked) return null;
-
-  // 🔒 CRITICAL GUARD:
-  // Redirect ONLY when landing on `/` without navigation state (OAuth case)
-  if (hasSession && location.pathname === "/" && !location.state) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return <>{children}</>;
+type Props = {
+  children: React.ReactNode;
 };
 
-export default HomeGate;
+export default function HomeGate({ children }: Props) {
+  const navigate = useNavigate();
+  const checkedRef = useRef(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const run = async () => {
+      if (checkedRef.current) return;
+      checkedRef.current = true;
+
+      const { data } = await supabase.auth.getSession();
+
+      if (!mounted) return;
+
+      if (data.session?.user) {
+        navigate("/dashboard", { replace: true });
+        return;
+      }
+
+      setReady(true);
+    };
+
+    run();
+
+    return () => {
+      mounted = false;
+    };
+  }, [navigate]);
+
+  // prevent home flash while checking session
+  if (!ready) return null;
+
+  return <>{children}</>;
+}
