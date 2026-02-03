@@ -6,17 +6,19 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const run = async () => {
-      const { data } = await supabase.auth.getSession();
+    const completeAuth = async () => {
+      const { data, error } = await supabase.auth.getSession();
 
-      if (data.session) {
-        navigate("/dashboard", { replace: true });
-      } else {
+      if (error || !data.session) {
         navigate("/", { replace: true });
+        return;
       }
+
+      // ✅ AUTH SUCCESS → DASHBOARD
+      navigate("/dashboard", { replace: true });
     };
 
-    run();
+    completeAuth();
   }, [navigate]);
 
   return null;
