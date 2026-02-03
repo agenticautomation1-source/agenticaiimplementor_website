@@ -6,9 +6,9 @@ type Props = {
   children: React.ReactNode;
 };
 
-const RequireAuth = ({ children }: Props) => {
-  const [session, setSession] = useState<any>(null);
+export default function RequireAuth({ children }: Props) {
   const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<any>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -16,24 +16,13 @@ const RequireAuth = ({ children }: Props) => {
       setSession(data.session);
       setLoading(false);
     });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   if (loading) return null;
 
   if (!session) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to="/" replace state={{ from: location.pathname }} />;
   }
 
   return <>{children}</>;
-};
-
-export default RequireAuth;
+}

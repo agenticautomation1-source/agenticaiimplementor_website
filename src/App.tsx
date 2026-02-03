@@ -1,3 +1,4 @@
+import RequireAuth from "./components/RequireAuth";
 import HomeGate from "./pages/HomeGate";
 import AuthCallback from "./pages/AuthCallback";
 import TestAuth from "./pages/TestAuth";
@@ -6,10 +7,6 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import SystemsEngineer from "./pages/courses/SystemsEngineer";
 import PlatformArchitect from "./pages/courses/PlatformArchitect";
 import GovernanceEngineer from "./pages/courses/GovernanceEngineer";
-
-import AgenticAISystemsEngineer from "./pages/programs/AgenticAISystemsEngineer";
-import GenAIPlatformArchitect from "./pages/programs/GenAIPlatformArchitect";
-import AIValidationGovernanceEngineer from "./pages/programs/AIValidationGovernanceEngineer";
 
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
@@ -36,14 +33,6 @@ import { supabase } from "./lib/supabaseClient";
 
 const App: React.FC = () => {
 const [paymentOpen, setPaymentOpen] = useState(false);
-
-
-const navigate = useNavigate();
-const location = useLocation();
-
-  // ⚠️ LEGACY UI STATE — NO LONGER USED FOR AUTH
-  const [view, setView] = useState<"landing" | "lms">("landing");
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
   const handleEnroll = (course: Course) => {
     setSelectedCourse(course);
@@ -73,7 +62,11 @@ const location = useLocation();
           {/* ================= DASHBOARD (AUTH REQUIRED) ================= */}
  <Route
   path="/dashboard"
-  element={<Dashboard setPaymentOpen={setPaymentOpen} />}
+  element={
+    <RequireAuth>
+      <Dashboard setPaymentOpen={setPaymentOpen} />
+    </RequireAuth>
+  }
 />
 
           {/* ================= HOME ================= */}
