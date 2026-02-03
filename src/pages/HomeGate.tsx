@@ -10,34 +10,32 @@ export default function HomeGate({ children }: Props) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-  let mounted = true;
+    let mounted = true;
 
-  const run = async () => {
-    if (checkedRef.current) return;
-    checkedRef.current = true;
+    const run = async () => {
+      if (checkedRef.current) return;
+      checkedRef.current = true;
 
-    const { data } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    // 🔴 THIS IS THE MISSING LOGIC
-    if (data.session) {
-      window.location.replace("/#/dashboard");
-      return;
-    }
+      // 🚨 HARD BLOCK: logged-in users NEVER see home
+      if (data.session) {
+        window.location.replace("/#/dashboard");
+        return;
+      }
 
-    setReady(true);
-  };
+      setReady(true);
+    };
 
-  run();
+    run();
 
-  return () => {
-    mounted = false;
-  };
-}, []);
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-
-  // prevent home flash while checking session
   if (!ready) return null;
 
   return <>{children}</>;
