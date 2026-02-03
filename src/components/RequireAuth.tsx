@@ -20,7 +20,7 @@ export default function RequireAuth({ children }: Props) {
   if (loading) return null;
 
   if (!session) {
-    return <Navigate to="/" replace />;
+   return <Navigate to="/auth/callback" replace />;
   }
 
   return <>{children}</>;

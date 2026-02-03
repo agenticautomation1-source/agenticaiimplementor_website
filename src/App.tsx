@@ -56,7 +56,7 @@ const App: React.FC = () => {
         <Routes>
 
           {/* ================= AUTH CALLBACK ================= */}
-          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="auth/callback" element={<AuthCallback />} />
 
           {/* ================= DASHBOARD (PROTECTED) ================= */}
           <Route

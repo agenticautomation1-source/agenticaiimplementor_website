@@ -40,19 +40,17 @@ return () => {
 };
 }, []);
 
-
 useEffect(() => {
   if (user) {
     navigate("/dashboard", { replace: true });
   }
 }, [user, navigate]);
 
-
   const signInWithGoogle = async () => {
   await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
+     redirectTo: `${window.location.origin}/#/auth/callback`,
       queryParams: {
         prompt: "login",
       },
