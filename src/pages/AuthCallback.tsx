@@ -1,25 +1,29 @@
-import { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { supabase } from "../lib/supabaseClient"
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 
-const AuthCallback = () => {
-  const navigate = useNavigate()
+export default function AuthCallback() {
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const resolveAuth = async () => {
-      const { data } = await supabase.auth.getSession()
-
-      if (data.session?.user) {
-        navigate("/dashboard", { replace: true })
-      } else {
-        navigate("/", { replace: true })
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session) {
+          navigate("/dashboard", { replace: true });
+        } else {
+          navigate("/", { replace: true });
+        }
       }
-    }
+    );
 
-    resolveAuth()
-  }, [navigate])
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [navigate]);
 
-  return null
+  return (
+    <div className="min-h-screen flex items-center justify-center text-slate-400">
+      Finalizing sign-in…
+    </div>
+  );
 }
-
-export default AuthCallback

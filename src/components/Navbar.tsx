@@ -37,15 +37,14 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const signInWithGoogle = async () => {
   await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${window.location.origin}/#/auth/callback`,
-      queryParams: {
-        prompt: "login",
-      },
+  provider: "google",
+  options: {
+    redirectTo: `${window.location.origin}/auth/callback`,
+    queryParams: {
+      prompt: "login",
     },
-  });
-};
+  },
+});
 
   const logout = async () => {
   await supabase.auth.signOut();
