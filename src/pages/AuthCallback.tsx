@@ -9,13 +9,19 @@ export default function AuthCallback() {
     const finalizeAuth = async () => {
       const { data, error } = await supabase.auth.getSession();
 
-      if (error || !data.session) {
-        console.error("Auth callback failed", error);
+      if (error) {
+        console.error("Auth callback error:", error);
         navigate("/", { replace: true });
         return;
       }
 
-      navigate("/dashboard", { replace: true });
+      if (data.session) {
+        navigate("/dashboard", { replace: true });
+        return;
+      }
+
+      // fallback
+      navigate("/", { replace: true });
     };
 
     finalizeAuth();
