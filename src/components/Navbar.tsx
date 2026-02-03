@@ -9,6 +9,11 @@ const [user, setUser] = useState<any>(null);
 
 const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [authLoading, setAuthLoading] = useState(false);
+
+
   const location = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
@@ -40,13 +45,39 @@ return () => {
   await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/#/auth/callback`,
+      redirectTo: `${window.location.origin}/#/dashboard`,
       queryParams: {
         prompt: "login",
       },
     },
   });
 };
+
+const signInWithEmail = async () => {
+  if (!email || !password) {
+    alert("Email and password required");
+    return;
+  }
+
+  setAuthLoading(true);
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  setAuthLoading(false);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  // 🔴 REQUIRED: email sign-in does NOT auto-redirect
+  window.location.replace("/#/dashboard");
+};
+
+
 
   const logout = async () => {
   await supabase.auth.signOut();
@@ -147,9 +178,35 @@ return () => {
             </nav>
 
             {!user && (
-  <button onClick={signInWithGoogle}>
-    Secure Entry
-  </button>
+  <div className="flex items-center gap-2">
+    <input
+      type="email"
+      placeholder="Email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      className="px-2 py-1 text-xs bg-black border border-white/20 rounded"
+    />
+
+    <input
+      type="password"
+      placeholder="Password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      className="px-2 py-1 text-xs bg-black border border-white/20 rounded"
+    />
+
+    <button
+      onClick={signInWithEmail}
+      disabled={authLoading}
+      className="text-xs uppercase"
+    >
+      {authLoading ? "Signing in…" : "Email Login"}
+    </button>
+
+    <button onClick={signInWithGoogle} className="text-xs uppercase">
+      Google Login
+    </button>
+  </div>
 )}
 
 {user && (
