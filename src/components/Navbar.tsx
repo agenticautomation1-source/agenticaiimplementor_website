@@ -22,30 +22,31 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   loadSession();
 
-  const { data: listener } = supabase.auth.onAuthStateChange(
-    (_event, session) => {
-      if (!mounted) return;
-      setUser(session?.user ?? null);
-    }
-  );
+  const {
+  data: { subscription },
+} = supabase.auth.onAuthStateChange((_event, session) => {
+  if (!mounted) return;
+  setUser(session?.user ?? null);
+});
 
-  return () => {
+return () => {
   mounted = false;
-  listener?.subscription?.unsubscribe();
+  subscription.unsubscribe();
 };
 }, []);
 
 
   const signInWithGoogle = async () => {
   await supabase.auth.signInWithOAuth({
-  provider: "google",
-  options: {
-    redirectTo: `${window.location.origin}/auth/callback`,
-    queryParams: {
-      prompt: "login",
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+      queryParams: {
+        prompt: "login",
+      },
     },
-  },
-});
+  });
+};
 
   const logout = async () => {
   await supabase.auth.signOut();
