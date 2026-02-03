@@ -6,22 +6,19 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const finalize = async () => {
+    const handleAuth = async () => {
       const { data } = await supabase.auth.getSession();
 
       if (data.session) {
+        // ✅ THIS IS THE MISSING PIECE
         navigate("/dashboard", { replace: true });
       } else {
         navigate("/", { replace: true });
       }
     };
 
-    finalize();
+    handleAuth();
   }, [navigate]);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center text-slate-400">
-      Finalizing sign-in…
-    </div>
-  );
+  return null;
 }
