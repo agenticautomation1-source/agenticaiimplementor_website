@@ -29,15 +29,11 @@ const RequireAuth = ({ children }: Props) => {
 
   if (loading) return null;
 
-if (!session) {
-  return <Navigate to="/" state={{ from: location }} replace />;
-}
+  if (!session) {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
 
-if (session && location.pathname === "/") {
-  return <Navigate to="/dashboard" replace />;
-}
-
-return <>{children}</>;
+  return <>{children}</>;
 };
 
 export default RequireAuth;

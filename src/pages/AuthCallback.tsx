@@ -6,19 +6,18 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (session) {
-          navigate("/dashboard", { replace: true });
-        } else {
-          navigate("/", { replace: true });
-        }
-      }
-    );
+    const finalize = async () => {
+      const { data, error } = await supabase.auth.getSession();
 
-    return () => {
-      authListener.subscription.unsubscribe();
+      if (error || !data.session) {
+        navigate("/", { replace: true });
+        return;
+      }
+
+      navigate("/dashboard", { replace: true });
     };
+
+    finalize();
   }, [navigate]);
 
   return (
