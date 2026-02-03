@@ -246,7 +246,6 @@ if (authLoading) {
 }
 
 if (!authLoading && !user) {
-  window.location.replace("/#/login");
   return null;
 }
 

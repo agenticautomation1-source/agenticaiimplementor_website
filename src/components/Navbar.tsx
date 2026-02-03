@@ -36,22 +36,20 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
 }, []);
 
   const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/#/dashboard`,
-        queryParams: {
-          prompt: "login",
-        },
+  await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      queryParams: {
+        prompt: "login",
       },
-    });
-  };
+    },
+  });
+};
 
   const logout = async () => {
-    await supabase.auth.signOut();
-    navigate("/", { replace: true });
-    setShowLogoutModal(true);
-  };
+  await supabase.auth.signOut();
+  setShowLogoutModal(true);
+};
 
   const goToPrograms = () => {
     if (location.pathname !== "/") {
@@ -83,7 +81,10 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
 
           <div className="flex justify-end gap-3">
             <button
-              onClick={() => setShowLogoutModal(false)}
+              onClick={() => {
+  setShowLogoutModal(false);
+  navigate("/", { replace: true });
+}}
               className="px-4 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition"
             >
               Continue

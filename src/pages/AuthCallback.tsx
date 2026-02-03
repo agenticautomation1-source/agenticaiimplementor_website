@@ -1,20 +1,25 @@
-import { useEffect } from "react";
-import { supabase } from "../lib/supabaseClient";
+import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { supabase } from "../lib/supabaseClient"
 
-export default function AuthCallback() {
+const AuthCallback = () => {
+  const navigate = useNavigate()
+
   useEffect(() => {
-    const run = async () => {
-      // Give Supabase time to hydrate session
-      await new Promise((r) => setTimeout(r, 50));
+    const resolveAuth = async () => {
+      const { data } = await supabase.auth.getSession()
 
-      await supabase.auth.getSession();
+      if (data.session?.user) {
+        navigate("/dashboard", { replace: true })
+      } else {
+        navigate("/", { replace: true })
+      }
+    }
 
-      // Always hard redirect for HashRouter + OAuth
-      window.location.replace("/#/dashboard");
-    };
+    resolveAuth()
+  }, [navigate])
 
-    run();
-  }, []);
-
-  return null;
+  return null
 }
+
+export default AuthCallback
