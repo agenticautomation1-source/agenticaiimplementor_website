@@ -33,6 +33,8 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
   mounted = false;
   listener?.subscription?.unsubscribe();
 };
+}, []);
+
 
   const signInWithGoogle = async () => {
   await supabase.auth.signInWithOAuth({
