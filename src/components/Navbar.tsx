@@ -41,6 +41,13 @@ return () => {
 }, []);
 
 
+useEffect(() => {
+  if (user) {
+    navigate("/dashboard", { replace: true });
+  }
+}, [user, navigate]);
+
+
   const signInWithGoogle = async () => {
   await supabase.auth.signInWithOAuth({
     provider: "google",
