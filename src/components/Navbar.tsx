@@ -30,10 +30,9 @@ const [showLogoutModal, setShowLogoutModal] = useState(false);
   );
 
   return () => {
-    mounted = false;
-    listener.subscription.unsubscribe();
-  };
-}, []);
+  mounted = false;
+  listener?.subscription?.unsubscribe();
+};
 
   const signInWithGoogle = async () => {
   await supabase.auth.signInWithOAuth({
