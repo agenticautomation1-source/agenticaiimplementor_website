@@ -40,11 +40,7 @@ return () => {
 };
 }, []);
 
-useEffect(() => {
-  if (user) {
-    navigate("/dashboard", { replace: true });
-  }
-}, [user, navigate]);
+
 
   const signInWithGoogle = async () => {
   await supabase.auth.signInWithOAuth({
@@ -78,11 +74,8 @@ const signInWithEmail = async () => {
     return;
   }
 
-  window.location.replace("/dashboard");
+  navigate("/dashboard", { replace: true });
 };
-
-
-
   const logout = async () => {
   await supabase.auth.signOut();
   setShowLogoutModal(true);
