@@ -1,0 +1,8 @@
+{
+  "name": "Elite Agentic AI",
+  "description": "An elite training platform for AI engineers specializing in autonomous agents, multi-agent systems, and cognitive reasoning.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
