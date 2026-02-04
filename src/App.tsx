@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { supabase } from "./lib/supabaseClient";
+
 import React, { useState } from "react";
 import AuthCallback from "./pages/AuthCallback";
 import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";

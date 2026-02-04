@@ -1,12 +1,8 @@
-import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
+import { useEffect, useState } from "react";
 
-type Props = {
-  children: React.ReactNode;
-};
-
-export default function RequireAuth({ children }: Props) {
+export default function RequireAuth({ children }: { children: JSX.Element }) {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<any>(null);
 
@@ -20,8 +16,8 @@ export default function RequireAuth({ children }: Props) {
   if (loading) return null;
 
   if (!session) {
-   return <Navigate to="/auth/callback" replace />;
+    return <Navigate to="/" replace />;
   }
 
-  return <>{children}</>;
+  return children;
 }

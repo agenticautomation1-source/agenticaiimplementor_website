@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
 type Props = {
@@ -7,48 +6,34 @@ type Props = {
 };
 
 export default function HomeGate({ children }: Props) {
-  
   const [ready, setReady] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
-  let mounted = true;
-
-  const run = async () => {
-if (window.location.hash.includes("access_token")) {
-  setReady(true);
-  return;
-}
-
-    try {
-      const { data } = await supabase.auth.getSession();
-      if (!mounted) return;
-
-      if (data.session) {
-        navigate("/dashboard", { replace: true });
-        return;
+    const check = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          // logged-in users should not see landing
+          window.location.replace("/#/dashboard");
+          return;
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (err) {
-      console.error("HomeGate getSession failed:", err);
-    }
 
-    if (mounted) {
       setReady(true);
-    }
-  };
+    };
 
-  run();
+    check();
+  }, []);
 
-  return () => {
-    mounted = false;
-  };
-}, [navigate]);
-if (!ready) {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background-dark text-slate-400">
-      Loading…
-    </div>
-  );
-}
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background-dark text-slate-400">
+        Loading…
+      </div>
+    );
+  }
+
   return <>{children}</>;
 }
