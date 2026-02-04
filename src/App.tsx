@@ -29,6 +29,7 @@ import TermsConditions from "./pages/TermsAndConditions";
 import { Course } from "./types";
 
 const App: React.FC = () => {
+
   const [paymentOpen, setPaymentOpen] = useState(false);
 
   const navigate = useNavigate();
