@@ -51,9 +51,10 @@ export default function Navbar() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       
-      // BUG FIX: Ensure user lands on Dashboard IMMEDIATELY after successful sign-in
+      // BUG FIX: Force redirect to Dashboard immediately upon sign-in
       if (event === 'SIGNED_IN' && session) {
         setIsLoginModalOpen(false);
+        // Using replace ensures the user doesn't stay on the landing page
         window.location.replace("/#/dashboard");
       }
     });
@@ -62,17 +63,17 @@ export default function Navbar() {
   }, []);
 
   // =========================================================
-  // REPAIRED: CORE HANDLERS
+  // CORE HANDLERS (REPAIRED FOR BUG FIXES)
   // =========================================================
   
   const prepareLoginFlow = () => {
     // BUG FIX: Capture the specific program page path before login modal opens
-    // Logic: If on a course page, save path. If on home, clear path.
+    // This allows the Dashboard "Back to Programs" button to know where to go.
     const currentHash = window.location.hash.replace('#', '');
     if (currentHash.includes('/courses/')) {
       localStorage.setItem('returnPath', currentHash);
     } else {
-      localStorage.removeItem('returnPath'); 
+      localStorage.removeItem('returnPath'); // Clear if starting from home
     }
     setIsLoginModalOpen(true);
   };
@@ -102,7 +103,7 @@ export default function Navbar() {
     if (error) {
       setAuthError(error.message);
     } else if (data.user) {
-      // BUG FIX: Forced immediate move to Dashboard
+      // BUG FIX: Immediate redirect for email sign-ins
       setIsLoginModalOpen(false);
       window.location.replace("/#/dashboard");
     }
@@ -118,10 +119,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* 
-          MAIN NAVIGATION CONTAINER
-          Stitch Design: Glassmorphism, dynamic padding, and border transitions
-      */}
       <nav 
         className={`fixed top-0 w-full z-[100] transition-all duration-700 ease-in-out border-b ${
           scrolled 
@@ -131,7 +128,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center">
           
-          {/* LOGO GROUP: Enterprise Agentic Aesthetic */}
+          {/* Logo Group */}
           <div 
             className="flex items-center gap-4 cursor-pointer group" 
             onClick={() => navigate('/')}
@@ -146,24 +143,24 @@ export default function Navbar() {
               <span className="font-bold text-white tracking-tighter text-xl leading-none uppercase">
                 Agentic AI
               </span>
-              <span className="text-[10px] text-gray-500 tracking-[0.45em] uppercase font-black mt-1.5 transition-colors group-hover:text-cyan-400">
+              <span className="text-[10px] text-gray-500 tracking-[0.45em] uppercase font-black mt-1.5 group-hover:text-cyan-400 transition-colors">
                 Implementors
               </span>
             </div>
           </div>
 
-          {/* DESKTOP NAVIGATION: High Signal Semantic Links */}
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-12">
             <div className="flex items-center gap-10">
-              <Link to="/courses" className="text-[12px] font-bold uppercase tracking-[0.25em] text-gray-500 hover:text-white transition-all duration-300">Programs</Link>
+              <Link to="/" className="text-[12px] font-bold uppercase tracking-[0.25em] text-gray-500 hover:text-white transition-all duration-300">Programs</Link>
               <Link to="/learning-paths" className="text-[12px] font-bold uppercase tracking-[0.25em] text-gray-500 hover:text-white transition-all duration-300">Paths</Link>
-              <Link to="/about" className="text-[12px] font-bold uppercase tracking-[0.25em] text-gray-500 hover:text-white transition-all duration-300">Framework</Link>
+              <Link to="/about" className="text-[12px] font-bold uppercase tracking-[0.25em] text-gray-500 hover:text-white transition-all duration-300">About</Link>
               <Link to="/contact" className="text-[12px] font-bold uppercase tracking-[0.25em] text-gray-500 hover:text-white transition-all duration-300">Contact</Link>
             </div>
 
             <div className="h-6 w-[1px] bg-white/10 mx-2"></div>
 
-            {/* REPAIRED: Auth Logic Links */}
+            {/* Repaired: Auth Section Rendering */}
             <div className="flex items-center gap-8">
               {user ? (
                 <div className="flex items-center gap-8 animate-in fade-in slide-in-from-right-4">
@@ -200,7 +197,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* MOBILE TOGGLE (STITCH MOBILE MENU TRIGGER) */}
+          {/* Mobile Menu Trigger */}
           <button 
             className="lg:hidden text-white p-4 hover:bg-white/5 rounded-[1.25rem] transition-all active:scale-90" 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -211,11 +208,11 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* MOBILE MENU OVERLAY: Full screen immersive logic */}
+        {/* Mobile menu overlay */}
         {isMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-3xl border-b border-white/10 px-12 py-20 flex flex-col gap-12 animate-in slide-in-from-top-12 duration-500 ease-out h-[90vh]">
             <div className="flex flex-col gap-10">
-              <Link to="/courses" onClick={() => setIsMenuOpen(false)} className="text-4xl font-black text-white tracking-tighter uppercase italic transition-all active:translate-x-4">Programs</Link>
+              <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-4xl font-black text-white tracking-tighter uppercase italic transition-all active:translate-x-4">Programs</Link>
               <Link to="/learning-paths" onClick={() => setIsMenuOpen(false)} className="text-4xl font-black text-white tracking-tighter uppercase italic transition-all active:translate-x-4">Learning Paths</Link>
               <Link to="/about" onClick={() => setIsMenuOpen(false)} className="text-4xl font-black text-white tracking-tighter uppercase italic transition-all active:translate-x-4">Framework</Link>
               {user && (
@@ -225,19 +222,16 @@ export default function Navbar() {
             <div className="h-[2px] bg-gradient-to-r from-white/15 via-white/5 to-transparent w-full mt-auto"></div>
             <div className="flex flex-col gap-8 pb-10">
               {user ? (
-                <button onClick={handleSignOut} className="text-left text-2xl font-bold text-red-500 uppercase tracking-[0.2em] active:opacity-50 transition-opacity">Terminate Session</button>
+                <button onClick={handleSignOut} className="text-left text-2xl font-bold text-red-500 uppercase tracking-[0.2em]">Terminate Session</button>
               ) : (
-                <button onClick={prepareLoginFlow} className="text-left text-2xl font-bold text-white uppercase tracking-[0.2em] active:opacity-50 transition-opacity">Authorize Login</button>
+                <button onClick={prepareLoginFlow} className="text-left text-2xl font-bold text-white uppercase tracking-[0.2em]">Authorize Login</button>
               )}
             </div>
           </div>
         )}
       </nav>
 
-      {/* 
-          IDENTITY GATE MODAL (STITCH AUTH SYSTEM)
-          Full 100-line complex modal preservation
-      */}
+      {/* Identity Gate Modal */}
       {isLoginModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
           <div 
@@ -245,13 +239,11 @@ export default function Navbar() {
             onClick={() => setIsLoginModalOpen(false)}
           ></div>
           
-          <div className="relative w-full max-w-[500px] bg-[#050505] border border-white/10 rounded-[56px] p-12 lg:p-16 shadow-[0_0_150px_rgba(0,0,0,1)] overflow-hidden animate-in zoom-in-95 duration-500 ease-out">
+          <div className="relative w-full max-w-[500px] bg-[#050505] border border-white/10 rounded-[56px] p-12 lg:p-16 shadow-[0_0_150px_rgba(0,0,0,1)] overflow-hidden animate-in zoom-in-95 duration-500 ease-out text-center">
             
-            {/* Design Ornament: Top Branded Accent */}
             <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-70"></div>
             
-            {/* Modal Header Section */}
-            <div className="mb-14 text-center">
+            <div className="mb-14">
               <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-[28px] flex items-center justify-center mx-auto mb-10 shadow-inner shadow-white/5 group">
                 <span className="material-symbols-outlined text-cyan-500 text-4xl group-hover:scale-110 transition-transform duration-500">shield_person</span>
               </div>
@@ -262,7 +254,6 @@ export default function Navbar() {
             </div>
 
             <div className="space-y-6">
-              {/* THIRD PARTY AUTH: Google Implementation */}
               <button 
                 onClick={handleGoogleLogin}
                 className="w-full flex items-center justify-center gap-6 bg-white hover:bg-gray-100 text-black h-16 rounded-[24px] font-black transition-all duration-300 transform active:scale-[0.96] shadow-2xl shadow-white/10"
@@ -276,17 +267,15 @@ export default function Navbar() {
                 <span className="text-[12px] uppercase tracking-[0.3em] font-black">Verify with Google</span>
               </button>
 
-              {/* DIVIDER: Semantic Protocol Separation */}
               <div className="relative py-12 flex items-center">
                 <div className="flex-grow border-t border-white/10"></div>
                 <span className="px-8 text-[10px] text-gray-700 uppercase tracking-[0.6em] font-black italic">Internal Registry</span>
                 <div className="flex-grow border-t border-white/10"></div>
               </div>
 
-              {/* DIRECT REGISTRY ACCESS: Email Logic */}
               <form onSubmit={handleEmailLogin} className="space-y-6">
                 <div className="space-y-4">
-                  <div className="relative">
+                  <div className="relative text-left">
                     <span className="absolute left-7 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-700 text-2xl">passkey</span>
                     <input 
                       type="email" 
@@ -297,7 +286,7 @@ export default function Navbar() {
                       required 
                     />
                   </div>
-                  <div className="relative">
+                  <div className="relative text-left">
                     <span className="absolute left-7 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-700 text-2xl">encrypted</span>
                     <input 
                       type="password" 
@@ -333,7 +322,6 @@ export default function Navbar() {
               </form>
             </div>
 
-            {/* Modal Abort Action */}
             <button 
               onClick={() => setIsLoginModalOpen(false)}
               className="mt-14 w-full text-center text-[10px] text-gray-700 hover:text-gray-400 font-black uppercase tracking-[0.5em] transition-colors duration-300"

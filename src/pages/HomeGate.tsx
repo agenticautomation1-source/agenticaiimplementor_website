@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 type Props = {
@@ -6,38 +7,27 @@ type Props = {
 };
 
 export default function HomeGate({ children }: Props) {
-  const checkedRef = useRef(false);
+  const navigate = useNavigate();
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
-
-    // 1. Check session immediately on load
-    const checkInitialSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (mounted && data.session) {
-        window.location.replace("/#/dashboard");
-        return;
-      }
-      if (mounted) setReady(true);
-    };
-
-    checkInitialSession();
-
-    // 2. Listen for auth changes (catches the exact moment sign-in finishes)
+    // This listener reacts the instant the Auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (mounted && session) {
-        window.location.replace("/#/dashboard");
+      if (session) {
+        // 🚨 AUTO-REDIRECT: The moment a session exists, move to dashboard
+        navigate('/dashboard', { replace: true });
+      } else {
+        // Only show the landing page if there is definitely no user
+        setReady(true);
       }
     });
 
     return () => {
-      mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [navigate]);
 
-  // Show a black screen while determining if we should redirect
+  // Prevent "Flash" of landing page: Show nothing until we know auth state
   if (!ready) return <div className="min-h-screen bg-black" />;
 
   return <>{children}</>;

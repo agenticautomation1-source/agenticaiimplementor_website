@@ -7,7 +7,7 @@ export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Retrieve the previous page info if available via state
+  // Retrieve state info if available
   const from = location.state?.from || sessionStorage.getItem("dashboard_from");
   
   const [user, setUser] = useState(null);
@@ -18,7 +18,7 @@ export default function Dashboard() {
   const paymentHandledRef = useRef(false);
 
   // =========================================================
-  // REPAIRED: FETCH ENROLLMENTS (Removed TS Types)
+  // FETCH ENROLLMENTS LOGIC
   // =========================================================
   const fetchEnrollments = async (userId) => {
     const { data, error } = await supabase
@@ -55,6 +55,8 @@ export default function Dashboard() {
       } else {
         setUser(null);
         setEnrolledPrograms(new Set());
+        // Force redirect to landing page if no session found
+        window.location.replace("/#/");
       }
 
       setAuthLoading(false);
@@ -106,47 +108,41 @@ export default function Dashboard() {
   }, []);
 
   // =========================================================
-  // REPAIRED: LOGOUT HANDLER
+  // REPAIRED: LOGOUT HANDLER (Full Cleanup)
   // =========================================================
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    // Clear all session/path trackers
     sessionStorage.removeItem("dashboard_from");
     localStorage.removeItem("returnPath"); 
-    // Force redirect to landing page
     window.location.replace("/#/");
   };
 
   // =========================================================
-  // REPAIRED: BACK TO PROGRAMS LOGIC (CRITICAL BUG FIX)
+  // REPAIRED: BACK TO PROGRAMS LOGIC (CRITICAL FIX)
   // =========================================================
   const handleBackToProgram = () => {
-    // 1. Check if we saved a course origin in the Navbar before login
+    // Check if we saved a course path in the Navbar before login modal opened
     const savedCoursePath = localStorage.getItem("returnPath");
     
     if (savedCoursePath && savedCoursePath.includes("/courses/")) {
-      // Return to the specific program (SystemsEngineer, PlatformArchitect, etc.)
+      // Case: Returning to a specific course (Engineer, Architect, etc)
       navigate(savedCoursePath);
     } else {
-      // 2. Fallback for first-time login: Go to "Featured Curriculum" on Home
-      // Note: Make sure your landing page curriculum section has id="curriculum"
+      // Case: First-time login or from Home -> Scroll to curriculum section on landing page
       window.location.href = "/#/#curriculum";
     }
   };
 
   // =========================================================
-  // RAZORPAY ENROLL HANDLER (Removed TS Types)
+  // RAZORPAY ENROLL HANDLER (Full Logic Restored)
   // =========================================================
   const handleEnroll = async (programId) => {
     if (!user) {
-      alert("Session not ready yet. Please wait 1–2 seconds and try again.");
+      alert("Session not ready yet. Please wait a moment.");
       return;
     }
 
-    if (paymentInProgress) {
-      console.warn("Payment already in progress, blocking duplicate call");
-      return;
-    }
+    if (paymentInProgress) return;
     if (!razorpayReady) {
       alert("Payment system is still loading. Please try again.");
       return;
@@ -177,12 +173,8 @@ export default function Dashboard() {
         description: programId.replaceAll("-", " "),
         order_id: data.id,
         redirect: false,
-        prefill: {
-          email: user.email,
-        },
-        theme: {
-          color: "#22d3ee",
-        },
+        prefill: { email: user.email },
+        theme: { color: "#22d3ee" },
         modal: {
           backdropclose: false,
           escape: false,
@@ -193,7 +185,6 @@ export default function Dashboard() {
           },
         },
         handler: async (response) => {
-          console.log("RAZORPAY HANDLER FIRED", response);
           setPaymentInProgress(false);
           document.documentElement.classList.remove("razorpay-open");
 
@@ -211,22 +202,17 @@ export default function Dashboard() {
             });
 
             if (!verifyRes.ok) {
-              const err = await verifyRes.json();
-              console.error("VERIFY FAILED", err);
-              paymentHandledRef.current = false;
-              alert("Payment verification failed on server.");
+              alert("Payment verification failed.");
               return;
             }
 
-            console.log("PAYMENT VERIFIED SUCCESSFULLY");
             const enrolled = await fetchEnrollments(user.id);
             setEnrolledPrograms(enrolled);
-            alert("Payment verified. You are now enrolled in this program.");
+            alert("Payment verified. You are now enrolled.");
 
           } catch (err) {
-            console.error("Verification request crashed", err);
-            paymentHandledRef.current = false;
-            alert("Payment verification failed.");
+            console.error("Verification error", err);
+            alert("Verification failed.");
           }
         },
       };
@@ -236,13 +222,10 @@ export default function Dashboard() {
       setPaymentInProgress(false);
       document.documentElement.classList.remove("razorpay-open");
       console.error("Enrollment error:", err);
-      alert("Payment failed. Please try again.");
+      alert("Payment failed.");
     }
   };
 
-  // =========================================================
-  // CONDITIONAL LOADING RENDER
-  // =========================================================
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#050608] text-slate-400">
@@ -254,9 +237,7 @@ export default function Dashboard() {
     );
   }
 
-  if (!authLoading && !user) {
-    return null;
-  }
+  if (!authLoading && !user) return null;
 
   return (
     <main className="min-h-screen bg-[#050608] text-slate-200 px-6 py-24 font-display">
@@ -270,7 +251,7 @@ export default function Dashboard() {
               Program access and next actions
             </p>
 			
-            {/* REPAIRED: <- Back to Programs Button */}
+            {/* REPAIRED BACK TO PROGRAMS BUTTON */}
             <button
               onClick={handleBackToProgram}
               className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400 hover:text-white transition-all duration-300"
@@ -285,7 +266,7 @@ export default function Dashboard() {
               <span className="text-[9px] text-slate-500 uppercase tracking-widest font-black mb-1">Authenticated Account</span>
               <span className="text-xs text-white/70 font-bold">{user.email}</span>
             </div>
-            {/* REPAIRED: Logout Button Present */}
+            {/* REPAIRED LOGOUT BUTTON */}
             <button 
               onClick={handleLogout}
               className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/5 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
@@ -303,93 +284,78 @@ export default function Dashboard() {
           <p className="text-cyan-400 text-[10px] font-black uppercase tracking-[0.5em] mb-3">
             Available Programs
           </p>
-          <p className="text-slate-500 text-sm max-w-2xl leading-relaxed">
+          <p className="text-slate-500 text-sm max-w-2xl leading-relaxed font-medium">
             Manage your progress across the Agentic AI Implementors masterstroke curriculum.
           </p>
         </div>
 
         <div className="space-y-8">
 
-          {/* ================= AGENTIC AI SYSTEMS ENGINEER block ================= */}
+          {/* AGENTIC AI SYSTEMS ENGINEER block */}
           <div className="relative rounded-[32px] border border-cyan-400/40 bg-white/[0.02] overflow-hidden group">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(0,220,246,0.15),transparent_60%)]" />
-
             <div className="relative flex flex-col lg:flex-row lg:items-center justify-between p-10 gap-10">
               <div className="flex items-start gap-8">
                 <div className="p-5 rounded-2xl bg-cyan-400/10 border border-cyan-400/30 text-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.1)]">
                   <span className="material-symbols-outlined text-4xl">smart_toy</span>
                 </div>
-
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-2 tracking-tight uppercase italic">
                     Agentic AI Systems Engineer
                   </h3>
                   <p className="text-slate-400 text-sm max-w-xl leading-relaxed">
-                    Build and operate autonomous, tool-using AI systems.
-                    Mastery of multi-agent orchestration, tool-loop grounding, and enterprise agentic patterns.
+                    Build and operate autonomous, tool-using AI systems. Mastery of multi-agent orchestration and tool-loop grounding.
                   </p>
                 </div>
               </div>
-
               <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 lg:justify-end">
                 <span className="px-4 py-1.5 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-black tracking-widest border border-cyan-400/20">
                   ACTIVE
                 </span>
-
                 <a
                   href="/syllabus/full/Agentic%20AI%20Systems%20Engineer%20–%20Syllabus%20&%20Lesson%20Plan.pdf"
                   target="_blank"
-                  rel="noopener noreferrer"
                   className="px-8 py-4 border border-white/10 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-400 hover:text-white hover:bg-white/5 transition-all"
                 >
                   Syllabus (PDF)
                 </a>
-
                 <button
                   onClick={() => navigate('/lms/courses/masterstroke-agentic-ai-systems-engineer')}
                   className="px-8 py-4 bg-cyan-400 text-black rounded-xl font-black uppercase tracking-widest text-[10px] hover:brightness-110 shadow-lg shadow-cyan-400/20 transition-all active:scale-95"
                 >
-                  Access Curriculum
+                  Access LMS
                 </button>
               </div>
             </div>
           </div>
 
-          {/* ================= GENAI PLATFORM ARCHITECT block ================= */}
+          {/* GENAI PLATFORM ARCHITECT block */}
           <div className="relative rounded-[32px] border border-white/10 bg-white/[0.01] overflow-hidden group">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(234,179,8,0.12),transparent_60%)]" />
-
             <div className="relative flex flex-col lg:flex-row lg:items-center justify-between p-10 gap-10">
               <div className="flex items-start gap-8">
                 <div className="p-5 rounded-2xl bg-white/[0.04] border border-white/10 text-yellow-500">
                   <span className="material-symbols-outlined text-4xl">architecture</span>
                 </div>
-
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-2 tracking-tight uppercase italic">
                     GenAI Platform Architect
                   </h3>
                   <p className="text-slate-400 text-sm max-w-xl leading-relaxed">
-                    Design scalable GenAI platforms and orchestration layers.
-                    Focus on enterprise-grade reliability, provider abstraction, and infrastructure safety.
+                    Design scalable GenAI platforms and orchestration layers. Focus on enterprise-grade reliability and provider abstraction.
                   </p>
                 </div>
               </div>
-
               <div className="flex items-center gap-4">
                 <a
                   href="/syllabus/outline/MASTERSTROKE%20–%20GenAI%20Platform%20Architect.pdf"
                   target="_blank"
-                  rel="noopener noreferrer"
                   className="px-6 py-4 border border-white/10 rounded-xl text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all"
                 >
                   Outline
                 </a>
-
                 {enrolledPrograms.has("genai-platform-architect") ? (
-                  <button className="px-8 py-4 bg-white/10 text-slate-400 rounded-xl font-black uppercase tracking-widest text-[10px] cursor-default border border-white/5">
-                    ENROLLED
-                  </button>
+                  <button className="px-8 py-4 bg-white/10 text-slate-400 rounded-xl font-black uppercase tracking-widest text-[10px] cursor-default border border-white/5">ENROLLED</button>
                 ) : (
                   <button
                     onClick={() => handleEnroll("genai-platform-architect")}
@@ -402,41 +368,33 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* ================= AI VALIDATION & GOVERNANCE ENGINEER block ================= */}
+          {/* AI VALIDATION & GOVERNANCE ENGINEER block */}
           <div className="relative rounded-[32px] border border-white/10 bg-white/[0.01] overflow-hidden group">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(220,38,38,0.15),transparent_60%)]" />
-
             <div className="relative flex flex-col lg:flex-row lg:items-center justify-between p-10 gap-10">
               <div className="flex items-start gap-8">
                 <div className="p-5 rounded-2xl bg-white/[0.04] border border-white/10 text-red-500">
                   <span className="material-symbols-outlined text-4xl">gavel</span>
                 </div>
-
                 <div>
                   <h3 className="text-2xl font-bold text-slate-300 mb-2 tracking-tight uppercase italic">
                     AI Validation & Governance Engineer
                   </h3>
                   <p className="text-slate-400 text-sm max-w-xl leading-relaxed">
-                    Ensure safety, compliance, and auditability of AI systems.
-                    Master evaluation frameworks, adversarial testing, and red-teaming automation.
+                    Ensure safety, compliance, and auditability of AI systems. Evaluation frameworks and red-teaming automation.
                   </p>
                 </div>
               </div>
-
               <div className="flex items-center gap-4">
                 <a
                   href="/syllabus/outline/MASTERSTROKE%20–%20AI%20Validation%20&%20Governance%20Engineer.pdf"
                   target="_blank"
-                  rel="noopener noreferrer"
                   className="px-6 py-4 border border-white/10 rounded-xl text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all"
                 >
                   Outline
                 </a>
-
                 {enrolledPrograms.has("ai-validation-governance-engineer") ? (
-                   <button className="px-8 py-4 bg-white/10 text-slate-400 rounded-xl font-black uppercase tracking-widest text-[10px] cursor-default border border-white/5">
-                    ENROLLED
-                  </button>
+                  <button className="px-8 py-4 bg-white/10 text-slate-400 rounded-xl font-black uppercase tracking-widest text-[10px] cursor-default border border-white/5">ENROLLED</button>
                 ) : (
                   <button
                     onClick={() => handleEnroll("ai-validation-governance-engineer")}
@@ -448,11 +406,10 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
-      {/* ================= PLATFORM UTILITIES FOOTER ================= */}
+      {/* FOOTER */}
       <section className="max-w-7xl mx-auto border-t border-white/5 pt-12 text-center">
         <p className="text-[9px] text-slate-700 uppercase tracking-[0.6em] font-black">
           Masterstroke Identity Protocol v2.4.0
