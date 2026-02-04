@@ -35,6 +35,12 @@ export default function HomeGate({ children }: Props) {
     };
   }, [navigate]);
 
-  
+if (!ready) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background-dark text-slate-400">
+      Loading…
+    </div>
+  );
+}
   return <>{children}</>;
 }
