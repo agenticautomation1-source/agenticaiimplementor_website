@@ -10,7 +10,7 @@ export default function Dashboard() {
   // Retrieve the previous page path from location state or session storage
   const from = location.state?.from || sessionStorage.getItem("dashboard_from");
   
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [razorpayReady, setRazorpayReady] = useState(false);
   const [paymentInProgress, setPaymentInProgress] = useState(false);
@@ -18,7 +18,7 @@ export default function Dashboard() {
   const paymentHandledRef = useRef(false);
 
   // ================= FETCH ENROLLMENTS =================
-  const fetchEnrollments = async (userId: string) => {
+  const fetchEnrollments = async (userId) => {
     const { data, error } = await supabase
       .from("enrollments")
       .select("program_id, status")
@@ -83,7 +83,7 @@ export default function Dashboard() {
 
   // ================= LOAD RAZORPAY SCRIPT =================
   useEffect(() => {
-    if ((window as any).Razorpay) {
+    if (window.Razorpay) {
       setRazorpayReady(true);
       return;
     }
@@ -111,7 +111,7 @@ export default function Dashboard() {
   };
 
   // ================= RAZORPAY ENROLL HANDLER =================
-  const handleEnroll = async (programId: string) => {
+  const handleEnroll = async (programId) => {
     // 🛑 GUARD: user must be ready
     if (!user) {
       alert("Session not ready yet. Please wait 1–2 seconds and try again.");
@@ -174,7 +174,7 @@ export default function Dashboard() {
           },
         },
 
-        handler: async (response: any) => {
+        handler: async (response) => {
           console.log("RAZORPAY HANDLER FIRED", response);
           setPaymentInProgress(false);
           document.documentElement.classList.remove("razorpay-open");
@@ -211,7 +211,7 @@ export default function Dashboard() {
           }
         },
       };
-      const rzp = new (window as any).Razorpay(options);
+      const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
       setPaymentInProgress(false);
