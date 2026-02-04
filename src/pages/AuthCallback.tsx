@@ -6,16 +6,12 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const finalize = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        navigate("/dashboard", { replace: true });
-      } else {
-        navigate("/", { replace: true });
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        window.location.replace("/#/dashboard"); // Force move to dashboard
       }
-    };
-    finalize();
+    });
   }, [navigate]);
 
-  return <div className="min-h-screen bg-black flex items-center justify-center text-cyan-400">Authenticating...</div>;
+  return <div className="min-h-screen bg-black flex items-center justify-center text-cyan-400 uppercase tracking-[0.5em] text-xs">Authenticating Session...</div>;
 }

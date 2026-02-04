@@ -12,31 +12,32 @@ export default function HomeGate({ children }: Props) {
   useEffect(() => {
     let mounted = true;
 
-    const run = async () => {
-      if (checkedRef.current) return;
-      checkedRef.current = true;
-
+    // 1. Check session immediately on load
+    const checkInitialSession = async () => {
       const { data } = await supabase.auth.getSession();
-
-      if (!mounted) return;
-
-      // 🚨 HARD BLOCK: If session exists, go to Dashboard IMMEDIATELY
-      if (data.session) {
+      if (mounted && data.session) {
         window.location.replace("/#/dashboard");
         return;
       }
-
-      setReady(true);
+      if (mounted) setReady(true);
     };
 
-    run();
+    checkInitialSession();
+
+    // 2. Listen for auth changes (catches the exact moment sign-in finishes)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (mounted && session) {
+        window.location.replace("/#/dashboard");
+      }
+    });
 
     return () => {
       mounted = false;
+      subscription.unsubscribe();
     };
   }, []);
 
-  // Show nothing (black screen) until we are sure user is NOT logged in
+  // Show a black screen while determining if we should redirect
   if (!ready) return <div className="min-h-screen bg-black" />;
 
   return <>{children}</>;
