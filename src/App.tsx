@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequireAuth from "./components/RequireAuth";
+import HomeGate from "./components/HomeGate";
 
 import SystemsEngineer from "./pages/courses/SystemsEngineer";
 import PlatformArchitect from "./pages/courses/PlatformArchitect";
@@ -37,9 +38,7 @@ const App: React.FC = () => {
   const location = useLocation();
 
   // ⚠️ LEGACY UI STATE — NOT USED FOR AUTH
-  const [view, setView] = useState<"landing" | "lms">("landing");
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-
+  
   const handleEnroll = (course: Course) => {
     setSelectedCourse(course);
   };
@@ -72,20 +71,20 @@ const App: React.FC = () => {
             }
           />
 
-          {/* ================= HOME ================= */}
-          <Route
-            path="/"
-            element={
-              <>
-                <Hero />
-                <LogoMarquee />
+ {/* ================= HOME ================= */}
+<Route
+  path="/"
+  element={
+    <HomeGate>
+      <>
+        <Hero />
+        <LogoMarquee />
 
-                <div id="curriculum">
-                  <Curriculum onEnroll={handleEnroll} />
-                </div>
+        <div id="curriculum">
+          <Curriculum onEnroll={handleEnroll} />
+        </div>
 
-                <WhyMasterstroke />
-
+        <WhyMasterstroke />
                 {/* ================= CTA ================= */}
                 <section className="max-w-[1200px] mx-auto px-6 py-24">
                   <div className="relative rounded-3xl overflow-hidden p-12 md:p-20 text-center border border-white/5 bg-[#05070c]">

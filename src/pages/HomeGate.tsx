@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 type Props = {
@@ -8,6 +9,7 @@ type Props = {
 export default function HomeGate({ children }: Props) {
   const checkedRef = useRef(false);
   const [ready, setReady] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let mounted = true;
@@ -17,12 +19,10 @@ export default function HomeGate({ children }: Props) {
       checkedRef.current = true;
 
       const { data } = await supabase.auth.getSession();
-
       if (!mounted) return;
 
-      // 🚨 HARD BLOCK: logged-in users NEVER see home
       if (data.session) {
-        window.location.replace("/#/dashboard");
+        navigate("/dashboard", { replace: true });
         return;
       }
 
@@ -30,13 +30,11 @@ export default function HomeGate({ children }: Props) {
     };
 
     run();
-
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [navigate]);
 
   if (!ready) return null;
-
   return <>{children}</>;
 }
