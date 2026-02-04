@@ -7,7 +7,7 @@ import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom"
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequireAuth from "./components/RequireAuth";
-import HomeGate from "./components/HomeGate";
+
 import SystemsEngineer from "./pages/courses/SystemsEngineer";
 import PlatformArchitect from "./pages/courses/PlatformArchitect";
 import GovernanceEngineer from "./pages/courses/GovernanceEngineer";
@@ -64,58 +64,56 @@ const handleEnroll = (course: Course) => {
 <Route
   path="/"
   element={
-    <HomeGate>
-      <div>
-        <Hero />
-        <LogoMarquee />
+    <div>
+      <Hero />
+      <LogoMarquee />
 
-        <div id="curriculum">
-			<Curriculum />
-		</div>
+      <div id="curriculum">
+        <Curriculum />
+      </div>
 
-        <WhyMasterstroke />
+      <WhyMasterstroke />
 
-        {/* ================= CTA ================= */}
-        <section className="max-w-[1200px] mx-auto px-6 py-24">
-          <div className="relative rounded-3xl overflow-hidden p-12 md:p-20 text-center border border-white/5 bg-[#05070c]">
-            <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_0%_0%,rgba(59,130,246,0.18),transparent_60%)] pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 pointer-events-none" />
+      {/* ================= CTA ================= */}
+      <section className="max-w-[1200px] mx-auto px-6 py-24">
+        <div className="relative rounded-3xl overflow-hidden p-12 md:p-20 text-center border border-white/5 bg-[#05070c]">
+          <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_0%_0%,rgba(59,130,246,0.18),transparent_60%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 pointer-events-none" />
 
-            <div className="relative z-10 flex flex-col items-center gap-8">
-              <h2 className="text-white text-4xl md:text-5xl font-bold font-display max-w-2xl">
-                The Future is Agentic.
-                <br />
-                Play Your Masterstroke
-              </h2>
+          <div className="relative z-10 flex flex-col items-center gap-8">
+            <h2 className="text-white text-4xl md:text-5xl font-bold font-display max-w-2xl">
+              The Future is Agentic.
+              <br />
+              Play Your Masterstroke
+            </h2>
 
-              <p className="text-slate-400 text-lg max-w-xl">
-                Masterstroke is a hands-on, cohort-driven program for
-                engineers building real agentic systems in production
-                environments.
-              </p>
+            <p className="text-slate-400 text-lg max-w-xl">
+              Masterstroke is a hands-on, cohort-driven program for
+              engineers building real agentic systems in production
+              environments.
+            </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={() =>
-                    document
-                      .getElementById("curriculum")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="px-10 py-5 bg-primary text-white font-bold rounded-xl glow-accent hover:scale-105 transition-all active:scale-95 uppercase tracking-widest text-sm"
-                >
-                  Join the Masterstroke Program
-                </button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() =>
+                  document
+                    .getElementById("curriculum")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+                className="px-10 py-5 bg-primary text-white font-bold rounded-xl glow-accent hover:scale-105 transition-all active:scale-95 uppercase tracking-widest text-sm"
+              >
+                Join the Masterstroke Program
+              </button>
 
-                <button className="px-10 py-5 rounded-xl border border-white/10 text-white font-bold uppercase tracking-widest text-sm hover:bg-primary transition-all">
-                  View Case Studies
-                </button>
-              </div>
+              <button className="px-10 py-5 rounded-xl border border-white/10 text-white font-bold uppercase tracking-widest text-sm hover:bg-primary transition-all">
+                View Case Studies
+              </button>
             </div>
           </div>
-        </section>
-      </div>
-    </HomeGate>
+        </div>
+      </section>
+    </div>
   }
 />
 
