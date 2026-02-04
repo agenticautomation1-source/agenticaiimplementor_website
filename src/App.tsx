@@ -4,7 +4,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequireAuth from "./components/RequireAuth";
-import HomeGate from "./components/HomeGate";
+import HomeGate from "./components/HomeGate.tsx";
 
 import SystemsEngineer from "./pages/courses/SystemsEngineer";
 import PlatformArchitect from "./pages/courses/PlatformArchitect";
