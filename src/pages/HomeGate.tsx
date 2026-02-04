@@ -35,6 +35,6 @@ export default function HomeGate({ children }: Props) {
     };
   }, [navigate]);
 
-  if (!ready) return null;
+  
   return <>{children}</>;
 }
