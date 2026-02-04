@@ -1,34 +1,28 @@
 import React, { useState } from "react";
-import { Routes, Route, Link } from "react-router-dom";
-
+import AuthCallback from "./pages/AuthCallback";
+import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequireAuth from "./components/RequireAuth";
-import HomeGate from "./pages/HomeGate.tsx";
-
+import HomeGate from "./components/HomeGate";
 import SystemsEngineer from "./pages/courses/SystemsEngineer";
 import PlatformArchitect from "./pages/courses/PlatformArchitect";
 import GovernanceEngineer from "./pages/courses/GovernanceEngineer";
-
 import AgenticAISystemsEngineer from "./pages/programs/AgenticAISystemsEngineer";
 import GenAIPlatformArchitect from "./pages/programs/GenAIPlatformArchitect";
 import AIValidationGovernanceEngineer from "./pages/programs/AIValidationGovernanceEngineer";
-
 import CookiePolicy from "./pages/CookiePolicy";
 import Contact from "./pages/Contact";
 import Courses from "./pages/Courses";
-
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import LogoMarquee from "./components/LogoMarquee";
 import WhyMasterstroke from "./components/WhyMasterstroke";
 import Curriculum from "./components/Curriculum";
 import AIAdvisor from "./components/AIAdvisor";
-
 import RefundPolicy from "./pages/RefundPolicy";
 import Disclaimer from "./pages/Disclaimer";
 import TermsConditions from "./pages/TermsAndConditions";
-
 import { Course } from "./types";
 
 const App: React.FC = () => {
@@ -37,22 +31,13 @@ const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+const handleEnroll = (course: Course) => {
+  console.log("Enroll clicked:", course);
+};
+
   // ⚠️ LEGACY UI STATE — NOT USED FOR AUTH
   
-  const handleEnroll = (course: Course) => {
-    setSelectedCourse(course);
-  };
 
-  const handlePaymentSuccess = () => {
-    setSelectedCourse(null);
-    setView("lms");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const toggleView = () => {
-    setView((prev) => (prev === "landing" ? "lms" : "landing"));
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background-dark text-slate-100 pointer-events-auto">
@@ -81,8 +66,8 @@ const App: React.FC = () => {
         <LogoMarquee />
 
         <div id="curriculum">
-          <Curriculum onEnroll={handleEnroll} />
-        </div>
+			<Curriculum />
+		</div>
 
         <WhyMasterstroke />
 

@@ -7,17 +7,20 @@ type Props = {
 };
 
 export default function HomeGate({ children }: Props) {
-  const checkedRef = useRef(false);
+  
   const [ready, setReady] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    let mounted = true;
+  let mounted = true;
 
-    const run = async () => {
-      if (checkedRef.current) return;
-      checkedRef.current = true;
+  const run = async () => {
+if (window.location.hash.includes("access_token")) {
+  setReady(true);
+  return;
+}
 
+    try {
       const { data } = await supabase.auth.getSession();
       if (!mounted) return;
 
@@ -25,16 +28,21 @@ export default function HomeGate({ children }: Props) {
         navigate("/dashboard", { replace: true });
         return;
       }
+    } catch (err) {
+      console.error("HomeGate getSession failed:", err);
+    }
 
+    if (mounted) {
       setReady(true);
-    };
+    }
+  };
 
-    run();
-    return () => {
-      mounted = false;
-    };
-  }, [navigate]);
+  run();
 
+  return () => {
+    mounted = false;
+  };
+}, [navigate]);
 if (!ready) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background-dark text-slate-400">

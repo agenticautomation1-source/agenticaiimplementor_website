@@ -6,21 +6,29 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const finalizeLogin = async () => {
+    const finishAuth = async () => {
+      // 🔑 This consumes access_token from URL hash
       const { data, error } = await supabase.auth.getSession();
 
       if (error || !data.session) {
-        console.error("Auth callback failed", error);
+        console.error("OAuth session error:", error);
         navigate("/", { replace: true });
         return;
       }
 
-      // ✅ AUTH IS NOW REAL
+      // ✅ CLEAN THE URL (CRITICAL)
+      window.history.replaceState({}, document.title, "/#/dashboard");
+
+      // ✅ GO TO DASHBOARD
       navigate("/dashboard", { replace: true });
     };
 
-    finalizeLogin();
+    finishAuth();
   }, [navigate]);
 
-  return null;
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background-dark text-slate-400">
+      Signing you in…
+    </div>
+  );
 }
