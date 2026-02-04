@@ -85,7 +85,8 @@ const App: React.FC = () => {
         </div>
 
         <WhyMasterstroke />
-                {/* ================= CTA ================= */}
+
+		{/* ================= CTA ================= */}
                 <section className="max-w-[1200px] mx-auto px-6 py-24">
                   <div className="relative rounded-3xl overflow-hidden p-12 md:p-20 text-center border border-white/5 bg-[#05070c]">
                     <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_0%_0%,rgba(59,130,246,0.18),transparent_60%)] pointer-events-none" />
