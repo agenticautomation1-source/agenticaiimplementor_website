@@ -6,21 +6,16 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const finalizeLogin = async () => {
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error || !data.session) {
-        console.error("Auth callback failed", error);
+    const finalize = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        navigate("/dashboard", { replace: true });
+      } else {
         navigate("/", { replace: true });
-        return;
       }
-
-      // ✅ AUTH IS NOW REAL
-      navigate("/dashboard", { replace: true });
     };
-
-    finalizeLogin();
+    finalize();
   }, [navigate]);
 
-  return null;
+  return <div className="min-h-screen bg-black flex items-center justify-center text-cyan-400">Authenticating...</div>;
 }

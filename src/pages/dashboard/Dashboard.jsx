@@ -7,7 +7,7 @@ export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Retrieve the previous page path from location state or session storage
+  // Retrieve the previous page info if available via state
   const from = location.state?.from || sessionStorage.getItem("dashboard_from");
   
   const [user, setUser] = useState(null);
@@ -17,7 +17,9 @@ export default function Dashboard() {
   const [enrolledPrograms, setEnrolledPrograms] = useState(new Set());
   const paymentHandledRef = useRef(false);
 
-  // ================= FETCH ENROLLMENTS =================
+  // =========================================================
+  // REPAIRED: FETCH ENROLLMENTS (Removed TS Types)
+  // =========================================================
   const fetchEnrollments = async (userId) => {
     const { data, error } = await supabase
       .from("enrollments")
@@ -36,7 +38,9 @@ export default function Dashboard() {
     );
   };
 
-  // ================= FETCH USER & SESSION =================
+  // =========================================================
+  // REPAIRED: SESSION & AUTH LISTENER
+  // =========================================================
   useEffect(() => {
     let mounted = true;
 
@@ -81,7 +85,9 @@ export default function Dashboard() {
     };
   }, []);
 
-  // ================= LOAD RAZORPAY SCRIPT =================
+  // =========================================================
+  // RAZORPAY SCRIPT LOADER
+  // =========================================================
   useEffect(() => {
     if (window.Razorpay) {
       setRazorpayReady(true);
@@ -99,20 +105,39 @@ export default function Dashboard() {
     document.body.appendChild(script);
   }, []);
 
-  // ================= LOGOUT HANDLER =================
+  // =========================================================
+  // REPAIRED: LOGOUT HANDLER
+  // =========================================================
   const handleLogout = async () => {
     await supabase.auth.signOut();
-
-    // 🔴 CRITICAL: clear any remembered redirect
+    // Clear all session/path trackers
     sessionStorage.removeItem("dashboard_from");
-
-    // 🔴 FORCE hard reload to the landing page
+    localStorage.removeItem("returnPath"); 
+    // Force redirect to landing page
     window.location.replace("/#/");
   };
 
-  // ================= RAZORPAY ENROLL HANDLER =================
+  // =========================================================
+  // REPAIRED: BACK TO PROGRAMS LOGIC (CRITICAL BUG FIX)
+  // =========================================================
+  const handleBackToProgram = () => {
+    // 1. Check if we saved a course origin in the Navbar before login
+    const savedCoursePath = localStorage.getItem("returnPath");
+    
+    if (savedCoursePath && savedCoursePath.includes("/courses/")) {
+      // Return to the specific program (SystemsEngineer, PlatformArchitect, etc.)
+      navigate(savedCoursePath);
+    } else {
+      // 2. Fallback for first-time login: Go to "Featured Curriculum" on Home
+      // Note: Make sure your landing page curriculum section has id="curriculum"
+      window.location.href = "/#/#curriculum";
+    }
+  };
+
+  // =========================================================
+  // RAZORPAY ENROLL HANDLER (Removed TS Types)
+  // =========================================================
   const handleEnroll = async (programId) => {
-    // 🛑 GUARD: user must be ready
     if (!user) {
       alert("Session not ready yet. Please wait 1–2 seconds and try again.");
       return;
@@ -141,7 +166,6 @@ export default function Dashboard() {
 
       const data = await res.json();
 
-      // lock UI
       document.documentElement.classList.add("razorpay-open");
       setPaymentInProgress(true);
 
@@ -152,18 +176,13 @@ export default function Dashboard() {
         name: "Masterstroke Program",
         description: programId.replaceAll("-", " "),
         order_id: data.id,
-
-        // 🔴 CRITICAL: prevent Razorpay redirect flow
         redirect: false,
-
         prefill: {
           email: user.email,
         },
-
         theme: {
           color: "#22d3ee",
         },
-
         modal: {
           backdropclose: false,
           escape: false,
@@ -173,7 +192,6 @@ export default function Dashboard() {
             paymentHandledRef.current = false;
           },
         },
-
         handler: async (response) => {
           console.log("RAZORPAY HANDLER FIRED", response);
           setPaymentInProgress(false);
@@ -203,7 +221,8 @@ export default function Dashboard() {
             console.log("PAYMENT VERIFIED SUCCESSFULLY");
             const enrolled = await fetchEnrollments(user.id);
             setEnrolledPrograms(enrolled);
-            alert("Payment verified. You are now enrolled.");
+            alert("Payment verified. You are now enrolled in this program.");
+
           } catch (err) {
             console.error("Verification request crashed", err);
             paymentHandledRef.current = false;
@@ -221,12 +240,15 @@ export default function Dashboard() {
     }
   };
 
+  // =========================================================
+  // CONDITIONAL LOADING RENDER
+  // =========================================================
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-400 bg-[#050608]">
+      <div className="min-h-screen flex items-center justify-center bg-[#050608] text-slate-400">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-xs uppercase tracking-widest">Loading dashboard…</p>
+          <div className="w-10 h-10 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] animate-pulse">Initializing Dashboard</p>
         </div>
       </div>
     );
@@ -238,42 +260,36 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-screen bg-[#050608] text-slate-200 px-6 py-24 font-display">
-      {/* ================= HEADER ================= */}
+
+      {/* ================= HEADER SECTION ================= */}
       <section className="max-w-7xl mx-auto mb-16">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">Dashboard</h1>
-            <p className="text-slate-400 text-sm">
+            <h1 className="text-5xl font-black text-white mb-2 tracking-tighter italic uppercase">Dashboard</h1>
+            <p className="text-slate-500 text-sm font-medium tracking-widest uppercase mb-6">
               Program access and next actions
             </p>
-            
-            {/* CORRECTED BACK TO PROGRAMS BUTTON */}
-            {from ? (
-              <button
-                onClick={() => navigate(from)}
-                className="mt-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400 hover:text-white transition-colors"
-              >
-                <span className="text-lg leading-none">←</span> Back to Program
-              </button>
-            ) : (
-              <button
-                onClick={() => navigate('/')}
-                className="mt-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 hover:text-white transition-colors"
-              >
-                <span className="text-lg leading-none">←</span> Back to Programs
-              </button>
-            )}
+			
+            {/* REPAIRED: <- Back to Programs Button */}
+            <button
+              onClick={handleBackToProgram}
+              className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400 hover:text-white transition-all duration-300"
+            >
+              <span className="text-xl leading-none transition-transform group-hover:-translate-x-2">←</span> 
+              Back to Programs
+            </button>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="hidden md:flex flex-col items-end">
-              <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Authenticated as</span>
-              <span className="text-sm text-white/70">{user.email}</span>
+          <div className="flex items-center gap-6 bg-white/[0.03] border border-white/10 p-4 rounded-2xl">
+            <div className="flex flex-col items-end">
+              <span className="text-[9px] text-slate-500 uppercase tracking-widest font-black mb-1">Authenticated Account</span>
+              <span className="text-xs text-white/70 font-bold">{user.email}</span>
             </div>
+            {/* REPAIRED: Logout Button Present */}
             <button 
               onClick={handleLogout}
-              className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-red-400 hover:border-red-400/30 transition-all"
-              title="Sign Out"
+              className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/5 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
+              title="Terminate Session"
             >
               <span className="material-symbols-outlined text-xl">logout</span>
             </button>
@@ -281,136 +297,166 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* ================= PROGRAMS ================= */}
+      {/* ================= PROGRAMS SECTION ================= */}
       <section className="max-w-7xl mx-auto mb-20">
-        <div className="mb-10">
-          <p className="text-cyan-400 text-xs font-bold uppercase tracking-[0.3em] mb-2">
-            Programs
+        <div className="mb-12">
+          <p className="text-cyan-400 text-[10px] font-black uppercase tracking-[0.5em] mb-3">
+            Available Programs
           </p>
-          <p className="text-slate-400 text-sm">
-            Your current access across Masterstroke programs
+          <p className="text-slate-500 text-sm max-w-2xl leading-relaxed">
+            Manage your progress across the Agentic AI Implementors masterstroke curriculum.
           </p>
         </div>
 
-        <div className="space-y-6">
-          {/* ================= AGENTIC AI SYSTEMS ENGINEER — ACTIVE ================= */}
-          <div className="relative rounded-2xl border border-cyan-400/40 bg-white/[0.02] overflow-hidden group">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(0,220,246,0.18),transparent_62%)] opacity-70" />
-            <div className="relative flex flex-col lg:flex-row lg:items-center justify-between p-8 gap-8">
-              <div className="flex items-start gap-6">
-                <div className="p-4 rounded-xl bg-cyan-400/10 border border-cyan-400/40 text-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.1)]">
-                  <span className="material-symbols-outlined text-3xl">smart_toy</span>
+        <div className="space-y-8">
+
+          {/* ================= AGENTIC AI SYSTEMS ENGINEER block ================= */}
+          <div className="relative rounded-[32px] border border-cyan-400/40 bg-white/[0.02] overflow-hidden group">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(0,220,246,0.15),transparent_60%)]" />
+
+            <div className="relative flex flex-col lg:flex-row lg:items-center justify-between p-10 gap-10">
+              <div className="flex items-start gap-8">
+                <div className="p-5 rounded-2xl bg-cyan-400/10 border border-cyan-400/30 text-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.1)]">
+                  <span className="material-symbols-outlined text-4xl">smart_toy</span>
                 </div>
+
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-1">Agentic AI Systems Engineer</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2 tracking-tight uppercase italic">
+                    Agentic AI Systems Engineer
+                  </h3>
                   <p className="text-slate-400 text-sm max-w-xl leading-relaxed">
                     Build and operate autonomous, tool-using AI systems.
-                    Mastery of multi-agent orchestration and tool-loop grounding.
+                    Mastery of multi-agent orchestration, tool-loop grounding, and enterprise agentic patterns.
                   </p>
                 </div>
               </div>
+
               <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 lg:justify-end">
-                <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest border border-cyan-400/20">
+                <span className="px-4 py-1.5 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-black tracking-widest border border-cyan-400/20">
                   ACTIVE
                 </span>
+
                 <a
                   href="/syllabus/full/Agentic%20AI%20Systems%20Engineer%20–%20Syllabus%20&%20Lesson%20Plan.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-6 py-3 border border-white/10 rounded-lg font-bold uppercase tracking-widest text-[10px] hover:bg-white/5 transition"
+                  className="px-8 py-4 border border-white/10 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-400 hover:text-white hover:bg-white/5 transition-all"
                 >
                   Syllabus (PDF)
                 </a>
+
                 <button
                   onClick={() => navigate('/lms/courses/masterstroke-agentic-ai-systems-engineer')}
-                  className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-[10px] hover:brightness-110 transition shadow-lg shadow-cyan-400/20"
+                  className="px-8 py-4 bg-cyan-400 text-black rounded-xl font-black uppercase tracking-widest text-[10px] hover:brightness-110 shadow-lg shadow-cyan-400/20 transition-all active:scale-95"
                 >
-                  Go to LMS
+                  Access Curriculum
                 </button>
               </div>
             </div>
           </div>
 
-          {/* ================= GENAI PLATFORM ARCHITECT ================= */}
-          <div className="relative rounded-2xl border border-white/10 bg-white/[0.01] overflow-hidden">
-            <div className="relative flex flex-col lg:flex-row lg:items-center justify-between p-8 gap-8">
-              <div className="flex items-start gap-6">
-                <div className="p-4 rounded-xl bg-white/[0.04] border border-white/10 text-yellow-500">
-                  <span className="material-symbols-outlined text-3xl">architecture</span>
+          {/* ================= GENAI PLATFORM ARCHITECT block ================= */}
+          <div className="relative rounded-[32px] border border-white/10 bg-white/[0.01] overflow-hidden group">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(234,179,8,0.12),transparent_60%)]" />
+
+            <div className="relative flex flex-col lg:flex-row lg:items-center justify-between p-10 gap-10">
+              <div className="flex items-start gap-8">
+                <div className="p-5 rounded-2xl bg-white/[0.04] border border-white/10 text-yellow-500">
+                  <span className="material-symbols-outlined text-4xl">architecture</span>
                 </div>
+
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-1">GenAI Platform Architect</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2 tracking-tight uppercase italic">
+                    GenAI Platform Architect
+                  </h3>
                   <p className="text-slate-400 text-sm max-w-xl leading-relaxed">
                     Design scalable GenAI platforms and orchestration layers.
-                    Focus on enterprise-grade reliability and provider abstraction.
+                    Focus on enterprise-grade reliability, provider abstraction, and infrastructure safety.
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+
+              <div className="flex items-center gap-4">
                 <a
                   href="/syllabus/outline/MASTERSTROKE%20–%20GenAI%20Platform%20Architect.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-3 border border-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-white transition"
+                  className="px-6 py-4 border border-white/10 rounded-xl text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all"
                 >
                   Outline
                 </a>
+
                 {enrolledPrograms.has("genai-platform-architect") ? (
-                  <button className="px-6 py-3 bg-white/10 text-white rounded-lg font-bold uppercase tracking-widest text-[10px] cursor-default">
-                    Enrolled
+                  <button className="px-8 py-4 bg-white/10 text-slate-400 rounded-xl font-black uppercase tracking-widest text-[10px] cursor-default border border-white/5">
+                    ENROLLED
                   </button>
                 ) : (
                   <button
                     onClick={() => handleEnroll("genai-platform-architect")}
-                    className="px-6 py-3 bg-white text-black rounded-lg font-bold uppercase tracking-widest text-[10px] hover:bg-slate-200 transition"
+                    className="px-8 py-4 bg-white text-black rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-all active:scale-95 shadow-xl shadow-white/5"
                   >
-                    Enroll
+                    Enroll Now
                   </button>
                 )}
               </div>
             </div>
           </div>
 
-          {/* ================= AI VALIDATION & GOVERNANCE ENGINEER ================= */}
-          <div className="relative rounded-2xl border border-white/10 bg-white/[0.01] overflow-hidden">
-            <div className="relative flex flex-col lg:flex-row lg:items-center justify-between p-8 gap-8">
-              <div className="flex items-start gap-6">
-                <div className="p-4 rounded-xl bg-white/[0.04] border border-white/10 text-red-400">
-                  <span className="material-symbols-outlined text-3xl">gavel</span>
+          {/* ================= AI VALIDATION & GOVERNANCE ENGINEER block ================= */}
+          <div className="relative rounded-[32px] border border-white/10 bg-white/[0.01] overflow-hidden group">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(220,38,38,0.15),transparent_60%)]" />
+
+            <div className="relative flex flex-col lg:flex-row lg:items-center justify-between p-10 gap-10">
+              <div className="flex items-start gap-8">
+                <div className="p-5 rounded-2xl bg-white/[0.04] border border-white/10 text-red-500">
+                  <span className="material-symbols-outlined text-4xl">gavel</span>
                 </div>
+
                 <div>
-                  <h3 className="text-xl font-bold text-slate-300 mb-1">AI Validation & Governance Engineer</h3>
+                  <h3 className="text-2xl font-bold text-slate-300 mb-2 tracking-tight uppercase italic">
+                    AI Validation & Governance Engineer
+                  </h3>
                   <p className="text-slate-400 text-sm max-w-xl leading-relaxed">
                     Ensure safety, compliance, and auditability of AI systems.
-                    Evaluation frameworks and red-teaming automation.
+                    Master evaluation frameworks, adversarial testing, and red-teaming automation.
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+
+              <div className="flex items-center gap-4">
                 <a
                   href="/syllabus/outline/MASTERSTROKE%20–%20AI%20Validation%20&%20Governance%20Engineer.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-3 border border-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-white transition"
+                  className="px-6 py-4 border border-white/10 rounded-xl text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all"
                 >
                   Outline
                 </a>
+
                 {enrolledPrograms.has("ai-validation-governance-engineer") ? (
-                  <button className="px-6 py-3 bg-white/10 text-white rounded-lg font-bold uppercase tracking-widest text-[10px] cursor-default">
-                    Enrolled
+                   <button className="px-8 py-4 bg-white/10 text-slate-400 rounded-xl font-black uppercase tracking-widest text-[10px] cursor-default border border-white/5">
+                    ENROLLED
                   </button>
                 ) : (
                   <button
                     onClick={() => handleEnroll("ai-validation-governance-engineer")}
-                    className="px-6 py-3 bg-white text-black rounded-lg font-bold uppercase tracking-widest text-[10px] hover:bg-slate-200 transition"
+                    className="px-8 py-4 bg-white text-black rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-all active:scale-95 shadow-xl shadow-white/5"
                   >
-                    Enroll
+                    Enroll Now
                   </button>
                 )}
               </div>
             </div>
           </div>
+
         </div>
+      </section>
+
+      {/* ================= PLATFORM UTILITIES FOOTER ================= */}
+      <section className="max-w-7xl mx-auto border-t border-white/5 pt-12 text-center">
+        <p className="text-[9px] text-slate-700 uppercase tracking-[0.6em] font-black">
+          Masterstroke Identity Protocol v2.4.0
+        </p>
       </section>
     </main>
   );
