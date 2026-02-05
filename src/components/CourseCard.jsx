@@ -84,8 +84,8 @@ export default function CourseCard({ course }) {
           </button>
 
           {/* SECONDARY — INTERNAL NAVIGATION */}
-          <Link
-  to={`/${course.detailUrl.replace(/^\/+/, "")}`}
+<Link
+  to={course.detailUrl}
   className="text-center text-xs uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
 >
   View Curriculum

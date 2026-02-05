@@ -7,18 +7,18 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    setSession(data.session);
+  });
+
   const {
     data: { subscription },
-  } = supabase.auth.onAuthStateChange((event, session) => {
-  setSession(session);
-
-  if (event === "SIGNED_IN") {
-    navigate("/dashboard", { replace: true });
-  }
-});
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+  });
 
   return () => subscription.unsubscribe();
-}, [navigate]);
+}, []);
 
 
   const signInWithGoogle = async () => {
@@ -31,9 +31,9 @@ const Navbar: React.FC = () => {
 };
 
   const logout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/";
-  };
+  await supabase.auth.signOut();
+  navigate("/", { replace: true });
+};
 
   return (
     <div className="fixed top-0 left-5 right-5 z-50 py-4 pointer-events-none">
