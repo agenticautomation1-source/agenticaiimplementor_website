@@ -56,13 +56,13 @@ const handleEnroll = (course: Course) => {
 
           {/* ================= DASHBOARD (AUTH REQUIRED) ================= */}
           <Route
-            path="/dashboard"
-            element={
-              <RequireAuth>
-                <Dashboard setPaymentOpen={setPaymentOpen} />
-              </RequireAuth>
-            }
-          />
+  path="/dashboard"
+  element={
+    <RequireAuth>
+      <Dashboard key="dashboard" setPaymentOpen={setPaymentOpen} />
+    </RequireAuth>
+  }
+/>
 
 {/* ================= HOME ================= */}
 <Route
