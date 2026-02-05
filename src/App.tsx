@@ -1,3 +1,5 @@
+import Programs from "./pages/Programs";
+import LearningPaths from "./pages/LearningPaths";
 import { useEffect } from "react";
 import { supabase } from "./lib/supabaseClient";
 
@@ -123,6 +125,8 @@ const handleEnroll = (course: Course) => {
 
           {/* ================= COURSES ================= */}
           <Route path="/courses" element={<Courses />} />
+<Route path="/programs" element={<Programs />} />
+<Route path="/learning-paths" element={<LearningPaths />} />
 
           {/* ================= POLICY PAGES ================= */}
           <Route path="/refund-policy" element={<RefundPolicy />} />
