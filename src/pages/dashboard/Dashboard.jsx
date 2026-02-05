@@ -1,10 +1,10 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 import { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function Dashboard() {
-
+const navigate = useNavigate();
 const location = useLocation();
 
 const from =
@@ -261,15 +261,19 @@ if (!authLoading && !user) {
               Program access and next actions
             </p>
 			
-			{from && (
-  <button
-    onClick={() => window.location.replace(`/#${from.replace(/^\/+/, "")}`)}
-
-    className="mt-4 text-xs uppercase tracking-widest text-cyan-400 hover:underline"
-  >
-    ← Back to Program
-  </button>
-)}
+<button
+  onClick={() => {
+    navigate("/");
+    setTimeout(() => {
+      document
+        .getElementById("curriculum")
+        ?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  }}
+  className="mt-4 text-xs uppercase tracking-widest text-cyan-400 hover:underline"
+>
+  ← Back to Program
+</button>			
 
           </div>
 
