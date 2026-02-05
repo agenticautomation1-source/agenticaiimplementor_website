@@ -1,24 +1,17 @@
+import Courses from "./pages/Courses";
 import Programs from "./pages/Programs";
 import LearningPaths from "./pages/LearningPaths";
-import { useEffect } from "react";
-import { supabase } from "./lib/supabaseClient";
-
 import React, { useState } from "react";
 import AuthCallback from "./pages/AuthCallback";
 import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequireAuth from "./components/RequireAuth";
-
 import SystemsEngineer from "./pages/courses/SystemsEngineer";
 import PlatformArchitect from "./pages/courses/PlatformArchitect";
 import GovernanceEngineer from "./pages/courses/GovernanceEngineer";
-import AgenticAISystemsEngineer from "./pages/programs/AgenticAISystemsEngineer";
-import GenAIPlatformArchitect from "./pages/programs/GenAIPlatformArchitect";
-import AIValidationGovernanceEngineer from "./pages/programs/AIValidationGovernanceEngineer";
 import CookiePolicy from "./pages/CookiePolicy";
 import Contact from "./pages/Contact";
-import Courses from "./pages/Courses";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import LogoMarquee from "./components/LogoMarquee";
@@ -28,18 +21,12 @@ import AIAdvisor from "./components/AIAdvisor";
 import RefundPolicy from "./pages/RefundPolicy";
 import Disclaimer from "./pages/Disclaimer";
 import TermsConditions from "./pages/TermsAndConditions";
-import { Course } from "./types";
+
 
 const App: React.FC = () => {
 
   const [paymentOpen, setPaymentOpen] = useState(false);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
-const handleEnroll = (course: Course) => {
-  console.log("Enroll clicked:", course);
-};
 
   // ⚠️ LEGACY UI STATE — NOT USED FOR AUTH
   

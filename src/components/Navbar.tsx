@@ -30,9 +30,9 @@ const Navbar: React.FC = () => {
   }; 
 
   const logout = async () => {
-    await supabase.auth.signOut();
-    navigate("/", { replace: true });
-  };
+  await supabase.auth.signOut();
+  window.location.replace("/");
+};
 
   return (
     <div className="fixed top-0 left-5 right-5 z-50 py-4 pointer-events-none">

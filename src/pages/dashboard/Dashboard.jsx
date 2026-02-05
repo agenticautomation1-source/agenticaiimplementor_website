@@ -243,6 +243,7 @@ if (authLoading) {
 }
 
 if (!authLoading && !user) {
+  navigate("/", { replace: true });
   return null;
 }
 
