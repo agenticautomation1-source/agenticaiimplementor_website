@@ -1,23 +1,40 @@
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
-import { useEffect, useState } from "react";
 
-export default function RequireAuth({ children }: { children: JSX.Element }) {
+type Props = {
+  children: React.ReactNode;
+};
+
+export default function RequireAuth({ children }: Props) {
   const [loading, setLoading] = useState(true);
-  const [session, setSession] = useState<any>(null);
+  const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+    let mounted = true;
+
+    const check = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!mounted) return;
+
+      setAuthenticated(!!data.session);
       setLoading(false);
-    });
+    };
+
+    check();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  if (loading) return null;
+  if (loading) {
+    return null; // or a spinner if you want
+  }
 
-  if (!session) {
+  if (!authenticated) {
     return <Navigate to="/" replace />;
   }
 
-  return children;
+  return <>{children}</>;
 }
