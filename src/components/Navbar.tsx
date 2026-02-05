@@ -7,33 +7,32 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-  supabase.auth.getSession().then(({ data }) => {
-    setSession(data.session);
-  });
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+    });
 
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange((_event, session) => {
-    setSession(session);
-  });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
 
-  return () => subscription.unsubscribe();
-}, []);
-
+    return () => subscription.unsubscribe();
+  }, []);
 
   const signInWithGoogle = async () => {
-  await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
-    },
-  });
-
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+  }; 
 
   const logout = async () => {
-  await supabase.auth.signOut();
-  navigate("/", { replace: true });
-};
+    await supabase.auth.signOut();
+    navigate("/", { replace: true });
+  };
 
   return (
     <div className="fixed top-0 left-5 right-5 z-50 py-4 pointer-events-none">
@@ -91,7 +90,7 @@ const Navbar: React.FC = () => {
         <div className="flex items-center gap-4 md:gap-8">
           <nav className="hidden lg:flex items-center gap-6">
             <Link to="/programs" className="nav-link">Programs</Link>
-<Link to="/learning-paths" className="nav-link">Learning Paths</Link>
+            <Link to="/learning-paths" className="nav-link">Learning Paths</Link>
             <Link to="/courses" className="nav-link">Courses</Link>
             <Link to="/about" className="nav-link">About</Link>
             <Link to="/contact" className="nav-link">Contact</Link>
