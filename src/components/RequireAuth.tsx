@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 type Props = {
@@ -8,33 +8,44 @@ type Props = {
 
 export default function RequireAuth({ children }: Props) {
   const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [session, setSession] = useState<any>(null);
+  const location = useLocation();
 
   useEffect(() => {
     let mounted = true;
 
-    const check = async () => {
-      const { data } = await supabase.auth.getSession();
+    // 1️⃣ Get initial session
+    supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
-
-      setAuthenticated(!!data.session);
+      setSession(data.session);
       setLoading(false);
-    };
+    });
 
-    check();
+    // 2️⃣ Listen for OAuth completion
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      setSession(session);
+      setLoading(false);
+    });
 
     return () => {
       mounted = false;
+      subscription.unsubscribe();
     };
   }, []);
 
+  // ⏳ Wait — do NOT redirect while loading
   if (loading) {
-    return null; // or a spinner if you want
+    return null;
   }
 
-  if (!authenticated) {
-    return <Navigate to="/" replace />;
+  // ❌ No session → kick out
+  if (!session) {
+    return <Navigate to="/" replace state={{ from: location }} />;
   }
 
+  // ✅ Auth confirmed
   return <>{children}</>;
 }
