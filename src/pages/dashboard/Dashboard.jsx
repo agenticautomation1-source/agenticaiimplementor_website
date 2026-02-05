@@ -7,9 +7,6 @@ export default function Dashboard() {
 const navigate = useNavigate();
 const location = useLocation();
 
-const from =
-  location.state?.from ||
-  sessionStorage.getItem("dashboard_from");
   
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -108,7 +105,7 @@ useEffect(() => {
   sessionStorage.removeItem("dashboard_from");
 
   // 🔴 FORCE hard reload to kill Supabase cache
-  window.location.replace("/#/");
+  window.location.replace("/");
 };
 
 
