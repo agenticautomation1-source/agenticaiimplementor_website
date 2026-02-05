@@ -1,3 +1,4 @@
+import { Navigate } from "react-router-dom";
 import Courses from "./pages/Courses";
 import Programs from "./pages/Programs";
 import LearningPaths from "./pages/LearningPaths";
@@ -119,9 +120,9 @@ const App: React.FC = () => {
       element={<PlatformArchitect />}
     />
     <Route
-      path="/courses/ai-validation-governance-engineer"
-      element={<GovernanceEngineer />}
-    />
+  path="/courses/ai-validation-governance-engineer"
+  element={<GovernanceEngineer />}
+/>
 
     {/* ================= PROGRAMS / LEARNING ================= */}
     <Route path="/programs" element={<Programs />} />
@@ -136,6 +137,9 @@ const App: React.FC = () => {
 
     {/* ================= TEST ================= */}
     <Route path="/test-auth" element={<TestAuth />} />
+
+<Route path="*" element={<Navigate to="/" replace />} />
+
   </Routes>
 </main>
 

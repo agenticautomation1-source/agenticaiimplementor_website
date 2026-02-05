@@ -85,7 +85,7 @@ export default function CourseCard({ course }) {
 
           {/* SECONDARY — INTERNAL NAVIGATION */}
 <Link
-  to={course.detailUrl}
+  to={`/courses/${course.slug}`}
   className="text-center text-xs uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
 >
   View Curriculum

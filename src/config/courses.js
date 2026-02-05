@@ -5,6 +5,7 @@ import governanceImg from "../assets/courses/ai-validation-governance.png";
 export const MASTERSTROKE_COURSES = {
   systemsEngineer: {
     id: "systems-engineer",
+    slug: "agentic-ai-systems-engineer",
     title: "MASTERSTROKE – Agentic AI Systems Engineer",
     description:
       "Production-grade agentic AI systems built with hybrid architectures",
@@ -12,16 +13,14 @@ export const MASTERSTROKE_COURSES = {
     level: "Intermediate → Advanced",
     image: systemsImg,
 
-    // INTERNAL REACT PAGE
-    detailUrl: "/courses/agentic-ai-systems-engineer",
-
-    // EXTERNAL TUTORLMS / WOOCOMMERCE
+    // EXTERNAL LMS / WOOCOMMERCE
     enrollUrl:
       "https://agenticaiimplementors.com/lms/courses/masterstroke-agentic-ai-systems-engineer/",
   },
 
   platformArchitect: {
     id: "platform-architect",
+    slug: "genai-platform-architect",
     title: "MASTERSTROKE – GenAI Platform Architect",
     description:
       "Design the enterprise GenAI platforms others build on",
@@ -29,16 +28,14 @@ export const MASTERSTROKE_COURSES = {
     level: "Advanced",
     image: platformImg,
 
-    // INTERNAL REACT PAGE
-    detailUrl: "/courses/genai-platform-architect",
-
-    // EXTERNAL TUTORLMS / WOOCOMMERCE
+    // EXTERNAL LMS / WOOCOMMERCE
     enrollUrl:
       "https://agenticaiimplementors.com/lms/courses/masterstroke-genai-platform-architect/",
   },
 
   governanceEngineer: {
     id: "governance-engineer",
+    slug: "ai-validation-governance-engineer",
     title: "MASTERSTROKE – AI Validation & Governance Engineer",
     description:
       "Validation, auditability, and compliance for production AI",
@@ -46,10 +43,7 @@ export const MASTERSTROKE_COURSES = {
     level: "Advanced",
     image: governanceImg,
 
-    // INTERNAL REACT PAGE
-    detailUrl: "/courses/ai-validation-governance-engineer",
-
-    // EXTERNAL TUTORLMS / WOOCOMMERCE
+    // EXTERNAL LMS / WOOCOMMERCE
     enrollUrl:
       "https://agenticaiimplementors.com/lms/courses/masterstroke-ai-validation-governance-engineer/",
   },
