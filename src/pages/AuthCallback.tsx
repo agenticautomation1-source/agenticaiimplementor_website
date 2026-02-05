@@ -1,14 +1,24 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 export default function AuthCallback() {
-  useEffect(() => {
-    supabase.auth.getSession();
-  }, []);
+  const navigate = useNavigate();
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background-dark text-slate-400">
-      Signing you in…
-    </div>
-  );
+  useEffect(() => {
+    const finalize = async () => {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error || !data.session) {
+        navigate("/", { replace: true });
+        return;
+      }
+
+      navigate("/dashboard", { replace: true });
+    };
+
+    finalize();
+  }, [navigate]);
+
+  return <div className="min-h-screen bg-black" />;
 }

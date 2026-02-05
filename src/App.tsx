@@ -50,6 +50,10 @@ const handleEnroll = (course: Course) => {
 
       <main className="flex-1">
         <Routes>
+
+  {/* ================= AUTH CALLBACK ================= */}
+  <Route path="/auth/callback" element={<AuthCallback />} />
+
           {/* ================= DASHBOARD (AUTH REQUIRED) ================= */}
           <Route
             path="/dashboard"

@@ -20,13 +20,13 @@ const Navbar: React.FC = () => {
   }, []);
 
   const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin, // ❗️NO dashboard here
-      },
-    });
-  };
+  await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    },
+  });
+};
 
   const logout = async () => {
     await supabase.auth.signOut();
