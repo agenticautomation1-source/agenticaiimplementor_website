@@ -9,13 +9,13 @@ const Navbar: React.FC = () => {
   useEffect(() => {
   const {
     data: { subscription },
-  } = supabase.auth.onAuthStateChange((_event, session) => {
-    setSession(session);
+  } = supabase.auth.onAuthStateChange((event, session) => {
+  setSession(session);
 
-    if (session) {
-      navigate("/dashboard", { replace: true });
-    }
-  });
+  if (event === "SIGNED_IN") {
+    navigate("/dashboard", { replace: true });
+  }
+});
 
   return () => subscription.unsubscribe();
 }, [navigate]);
