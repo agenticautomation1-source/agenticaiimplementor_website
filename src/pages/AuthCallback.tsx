@@ -1,27 +1,23 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 export default function AuthCallback() {
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const finalizeAuth = async () => {
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error) {
-        console.error("Auth callback error:", error);
-        window.location.replace("/#/");
-        return;
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          navigate("/dashboard", { replace: true });
+        }
       }
+    );
 
-      if (data.session) {
-        // ✅ HARD redirect is REQUIRED for HashRouter
-        window.location.replace("/#/dashboard");
-      } else {
-        window.location.replace("/#/");
-      }
+    return () => {
+      listener.subscription.unsubscribe();
     };
-
-    finalizeAuth();
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center text-slate-400">

@@ -50,109 +50,108 @@ const handleEnroll = (course: Course) => {
       {/* AUTH-AWARE NAVBAR */}
       <Navbar />
 
-      <main className="flex-1">
-        <Routes>
+ <main className="flex-1">
+  <Routes>
+    {/* ================= AUTH ================= */}
+    <Route path="/auth/callback" element={<AuthCallback />} />
 
-  {/* ================= AUTH CALLBACK ================= */}
-  <Route path="/auth/callback" element={<AuthCallback />} />
+    {/* ================= DASHBOARD (AUTH REQUIRED) ================= */}
+    <Route
+      path="/dashboard"
+      element={
+        <RequireAuth>
+          <Dashboard />
+        </RequireAuth>
+      }
+    />
 
-          {/* ================= DASHBOARD (AUTH REQUIRED) ================= */}
-          <Route
-  path="/dashboard"
-  element={
-    <RequireAuth>
-      <Dashboard key="dashboard" setPaymentOpen={setPaymentOpen} />
-    </RequireAuth>
-  }
-/>
+    {/* ================= HOME ================= */}
+    <Route
+      path="/"
+      element={
+        <>
+          <Hero />
+          <LogoMarquee />
 
-{/* ================= HOME ================= */}
-<Route
-  path="/"
-  element={
-    <div>
-      <Hero />
-      <LogoMarquee />
-
-      <div id="curriculum">
-        <Curriculum />
-      </div>
-
-      <WhyMasterstroke />
-
-      {/* ================= CTA ================= */}
-      <section className="max-w-[1200px] mx-auto px-6 py-24">
-        <div className="relative rounded-3xl overflow-hidden p-12 md:p-20 text-center border border-white/5 bg-[#05070c]">
-          <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_0%_0%,rgba(59,130,246,0.18),transparent_60%)] pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 pointer-events-none" />
-
-          <div className="relative z-10 flex flex-col items-center gap-8">
-            <h2 className="text-white text-4xl md:text-5xl font-bold font-display max-w-2xl">
-              The Future is Agentic.
-              <br />
-              Play Your Masterstroke
-            </h2>
-
-            <p className="text-slate-400 text-lg max-w-xl">
-              Masterstroke is a hands-on, cohort-driven program for
-              engineers building real agentic systems in production
-              environments.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() =>
-                  document
-                    .getElementById("curriculum")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="px-10 py-5 bg-primary text-white font-bold rounded-xl glow-accent hover:scale-105 transition-all active:scale-95 uppercase tracking-widest text-sm"
-              >
-                Join the Masterstroke Program
-              </button>
-
-              <button className="px-10 py-5 rounded-xl border border-white/10 text-white font-bold uppercase tracking-widest text-sm hover:bg-primary transition-all">
-                View Case Studies
-              </button>
-            </div>
+          <div id="curriculum">
+            <Curriculum />
           </div>
-        </div>
-      </section>
-    </div>
-  }
-/>
 
-          {/* ================= COURSES ================= */}
-          <Route path="/courses" element={<Courses />} />
-<Route path="/programs" element={<Programs />} />
-<Route path="/learning-paths" element={<LearningPaths />} />
+          <WhyMasterstroke />
 
-          {/* ================= POLICY PAGES ================= */}
-          <Route path="/refund-policy" element={<RefundPolicy />} />
-          <Route path="/disclaimer" element={<Disclaimer />} />
-          <Route path="/terms-and-conditions" element={<TermsConditions />} />
-          <Route path="/cookie-policy" element={<CookiePolicy />} />
-          <Route path="/contact" element={<Contact />} />
+          <section className="max-w-[1200px] mx-auto px-6 py-24">
+            <div className="relative rounded-3xl overflow-hidden p-12 md:p-20 text-center border border-white/5 bg-[#05070c]">
+              <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_0%_0%,rgba(59,130,246,0.18),transparent_60%)] pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 pointer-events-none" />
 
-          {/* ================= TEST AUTH ================= */}
-          <Route path="/test-auth" element={<TestAuth />} />
+              <div className="relative z-10 flex flex-col items-center gap-8">
+                <h2 className="text-white text-4xl md:text-5xl font-bold font-display max-w-2xl">
+                  The Future is Agentic.
+                  <br />
+                  Play Your Masterstroke
+                </h2>
 
-          {/* ================= PROGRAM / COURSE PAGES ================= */}
-          <Route
-            path="/courses/agentic-ai-systems-engineer"
-            element={<SystemsEngineer />}
-          />
-          <Route
-            path="/courses/genai-platform-architect"
-            element={<PlatformArchitect />}
-          />
-          <Route
-            path="/courses/ai-validation-governance-engineer"
-            element={<GovernanceEngineer />}
-          />
-        </Routes>
-      </main>
+                <p className="text-slate-400 text-lg max-w-xl">
+                  Masterstroke is a hands-on, cohort-driven program for
+                  engineers building real agentic systems in production
+                  environments.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
+                    onClick={() =>
+                      document
+                        .getElementById("curriculum")
+                        ?.scrollIntoView({ behavior: "smooth" })
+                    }
+                    className="px-10 py-5 bg-primary text-white font-bold rounded-xl glow-accent hover:scale-105 transition-all active:scale-95 uppercase tracking-widest text-sm"
+                  >
+                    Join the Masterstroke Program
+                  </button>
+
+                  <button className="px-10 py-5 rounded-xl border border-white/10 text-white font-bold uppercase tracking-widest text-sm hover:bg-primary transition-all">
+                    View Case Studies
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </>
+      }
+    />
+
+    {/* ================= COURSES ================= */}
+    <Route path="/courses" element={<Courses />} />
+    <Route
+      path="/courses/agentic-ai-systems-engineer"
+      element={<SystemsEngineer />}
+    />
+    <Route
+      path="/courses/genai-platform-architect"
+      element={<PlatformArchitect />}
+    />
+    <Route
+      path="/courses/ai-validation-governance-engineer"
+      element={<GovernanceEngineer />}
+    />
+
+    {/* ================= PROGRAMS / LEARNING ================= */}
+    <Route path="/programs" element={<Programs />} />
+    <Route path="/learning-paths" element={<LearningPaths />} />
+
+    {/* ================= POLICY / INFO ================= */}
+    <Route path="/refund-policy" element={<RefundPolicy />} />
+    <Route path="/disclaimer" element={<Disclaimer />} />
+    <Route path="/terms-and-conditions" element={<TermsConditions />} />
+    <Route path="/cookie-policy" element={<CookiePolicy />} />
+    <Route path="/contact" element={<Contact />} />
+
+    {/* ================= TEST ================= */}
+    <Route path="/test-auth" element={<TestAuth />} />
+  </Routes>
+</main>
+
 
       {/* ================= FOOTER ================= */}
       <footer className="border-t border-white/5 bg-charcoal/50 py-20">
