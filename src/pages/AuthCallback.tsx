@@ -6,19 +6,29 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const finalize = async () => {
+    const finalizeAuth = async () => {
       const { data, error } = await supabase.auth.getSession();
 
-      if (error || !data.session) {
+      if (error) {
+        console.error("Auth callback error:", error);
         navigate("/", { replace: true });
         return;
       }
 
-      navigate("/dashboard", { replace: true });
+      if (data.session) {
+        // ✅ Session is now hydrated from hash
+        navigate("/dashboard", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
     };
 
-    finalize();
+    finalizeAuth();
   }, [navigate]);
 
-  return <div className="min-h-screen bg-black" />;
+  return (
+    <div className="min-h-screen flex items-center justify-center text-slate-400">
+      Completing sign-in…
+    </div>
+  );
 }
