@@ -1,26 +1,37 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
+  const handledRef = useRef(false);
 
   useEffect(() => {
-    const completeOAuth = async () => {
-      const { data, error } =
-        await supabase.auth.exchangeCodeForSession(window.location.href);
+    const resolveSession = async () => {
+      if (handledRef.current) return;
+      handledRef.current = true;
 
-      if (error) {
-        console.error("OAuth exchange failed:", error);
-        return;
-      }
+      try {
+        // 🔴 REQUIRED IN SUPABASE v2
+        const { error } = await supabase.auth.exchangeCodeForSession(
+          window.location.href
+        );
 
-      if (data.session) {
+        if (error) {
+          console.error("Session exchange failed:", error);
+          navigate("/", { replace: true });
+          return;
+        }
+
+        // ✅ Session is now REAL
         navigate("/dashboard", { replace: true });
+      } catch (err) {
+        console.error("OAuth callback crashed:", err);
+        navigate("/", { replace: true });
       }
     };
 
-    completeOAuth();
+    resolveSession();
   }, [navigate]);
 
   return (
