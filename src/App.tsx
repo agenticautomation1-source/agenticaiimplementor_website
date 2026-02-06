@@ -40,10 +40,10 @@ const App: React.FC = () => {
 
  <main className="flex-1 min-h-screen">
 <Routes>
-  {/* ================= AUTH CALLBACK ================= */}
+  {/* AUTH CALLBACK */}
   <Route path="/auth/callback" element={<AuthCallback />} />
 
-  {/* ================= DASHBOARD (PROTECTED) ================= */}
+  {/* DASHBOARD (PROTECTED) */}
   <Route
     path="/dashboard"
     element={
@@ -53,7 +53,7 @@ const App: React.FC = () => {
     }
   />
 
-  {/* ================= HOME (PUBLIC — NO AUTH LOGIC HERE) ================= */}
+  {/* HOME */}
   <Route
     path="/"
     element={
@@ -109,9 +109,10 @@ const App: React.FC = () => {
     }
   />
 
-  {/* ================= FALLBACK ================= */}
+  {/* FALLBACK */}
   <Route path="*" element={<Navigate to="/" replace />} />
 </Routes>
+
 
     {/* ================= COURSES ================= */}
     <Route path="/courses" element={<Courses />} />
