@@ -1,4 +1,3 @@
-import HomeGate from "./components/HomeGate";
 import { Navigate } from "react-router-dom";
 import Courses from "./pages/Courses";
 import Programs from "./pages/Programs";
@@ -40,13 +39,24 @@ const App: React.FC = () => {
       <Navbar />
 
  <main className="flex-1 min-h-screen">
-  <Routes>
-<Route path="/auth/callback" element={<AuthCallback />} />
+<Routes>
+  {/* ================= AUTH CALLBACK ================= */}
+  <Route path="/auth/callback" element={<AuthCallback />} />
 
-<Route
-  path="/"
-  element={
-    <HomeGate>
+  {/* ================= DASHBOARD (PROTECTED) ================= */}
+  <Route
+    path="/dashboard"
+    element={
+      <RequireAuth>
+        <Dashboard />
+      </RequireAuth>
+    }
+  />
+
+  {/* ================= HOME (PUBLIC — NO AUTH LOGIC HERE) ================= */}
+  <Route
+    path="/"
+    element={
       <>
         <Hero />
         <LogoMarquee />
@@ -96,10 +106,12 @@ const App: React.FC = () => {
           </div>
         </section>
       </>
-    </HomeGate>
-  }
-/>
+    }
+  />
 
+  {/* ================= FALLBACK ================= */}
+  <Route path="*" element={<Navigate to="/" replace />} />
+</Routes>
 
     {/* ================= COURSES ================= */}
     <Route path="/courses" element={<Courses />} />
