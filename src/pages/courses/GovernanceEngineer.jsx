@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import ProgramEnrollment from "../../components/ProgramEnrollment";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function AIValidationGovernanceEngineer() {
   useEffect(() => {
@@ -30,9 +31,6 @@ export default function AIValidationGovernanceEngineer() {
             Build AI systems that are safe, auditable, compliant, and trusted
             in enterprise environments.
           </p>
-
-          {/* ================= PROGRAM ENROLLMENT (AUTH) ================= */}
-          <ProgramEnrollment programSlug="ai-validation-governance-engineer" />
 
           <button
             className="mt-6 px-10 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-sm rounded-lg hover:bg-white/5"
