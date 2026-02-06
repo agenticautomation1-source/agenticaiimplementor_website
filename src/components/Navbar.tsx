@@ -29,9 +29,9 @@ const Navbar: React.FC = () => {
     });
   }; 
 
-  const logout = async () => {
+const logout = async () => {
   await supabase.auth.signOut();
-  window.location.replace("/");
+  navigate("/", { replace: true });
 };
 
   return (

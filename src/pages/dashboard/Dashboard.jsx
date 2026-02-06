@@ -106,7 +106,7 @@ useEffect(() => {
   sessionStorage.removeItem("dashboard_from");
 
   // 🔴 FORCE hard reload to kill Supabase cache
-  window.location.replace("/");
+  navigate("/", { replace: true });
 };
 
 

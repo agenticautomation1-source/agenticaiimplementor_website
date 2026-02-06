@@ -14,7 +14,7 @@ export default function HomeGate({ children }: Props) {
         const { data } = await supabase.auth.getSession();
         if (data.session) {
           // logged-in users should not see landing
-          window.location.replace("/#/dashboard");
+          navigate("/dashboard", { replace: true });
           return;
         }
       } catch (e) {

@@ -138,7 +138,10 @@ const App: React.FC = () => {
     {/* ================= TEST ================= */}
     <Route path="/test-auth" element={<TestAuth />} />
 
-<Route path="*" element={<Navigate to="/" replace />} />
+<Route
+  path="*"
+  element={<Navigate to="/" replace />}
+ />
 
   </Routes>
 </main>
