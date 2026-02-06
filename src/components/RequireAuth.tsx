@@ -8,7 +8,7 @@ type Props = {
 
 export default function RequireAuth({ children }: Props) {
   const [loading, setLoading] = useState(true);
-  const [session, setSession] = useState<any>(null);
+const [authenticated, setAuthenticated] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -16,19 +16,19 @@ export default function RequireAuth({ children }: Props) {
 
     // 1️⃣ Get initial session
     supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setLoading(false);
-    });
+  if (!mounted) return;
+  setAuthenticated(!!data.session);
+  setLoading(false);
+});
 
     // 2️⃣ Listen for OAuth completion
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!mounted) return;
-      setSession(session);
-      setLoading(false);
-    });
+  if (!mounted) return;
+  setAuthenticated(!!session);
+  setLoading(false);
+});
 
     return () => {
       mounted = false;
@@ -42,9 +42,9 @@ export default function RequireAuth({ children }: Props) {
   }
 
   // ❌ No session → kick out
-  if (!session) {
-    return <Navigate to="/" replace state={{ from: location }} />;
-  }
+  if (!authenticated) {
+  return <Navigate to="/" replace state={{ from: location }} />;
+}
 
   // ✅ Auth confirmed
   return <>{children}</>;
