@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
+import ProgramEnrollment from "../../components/ProgramEnrollment";
 
 export default function AIValidationGovernanceEngineer() {
   useEffect(() => {
@@ -72,33 +73,6 @@ export default function AIValidationGovernanceEngineer() {
             enterprise environments.
           </p>
 
-          {/* ================= AUTH CTA ================= */}
-          <div className="flex flex-col items-center gap-4 justify-center">
-            <button
-              onClick={signInWithGoogle}
-              disabled={loading}
-              className="px-10 py-4 bg-red-500 text-black font-bold uppercase tracking-widest text-sm rounded-lg hover:brightness-110 disabled:opacity-60"
-            >
-              Continue with Google
-            </button>
-
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-sm text-white focus:outline-none"
-              />
-              <button
-                onClick={signInWithEmail}
-                disabled={loading}
-                className="px-6 py-3 border border-white/20 rounded-lg font-bold uppercase tracking-widest text-xs hover:bg-white/5 disabled:opacity-60"
-              >
-                Email Login
-              </button>
-            </div>
-
             <button className="px-10 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-sm rounded-lg hover:bg-white/5">
               Download Syllabus
             </button>
@@ -169,6 +143,10 @@ export default function AIValidationGovernanceEngineer() {
           </div>
         </div>
       </section>
+
+      {/* ================= PROGRAM ENROLLMENT ================= */}
+      <ProgramEnrollment programSlug="agentic-ai-systems-engineer" />
+
     </main>
   );
 }
