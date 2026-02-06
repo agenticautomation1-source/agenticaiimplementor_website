@@ -30,8 +30,21 @@ const Navbar: React.FC = () => {
   }; 
 
 const logout = async () => {
+  const confirmLogout = window.confirm(
+    "Do you want to log out from Google?"
+  );
+
+  if (!confirmLogout) return;
+
+  // 1️⃣ Supabase sign out
   await supabase.auth.signOut();
-  navigate("/", { replace: true });
+
+  // 2️⃣ Clear all client-side auth remnants
+  sessionStorage.clear();
+  localStorage.clear();
+
+  // 3️⃣ HARD redirect to kill memory state
+  window.location.replace("/");
 };
 
   return (
