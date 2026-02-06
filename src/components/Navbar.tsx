@@ -30,20 +30,17 @@ const Navbar: React.FC = () => {
   }; 
 
 const logout = async () => {
-  const confirmLogout = window.confirm(
-    "Do you want to log out from Google?"
+  const confirmed = window.confirm(
+    "You’re logging out of Masterstroke - Agentic AI Implementors.\n\n" +
+    "For security, Google may keep you signed in at the browser level.\n" +
+    "You may be asked to choose your account again next time."
   );
 
-  if (!confirmLogout) return;
+  if (!confirmed) return;
 
-  // 1️⃣ Supabase sign out
   await supabase.auth.signOut();
 
-  // 2️⃣ Clear all client-side auth remnants
-  sessionStorage.clear();
-  localStorage.clear();
-
-  // 3️⃣ HARD redirect to kill memory state
+  // Hard redirect to reset app state
   window.location.replace("/");
 };
 
