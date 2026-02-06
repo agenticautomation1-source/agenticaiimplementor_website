@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { useEffect } from "react";
 import ProgramEnrollment from "../../components/ProgramEnrollment";
 
 export default function AIValidationGovernanceEngineer() {
@@ -7,55 +6,12 @@ export default function AIValidationGovernanceEngineer() {
     window.scrollTo(0, 0);
   }, []);
 
-  // ================= EMAIL STATE =================
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  // ================= GOOGLE SIGN-IN =================
-  const signInWithGoogle = async () => {
-    try {
-      setLoading(true);
-      await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-    } catch (err) {
-      console.error("Google sign-in error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ================= EMAIL OTP SIGN-IN =================
-  const signInWithEmail = async () => {
-    if (!email) return;
-
-    try {
-      setLoading(true);
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (error) {
-        console.error("Email sign-in error:", error);
-      }
-    } catch (err) {
-      console.error("Email sign-in exception:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <main className="bg-[#050608] text-slate-200 font-display">
       {/* ================= HERO ================= */}
       <section className="relative pt-40 pb-32 px-6 lg:px-20 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-[520px] bg-gradient-to-b from-red-600/10 to-transparent blur-[160px]" />
+
         <div className="relative z-10 max-w-5xl mx-auto text-center">
           <span className="inline-block mb-6 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-red-500/30 text-red-400 bg-red-500/5">
             Enrollment Open
@@ -73,10 +29,9 @@ export default function AIValidationGovernanceEngineer() {
             enterprise environments.
           </p>
 
-            <button className="px-10 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-sm rounded-lg hover:bg-white/5">
-              Download Syllabus
-            </button>
-          </div>
+          <button className="px-10 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-sm rounded-lg hover:bg-white/5">
+            Download Syllabus
+          </button>
         </div>
       </section>
 
@@ -86,6 +41,7 @@ export default function AIValidationGovernanceEngineer() {
           <p className="text-red-400 text-xs font-bold uppercase tracking-[0.3em] mb-4 text-center">
             Who This Program Is For
           </p>
+
           <h2 className="text-4xl font-bold text-white text-center mb-20">
             For engineers who control AI risk
           </h2>
@@ -145,8 +101,7 @@ export default function AIValidationGovernanceEngineer() {
       </section>
 
       {/* ================= PROGRAM ENROLLMENT ================= */}
-      <ProgramEnrollment programSlug="agentic-ai-systems-engineer" />
-
+      <ProgramEnrollment programSlug="ai-validation-governance-engineer" />
     </main>
   );
 }
