@@ -1,7 +1,8 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
 import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function Dashboard() {
 const navigate = useNavigate();
