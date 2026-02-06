@@ -80,20 +80,6 @@ useEffect(() => {
   };
 }, []);
 
-// ================= BLOCK BROWSER BACK FROM DASHBOARD =================
-useEffect(() => {
-  const handlePopState = () => {
-    navigate("/", { replace: true });
-  };
-
-  window.addEventListener("popstate", handlePopState);
-
-  return () => {
-    window.removeEventListener("popstate", handlePopState);
-  };
-}, [navigate]);
-
-
 
   // ================= LOAD RAZORPAY SCRIPT =================
   useEffect(() => {
