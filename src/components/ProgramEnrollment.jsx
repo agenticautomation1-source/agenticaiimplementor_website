@@ -11,9 +11,6 @@ export default function ProgramEnrollment({
 
 const navigate = useNavigate();
 
-const goToDashboard = () => {
-  window.location.replace(`/#/dashboard`);
-};
 
   // ================= EMAIL LOGIN =================
   const signInWithEmail = async () => {
@@ -28,7 +25,7 @@ const goToDashboard = () => {
     const { error } = await supabase.auth.signInWithOtp({
   email,
   options: {
-    emailRedirectTo: "https://agenticaiimplementors.com/#/auth/callback",
+    emailRedirectTo: `${window.location.origin}/auth/callback`,
   },
 });
 
@@ -41,15 +38,12 @@ const goToDashboard = () => {
     }
   };
 const signInWithGoogleFresh = async () => {
-  sessionStorage.setItem(
-    "dashboard_from",
-    `/courses/${programSlug}`
-  );
+  
 
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "https://agenticaiimplementors.com/#/auth/callback",
+      redirectTo: `${window.location.origin}/auth/callback`,
       queryParams: {
         prompt: "select_account",
       },

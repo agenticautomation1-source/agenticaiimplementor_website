@@ -6,11 +6,12 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const resolveSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
+    const completeOAuth = async () => {
+      const { data, error } =
+        await supabase.auth.exchangeCodeForSession(window.location.href);
 
       if (error) {
-        console.error("AuthCallback session error:", error);
+        console.error("OAuth exchange failed:", error);
         return;
       }
 
@@ -19,7 +20,7 @@ export default function AuthCallback() {
       }
     };
 
-    resolveSession();
+    completeOAuth();
   }, [navigate]);
 
   return (
