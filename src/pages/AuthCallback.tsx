@@ -1,31 +1,22 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
-  const handledRef = useRef(false);
 
   useEffect(() => {
-    const resolveSession = async () => {
-      if (handledRef.current) return;
-      handledRef.current = true;
+    const handle = async () => {
+      const { data } = await supabase.auth.getSession();
 
-      // 🔴 REQUIRED FOR SUPABASE v2 OAuth
-      const { error } = await supabase.auth.exchangeCodeForSession(
-        window.location.href
-      );
-
-      if (error) {
-        console.error("OAuth exchange failed:", error);
+      if (data.session) {
+        navigate("/dashboard", { replace: true });
+      } else {
         navigate("/", { replace: true });
-        return;
       }
-
-      navigate("/dashboard", { replace: true });
     };
 
-    resolveSession();
+    handle();
   }, [navigate]);
 
   return (
