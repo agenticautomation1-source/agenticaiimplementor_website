@@ -1,53 +1,10 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { useEffect } from "react";
+import ProgramEnrollment from "../../components/ProgramEnrollment";
 
 export default function AIValidationGovernanceEngineer() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  // ================= EMAIL STATE =================
-  const [email, setEmail] = useState("");
-
-  // ================= GOOGLE SIGN-IN =================
-  const signInWithGoogle = async () => {
-    sessionStorage.setItem(
-      "dashboard_from",
-      "/courses/ai-validation-governance-engineer"
-    );
-
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin + "/dashboard",
-        queryParams: {
-          prompt: "select_account",
-        },
-      },
-    });
-  };
-
-  // ================= EMAIL OTP SIGN-IN =================
-  const signInWithEmail = async () => {
-  if (!email) {
-    alert("Please enter your email");
-    return;
-  }
-
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: window.location.origin,
-    },
-  });
-
-  if (error) {
-    alert("Email sign-in failed");
-    return;
-  }
-
-  alert("Check your email for the login link");
-};
 
   return (
     <main className="bg-[#050608] text-slate-200 font-display">
@@ -74,39 +31,15 @@ export default function AIValidationGovernanceEngineer() {
             in enterprise environments.
           </p>
 
-          {/* ================= AUTH CTA ================= */}
-          <div className="flex flex-col items-center gap-4 justify-center">
+          {/* ================= PROGRAM ENROLLMENT (AUTH) ================= */}
+          <ProgramEnrollment programSlug="ai-validation-governance-engineer" />
 
-            <button
-              onClick={signInWithGoogle}
-              className="px-10 py-4 bg-red-500 text-black font-bold uppercase tracking-widest text-sm rounded-lg hover:brightness-110"
-            >
-              Continue with Google
-            </button>
+          <button
+            className="mt-6 px-10 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-sm rounded-lg hover:bg-white/5"
+          >
+            Download Syllabus
+          </button>
 
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-sm text-white focus:outline-none"
-              />
-              <button
-                onClick={signInWithEmail}
-                className="px-6 py-3 border border-white/20 rounded-lg font-bold uppercase tracking-widest text-xs hover:bg-white/5"
-              >
-                Email Login
-              </button>
-            </div>
-
-            <button
-              className="px-10 py-4 border border-white/15 text-white font-bold uppercase tracking-widest text-sm rounded-lg hover:bg-white/5"
-            >
-              Download Syllabus
-            </button>
-
-          </div>
         </div>
       </section>
 
@@ -250,6 +183,9 @@ export default function AIValidationGovernanceEngineer() {
 
         </div>
       </section>
+
+      {/* ================= PROGRAM ENROLLMENT (BOTTOM) ================= */}
+      <ProgramEnrollment programSlug="ai-validation-governance-engineer" />
 
     </main>
   );
