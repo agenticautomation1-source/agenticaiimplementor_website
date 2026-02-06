@@ -38,7 +38,7 @@ const App: React.FC = () => {
       {/* AUTH-AWARE NAVBAR */}
       <Navbar />
 
- <main className="flex-1">
+ <main className="flex-1 min-h-screen">
   <Routes>
     {/* ================= AUTH ================= */}
     <Route path="/auth/callback" element={<AuthCallback />} />
