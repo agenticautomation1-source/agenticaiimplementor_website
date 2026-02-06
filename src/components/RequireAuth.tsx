@@ -37,13 +37,27 @@ const [authenticated, setAuthenticated] = useState(false);
   }, []);
 
   // ⏳ Wait — do NOT redirect while loading
-  if (loading) {
-    return null;
-  }
+if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center text-slate-400">
+      Checking session…
+    </div>
+  );
+}
 
   // ❌ No session → kick out
-  if (!authenticated) {
-  return <Navigate to="/" replace state={{ from: location }} />;
+  // ❌ No session → kick out
+if (!authenticated) {
+  // IMPORTANT: do NOT redirect during OAuth callback
+  if (location.pathname === "/auth/callback") {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-slate-400">
+        Finalizing sign-in…
+      </div>
+    );
+  }
+
+  return <Navigate to="/" replace />;
 }
 
   // ✅ Auth confirmed

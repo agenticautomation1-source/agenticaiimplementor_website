@@ -6,32 +6,27 @@ export default function AuthCallback() {
   const navigate = useNavigate();
   const handledRef = useRef(false);
 
-useEffect(() => {
+  useEffect(() => {
     const resolveSession = async () => {
       if (handledRef.current) return;
       handledRef.current = true;
 
-      try {
-        // ✅ SUPABASE v2 — NO ARGUMENTS
-        const { error } = await supabase.auth.exchangeCodeForSession();
+      // 🔴 REQUIRED FOR SUPABASE v2 OAuth
+      const { error } = await supabase.auth.exchangeCodeForSession(
+        window.location.href
+      );
 
-        if (error) {
-          console.error("Session exchange failed:", error);
-          navigate("/", { replace: true });
-          return;
-        }
-
-        // ✅ SUCCESS → DASHBOARD
-        navigate("/dashboard", { replace: true });
-      } catch (err) {
-        console.error("Auth callback crashed:", err);
+      if (error) {
+        console.error("OAuth exchange failed:", error);
         navigate("/", { replace: true });
+        return;
       }
+
+      navigate("/dashboard", { replace: true });
     };
 
     resolveSession();
   }, [navigate]);
-
 
   return (
     <div className="min-h-screen flex items-center justify-center text-slate-400">

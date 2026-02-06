@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 type Props = {
@@ -7,25 +8,22 @@ type Props = {
 
 export default function HomeGate({ children }: Props) {
   const [ready, setReady] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const check = async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        if (data.session) {
-          // logged-in users should not see landing
-          navigate("/dashboard", { replace: true });
-          return;
-        }
-      } catch (e) {
-        console.error(e);
+      const { data } = await supabase.auth.getSession();
+
+      if (data.session) {
+        navigate("/dashboard", { replace: true });
+        return;
       }
 
       setReady(true);
     };
 
     check();
-  }, []);
+  }, [navigate]);
 
   if (!ready) {
     return (
