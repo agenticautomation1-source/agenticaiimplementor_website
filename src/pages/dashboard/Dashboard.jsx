@@ -1,12 +1,19 @@
 import { useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+//import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
+
+const PROGRAMS = {
+  AGENTIC: "agentic-ai-systems-engineer",
+  GENAI: "genai-platform-architect",
+  GOVERNANCE: "ai-validation-governance-engineer",
+};
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function Dashboard() {
 const navigate = useNavigate();
-const location = useLocation();
+//const location = useLocation();
 
   
   const [user, setUser] = useState(null);
@@ -15,6 +22,11 @@ const location = useLocation();
   const [paymentInProgress, setPaymentInProgress] = useState(false);
   const [enrolledPrograms, setEnrolledPrograms] = useState(new Set());
  const paymentHandledRef = useRef(false);
+
+const isAgenticEnrolled = enrolledPrograms.has(PROGRAMS.AGENTIC);
+const isGenAIEnrolled = enrolledPrograms.has(PROGRAMS.GENAI);
+const isGovernanceEnrolled = enrolledPrograms.has(PROGRAMS.GOVERNANCE);
+
 
    // ================= FETCH ENROLLMENTS =================
 const fetchEnrollments = async (userId) => {
@@ -234,7 +246,6 @@ alert("Payment verified. Check backend logs and Supabase.");
   };
 
 
-const isGenAIArchitectEnrolled = enrolledPrograms.has("genai-platform-architect");
 
 if (authLoading) {
   return (
@@ -319,25 +330,30 @@ if (authLoading) {
               </div>
 
               <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 lg:justify-end">
-                <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest">
-                  ACTIVE
-                </span>
 
-                <a
-                  href="/syllabus/full/Agentic%20AI%20Systems%20Engineer%20–%20Syllabus%20&%20Lesson%20Plan.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-6 py-3 border border-white/20 rounded-lg font-bold uppercase tracking-widest text-xs hover:text-white transition"
-                >
-                  Brochure & Lesson Plan (PDF)
-                </a>
 
-                <a
-                  href="/lms/courses/masterstroke-agentic-ai-systems-engineer"
-                  className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs hover:brightness-110 transition"
-                >
-                  Enroll / Go to LMS
-                </a>
+{isAgenticEnrolled ? (
+  <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest">
+    ACTIVE
+  </span>
+) : (
+  <>
+    <span className="text-xs text-slate-400 italic">
+      Access details will appear here once available
+    </span>
+
+    <button
+      onClick={() => handleEnroll(PROGRAMS.AGENTIC)}
+      className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
+    >
+      Enroll
+    </button>
+  </>
+)}
+
+
+
+
               </div>
             </div>
           </div>
@@ -366,21 +382,25 @@ if (authLoading) {
               </div>
 
               <div className="flex items-center gap-3">
-                <a
-                  href="/syllabus/outline/MASTERSTROKE%20–%20GenAI%20Platform%20Architect.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-5 py-3 border border-white/15 rounded-lg text-xs uppercase tracking-widest text-slate-300 hover:text-white transition"
-                >
-                  See program outline (PDF)
-                </a>
+ 
+{isGenAIEnrolled ? (
+  <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest">
+    ACTIVE
+  </span>
+) : (
+  <>
+    <span className="text-xs text-slate-400 italic">
+      Access details will appear here once available
+    </span>
 
-                <button
-                  onClick={() => handleEnroll("genai-platform-architect")}
-                  className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs hover:brightness-110 transition"
-                >
-                  Enroll
-                </button>
+    <button
+      onClick={() => handleEnroll(PROGRAMS.GENAI)}
+      className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
+    >
+      Enroll
+    </button>
+  </>
+)}
               </div>
             </div>
           </div>
@@ -409,23 +429,27 @@ if (authLoading) {
               </div>
 
               <div className="flex items-center gap-3">
-                <a
-                  href="/syllabus/outline/MASTERSTROKE%20–%20AI%20Validation%20&%20Governance%20Engineer.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-5 py-3 border border-white/15 rounded-lg text-xs uppercase tracking-widest text-slate-300 hover:text-white transition"
-                >
-                  See program outline (PDF)
-                </a>
 
-                <button
-                  onClick={() =>
-                    handleEnroll("ai-validation-governance-engineer")
-                  }
-                  className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs hover:brightness-110 transition"
-                >
-                  Enroll
-                </button>
+{isGovernanceEnrolled ? (
+  <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest">
+    ACTIVE
+  </span>
+) : (
+  <>
+    <span className="text-xs text-slate-400 italic">
+      Access details will appear here once available
+    </span>
+
+    <button
+      onClick={() => handleEnroll(PROGRAMS.GOVERNANCE)}
+      className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
+    >
+      Enroll
+    </button>
+  </>
+)}
+
+
               </div>
             </div>
           </div>
