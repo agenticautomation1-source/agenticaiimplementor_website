@@ -1,10 +1,10 @@
-import { Navigate } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 import Courses from "./pages/Courses";
 import Programs from "./pages/Programs";
 import LearningPaths from "./pages/LearningPaths";
 import React, { useState } from "react";
 import AuthCallback from "./pages/AuthCallback";
-import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
+
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequireAuth from "./components/RequireAuth";

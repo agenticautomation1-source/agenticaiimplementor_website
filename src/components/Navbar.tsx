@@ -7,18 +7,18 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-    });
+  supabase.auth.getSession().then(({ data }) => {
+    setSession(data.session);
+  });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+  });
 
-    return () => subscription.unsubscribe();
-  }, []);
+  return () => subscription.unsubscribe();
+}, [navigate]);
 
   const signInWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
@@ -39,9 +39,7 @@ const logout = async () => {
   if (!confirmed) return;
 
   await supabase.auth.signOut();
-
-  // Hard redirect to reset app state
-  window.location.replace("/");
+  navigate("/", { replace: true });
 };
 
   return (
