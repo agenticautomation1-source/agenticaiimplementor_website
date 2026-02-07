@@ -1,11 +1,5 @@
-console.log("RAZORPAY_KEY_ID:", process.env.RAZORPAY_KEY_ID);
-console.log(
-  "RAZORPAY_KEY_SECRET present:",
-  !!process.env.RAZORPAY_KEY_SECRET
-);
-
 import Razorpay from "razorpay";
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { IncomingMessage, ServerResponse } from "http";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
@@ -13,15 +7,22 @@ const razorpay = new Razorpay({
 });
 
 export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
+  req: IncomingMessage & { method?: string },
+  res: ServerResponse & {
+    status: (code: number) => any;
+    json: (data: any) => void;
+  }
 ) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { programSlug, userId } = req.body;
+    let rawBody = "";
+    for await (const chunk of req) rawBody += chunk;
+    const body = rawBody ? JSON.parse(rawBody) : {};
+
+    const { programSlug, userId } = body;
 
     const amountMap: Record<string, number> = {
       "agentic-ai-systems-engineer": 499900,
