@@ -333,9 +333,27 @@ if (authLoading) {
 
 
 {isAgenticEnrolled ? (
-  <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest">
-    ACTIVE
-  </span>
+  <>
+    <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest">
+      ACTIVE
+    </span>
+
+    <a
+      href="/syllabus/full/Agentic%20AI%20Systems%20Engineer%20–%20Syllabus%20&%20Lesson%20Plan.pdf"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="px-6 py-3 border border-white/20 rounded-lg font-bold uppercase tracking-widest text-xs"
+    >
+      Full Syllabus & Lesson Plan (PDF)
+    </a>
+
+    <a
+      href="/lms/courses/masterstroke-agentic-ai-systems-engineer"
+      className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
+    >
+      Go to LMS
+    </a>
+  </>
 ) : (
   <>
     <span className="text-xs text-slate-400 italic">
@@ -384,9 +402,27 @@ if (authLoading) {
               <div className="flex items-center gap-3">
  
 {isGenAIEnrolled ? (
-  <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest">
-    ACTIVE
-  </span>
+  <>
+    <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest">
+      ACTIVE
+    </span>
+
+    <a
+      href="/syllabus/full/GenAI%20Platform%20Architect%20–%20Syllabus%20&%20Lesson%20Plan.pdf"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="px-6 py-3 border border-white/20 rounded-lg font-bold uppercase tracking-widest text-xs"
+    >
+      Full Syllabus & Lesson Plan (PDF)
+    </a>
+
+    <a
+      href="/lms/courses/genai-platform-architect"
+      className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
+    >
+      Go to LMS
+    </a>
+  </>
 ) : (
   <>
     <span className="text-xs text-slate-400 italic">
@@ -431,9 +467,27 @@ if (authLoading) {
               <div className="flex items-center gap-3">
 
 {isGovernanceEnrolled ? (
-  <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest">
-    ACTIVE
-  </span>
+  <>
+    <span className="px-3 py-1 text-[10px] rounded-full bg-cyan-400/10 text-cyan-400 font-bold tracking-widest">
+      ACTIVE
+    </span>
+
+    <a
+      href="/syllabus/full/AI%20Validation%20&%20Governance%20Engineer%20–%20Syllabus%20&%20Lesson%20Plan.pdf"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="px-6 py-3 border border-white/20 rounded-lg font-bold uppercase tracking-widest text-xs"
+    >
+      Full Syllabus & Lesson Plan (PDF)
+    </a>
+
+    <a
+      href="/lms/courses/ai-validation-governance-engineer"
+      className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
+    >
+      Go to LMS
+    </a>
+  </>
 ) : (
   <>
     <span className="text-xs text-slate-400 italic">
