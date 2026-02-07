@@ -1,3 +1,7 @@
+export const config = {
+  runtime: "nodejs",
+};
+
 import Razorpay from "razorpay";
 import type { IncomingMessage, ServerResponse } from "http";
 
@@ -8,27 +12,31 @@ export default async function handler(
     json: (data: any) => void;
   }
 ) {
-
-console.log("CREATE-ORDER v2 LOADED");
+  console.log("CREATE-ORDER v2 LOADED");
 
   try {
     // 1. Allow only POST
     if (req.method !== "POST") {
-      return res.status(405).json({ error: "Method not allowed" });
+      return res.status(405).json({
+        success: false,
+        error: "Method not allowed",
+      });
     }
 
-    // 2. Validate Razorpay env vars
+    // 2. Validate Razorpay environment variables
     if (
       !process.env.RAZORPAY_KEY_ID ||
       !process.env.RAZORPAY_KEY_SECRET
     ) {
       console.error("Missing Razorpay environment variables");
+
       return res.status(500).json({
+        success: false,
         error: "Razorpay credentials not configured",
       });
     }
 
-    // 3. Initialize Razorpay safely (INSIDE handler)
+    // 3. Initialize Razorpay (inside handler, Node runtime safe)
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
       key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -46,11 +54,12 @@ console.log("CREATE-ORDER v2 LOADED");
     // 5. Validate input
     if (!programSlug || !userId) {
       return res.status(400).json({
+        success: false,
         error: "Missing programSlug or userId",
       });
     }
 
-    // 6. Pricing map (amount in paise)
+    // 6. Pricing map (amounts in paise)
     const amountMap: Record<string, number> = {
       "agentic-ai-systems-engineer": 499900,
       "genai-platform-architect": 499900,
@@ -61,6 +70,7 @@ console.log("CREATE-ORDER v2 LOADED");
 
     if (!amount) {
       return res.status(400).json({
+        success: false,
         error: "Invalid programSlug",
       });
     }
@@ -72,26 +82,26 @@ console.log("CREATE-ORDER v2 LOADED");
       receipt: `rcpt_${Date.now()}`,
     });
 
-    // 8. Success response (JSON ONLY)
+    // 8. Success response (JSON ONLY — never HTML)
     return res.status(200).json({
-  success: true,
-  order: {
-    id: order.id,
-    amount: order.amount,
-    currency: order.currency,
-    receipt: order.receipt,
-    status: order.status,
-    created_at: order.created_at,
-  },
-});
+      success: true,
+      order: {
+        id: order.id,
+        amount: order.amount,
+        currency: order.currency,
+        receipt: order.receipt,
+        status: order.status,
+        created_at: order.created_at,
+      },
+    });
   } catch (err) {
-    // 9. Catch-all to prevent HTML error pages
+    // 9. Catch-all to prevent Vercel HTML error pages
     console.error("Create order failed:", err);
 
     return res.status(500).json({
-  success: false,
-  error: "Create order failed",
-  message: err instanceof Error ? err.message : "Unknown error",
-});
+      success: false,
+      error: "Create order failed",
+      message: err instanceof Error ? err.message : "Unknown error",
+    });
   }
 }
