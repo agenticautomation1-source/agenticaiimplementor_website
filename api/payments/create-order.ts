@@ -12,22 +12,20 @@ export default async function handler(
     json: (data: any) => void;
   }
 ) {
-  console.log("CREATE-ORDER v3 START");
+  console.log("CREATE-ORDER v3 LOADED");
 
   try {
-    // 1. Method check
+    // 1. Allow only POST
     if (req.method !== "POST") {
-      console.log("INVALID METHOD:", req.method);
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    // 2. Env check
-    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-      console.error("ENV MISSING", {
-        hasKey: !!process.env.RAZORPAY_KEY_ID,
-        hasSecret: !!process.env.RAZORPAY_KEY_SECRET,
-      });
-
+    // 2. Validate env vars
+    if (
+      !process.env.RAZORPAY_KEY_ID ||
+      !process.env.RAZORPAY_KEY_SECRET
+    ) {
+      console.error("Missing Razorpay env vars");
       return res.status(500).json({
         error: "Razorpay credentials not configured",
       });
@@ -45,20 +43,16 @@ export default async function handler(
       rawBody += chunk;
     }
 
-    console.log("RAW BODY:", rawBody);
-
     const body = rawBody ? JSON.parse(rawBody) : {};
     const { programSlug, userId } = body;
 
-    // 5. Validate input
     if (!programSlug || !userId) {
-      console.log("INVALID INPUT", body);
       return res.status(400).json({
         error: "Missing programSlug or userId",
       });
     }
 
-    // 6. Pricing
+    // 5. Pricing
     const amountMap: Record<string, number> = {
       "agentic-ai-systems-engineer": 499900,
       "genai-platform-architect": 499900,
@@ -68,24 +62,19 @@ export default async function handler(
     const amount = amountMap[programSlug];
 
     if (!amount) {
-      console.log("INVALID PROGRAM:", programSlug);
       return res.status(400).json({
         error: "Invalid programSlug",
       });
     }
 
-    // 7. Create order
-    console.log("CREATING ORDER", { programSlug, amount });
-
+    // 6. Create order
     const order = await razorpay.orders.create({
       amount,
       currency: "INR",
       receipt: `rcpt_${Date.now()}`,
     });
 
-    console.log("ORDER CREATED:", order.id);
-
-    // 8. Success JSON
+    // 7. Return JSON
     return res.status(200).json({
       success: true,
       order: {
@@ -98,12 +87,12 @@ export default async function handler(
       },
     });
   } catch (err) {
-    console.error("CREATE ORDER CRASH:", err);
+    console.error("Create order failed:", err);
 
     return res.status(500).json({
       success: false,
       error: "Create order failed",
-      message: err instanceof Error ? err.message : String(err),
+      message: err instanceof Error ? err.message : "Unknown error",
     });
   }
 }
