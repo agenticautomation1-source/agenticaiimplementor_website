@@ -8,6 +8,9 @@ export default async function handler(
     json: (data: any) => void;
   }
 ) {
+
+console.log("CREATE-ORDER v2 LOADED");
+
   try {
     // 1. Allow only POST
     if (req.method !== "POST") {
