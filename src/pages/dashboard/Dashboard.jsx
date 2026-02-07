@@ -131,6 +131,9 @@ useEffect(() => {
       return;
     }
 
+console.log("ENROLL CLICKED");
+console.log("API_BASE (VITE_API_BASE_URL):", API_BASE);
+
     try {
       const res = await fetch(`${API_BASE}/payments/create-order`, {
         method: "POST",
