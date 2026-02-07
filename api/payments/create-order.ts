@@ -1,3 +1,9 @@
+console.log("RAZORPAY_KEY_ID:", process.env.RAZORPAY_KEY_ID);
+console.log(
+  "RAZORPAY_KEY_SECRET present:",
+  !!process.env.RAZORPAY_KEY_SECRET
+);
+
 import Razorpay from "razorpay";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
