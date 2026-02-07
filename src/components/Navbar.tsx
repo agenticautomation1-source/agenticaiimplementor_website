@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
+import { hardLogout } from "../lib/logout";
 
 const Navbar: React.FC = () => {
   const [session, setSession] = useState<any>(null);
-  const navigate = useNavigate();
+  
 
   useEffect(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -18,7 +19,7 @@ const Navbar: React.FC = () => {
   });
 
   return () => subscription.unsubscribe();
-}, [navigate]);
+}, []);
 
   const signInWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
@@ -28,19 +29,6 @@ const Navbar: React.FC = () => {
       },
     });
   }; 
-
-const logout = async () => {
-  const confirmed = window.confirm(
-    "You’re logging out of Masterstroke - Agentic AI Implementors.\n\n" +
-    "For security, Google may keep you signed in at the browser level.\n" +
-    "You may be asked to choose your account again next time."
-  );
-
-  if (!confirmed) return;
-
-  await supabase.auth.signOut();
-  navigate("/", { replace: true });
-};
 
   return (
     <div className="fixed top-0 left-5 right-5 z-50 py-4 pointer-events-none">
@@ -136,15 +124,15 @@ const logout = async () => {
                 Dashboard
               </Link>
 
-              <button
-                onClick={logout}
-                className="
-                  text-[10px] uppercase tracking-widest
-                  text-white/60 hover:text-white
-                "
-              >
-                Logout
-              </button>
+<button
+  onClick={hardLogout}
+  className="
+    text-[10px] uppercase tracking-widest
+    text-white/60 hover:text-white
+  "
+>
+  Logout
+</button>
             </>
           )}
         </div>
