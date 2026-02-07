@@ -8,41 +8,34 @@ import type { IncomingMessage, ServerResponse } from "http";
 export default async function handler(
   req: IncomingMessage & { method?: string },
   res: ServerResponse & {
-    status: (code: number) => any;
-    json: (data: any) => void;
+    status: (code: number) => {
+      json: (data: any) => void;
+    };
   }
 ) {
-  console.log("CREATE-ORDER v2 LOADED");
+  console.log("CREATE-ORDER v3 LOADED");
 
   try {
     // 1. Allow only POST
     if (req.method !== "POST") {
-      return res.status(405).json({
-        success: false,
-        error: "Method not allowed",
-      });
+      return res.status(405).json({ error: "Method not allowed" });
     }
 
-    // 2. Validate Razorpay environment variables
-    if (
-      !process.env.RAZORPAY_KEY_ID ||
-      !process.env.RAZORPAY_KEY_SECRET
-    ) {
+    // 2. Validate Razorpay env vars
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
       console.error("Missing Razorpay environment variables");
-
       return res.status(500).json({
-        success: false,
         error: "Razorpay credentials not configured",
       });
     }
 
-    // 3. Initialize Razorpay (inside handler, Node runtime safe)
+    // 3. Initialize Razorpay
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
       key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
-    // 4. Read raw request body (Vercel Node runtime)
+    // 4. Read raw body
     let rawBody = "";
     for await (const chunk of req) {
       rawBody += chunk;
@@ -54,12 +47,11 @@ export default async function handler(
     // 5. Validate input
     if (!programSlug || !userId) {
       return res.status(400).json({
-        success: false,
         error: "Missing programSlug or userId",
       });
     }
 
-    // 6. Pricing map (amounts in paise)
+    // 6. Pricing (paise)
     const amountMap: Record<string, number> = {
       "agentic-ai-systems-engineer": 499900,
       "genai-platform-architect": 499900,
@@ -70,19 +62,18 @@ export default async function handler(
 
     if (!amount) {
       return res.status(400).json({
-        success: false,
         error: "Invalid programSlug",
       });
     }
 
-    // 7. Create Razorpay order
+    // 7. Create order
     const order = await razorpay.orders.create({
       amount,
       currency: "INR",
       receipt: `rcpt_${Date.now()}`,
     });
 
-    // 8. Success response (JSON ONLY — never HTML)
+    // 8. JSON response ONLY
     return res.status(200).json({
       success: true,
       order: {
@@ -95,7 +86,6 @@ export default async function handler(
       },
     });
   } catch (err) {
-    // 9. Catch-all to prevent Vercel HTML error pages
     console.error("Create order failed:", err);
 
     return res.status(500).json({
