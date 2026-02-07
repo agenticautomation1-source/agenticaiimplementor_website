@@ -9,16 +9,16 @@ const router = express.Router();
  * Razorpay instance
  */
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+  key_id: process.env.RAZORPAY_KEY_ID!,
+  key_secret: process.env.RAZORPAY_KEY_SECRET!,
 });
 
 /**
  * Supabase admin client
  */
 const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 /**
@@ -27,12 +27,10 @@ const supabase = createClient(
  * =========================
  */
 router.post("/create-order", async (req, res) => {
-  
-
   try {
     const { programSlug, userId } = req.body;
 
-    const amountMap = {
+    const amountMap: Record<string, number> = {
       "agentic-ai-systems-engineer": 499900,
       "genai-platform-architect": 499900,
       "ai-validation-governance-engineer": 399900,
@@ -54,25 +52,19 @@ router.post("/create-order", async (req, res) => {
     });
 
     console.log("ORDER CREATED", order.id);
-
-    res.json(order);
+    return res.json(order);
   } catch (err) {
     console.error("Create order error:", err);
-    res.status(500).json({ error: "Order creation failed" });
+    return res.status(500).json({ error: "Order creation failed" });
   }
 });
 
-//**
 /**
  * =========================
  * VERIFY PAYMENT
  * =========================
  */
-
 router.post("/verify", async (req, res) => {
-  
-  
-
   try {
     const {
       razorpay_order_id,
@@ -82,7 +74,9 @@ router.post("/verify", async (req, res) => {
       programSlug,
     } = req.body;
 
-    // ---- STEP 1: Basic validation ----
+    /**
+     * STEP 1: Basic validation
+     */
     if (
       !razorpay_order_id ||
       !razorpay_payment_id ||
@@ -90,98 +84,96 @@ router.post("/verify", async (req, res) => {
       !userId ||
       !programSlug
     ) {
-      console.error("STEP 1 FAILED: Missing fields");
       return res.status(400).json({ error: "Missing payment details" });
     }
 
-    
+    /**
+     * STEP 2: Idempotency check (payments table)
+     */
+    const { data: existingPayment, error: paymentFetchError } =
+      await supabase
+        .from("payments")
+        .select("id")
+        .eq("razorpay_payment_id", razorpay_payment_id)
+        .maybeSingle();
 
-    // ---- STEP 2: Idempotency check ----
-    const { data: existing, error: fetchError } = await supabase
-      .from("enrollments")
-      .select("id")
-      .eq("razorpay_payment_id", razorpay_payment_id)
-      .maybeSingle();
-
-    if (fetchError) {
-      console.error("STEP 2 FAILED: Supabase fetch error", fetchError);
-      return res.status(500).json({ error: "Enrollment lookup failed" });
+    if (paymentFetchError) {
+      console.error("Payment lookup failed", paymentFetchError);
+      return res.status(500).json({ error: "Payment lookup failed" });
     }
 
-    if (existing) {
-      console.log("STEP 2 OK: Payment already verified");
-      return res.json({ success: true });
+    if (existingPayment) {
+      console.log("Duplicate payment callback ignored");
+      return res.json({ success: true, duplicate: true });
     }
 
-    
+    /**
+     * STEP 3: Signature verification
+     */
+    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
 
-    // ---- STEP 3: Signature verification ----
-const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+      .update(body)
+      .digest("hex");
 
-const expectedSignature = crypto
-  .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-  .update(body)
-  .digest("hex");
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({ error: "Invalid signature" });
+    }
 
-if (expectedSignature !== razorpay_signature) {
-  console.error("STEP 3 FAILED: Signature mismatch");
-  return res.status(400).json({ error: "Invalid signature" });
-}
+    /**
+     * STEP 4: Record payment (SOURCE OF TRUTH)
+     */
+    const { error: paymentInsertError } = await supabase
+      .from("payments")
+      .insert({
+        user_id: userId,
+        program_id: programSlug,
+        razorpay_order_id,
+        razorpay_payment_id,
+        amount: null, // optional for now
+        currency: "INR",
+        status: "paid",
+        raw_payload: req.body,
+      });
 
+    if (paymentInsertError) {
+      console.error("Payment insert failed", paymentInsertError);
+      return res.status(500).json({ error: "Payment record failed" });
+    }
 
+    /**
+     * STEP 5: Upsert enrollment (idempotent)
+     */
+    const { data: enrollment, error: enrollmentError } =
+      await supabase
+        .from("enrollments")
+        .upsert(
+          {
+            user_id: userId,
+            program_id: programSlug,
+            razorpay_order_id,
+            razorpay_payment_id,
+            status: "active",
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "user_id,program_id",
+          }
+        )
+        .select("*");
 
-// ---- INSERT PAYLOAD CHECK (DEBUG — DO NOT REMOVE YET) ----
-console.log("INSERT PAYLOAD CHECK", {
-  user_id: userId,
-  program_id: programSlug,
-  razorpay_order_id: razorpay_order_id,
-  razorpay_payment_id: razorpay_payment_id,
-  status: "active",
+    if (enrollmentError) {
+      console.error("Enrollment upsert failed", enrollmentError);
+      return res.status(500).json({ error: "Enrollment upsert failed" });
+    }
+
+    console.log("Enrollment activated", enrollment);
+    return res.json({ success: true });
+  } catch (err) {
+    console.error("VERIFY CRASHED:", err);
+    return res.status(500).json({ error: "Verification failed" });
+  }
 });
-
-// ---- STEP 4: Insert enrollment ----
-console.log("ABOUT TO INSERT ENROLLMENT", {
-  user_id: userId,
-  program_id: programSlug,
-  razorpay_payment_id,
-  status: "active",
-});
-
-// 🔴 IMPORTANT: force Supabase to return inserted rows
-const { data, error } = await supabase
-  .from("enrollments")
-  .insert(
-    {
-      user_id: userId,
-      program_id: programSlug,
-      razorpay_order_id: razorpay_order_id, // ✅ REQUIRED (NOT NULL)
-      razorpay_payment_id: razorpay_payment_id,
-      status: "active",
-    },
-    { returning: "representation" } // ✅ CRITICAL FOR CONFIRMATION
-  )
-  .select("*");
-
-if (error) {
-  console.error("STEP 4 FAILED: SUPABASE INSERT ERROR", {
-    message: error.message,
-    details: error.details,
-    hint: error.hint,
-    code: error.code,
-  });
-
-  return res.status(500).json({ error: "Enrollment insert failed" });
-}
-
-console.log("STEP 4 OK: ENROLLMENT INSERTED", data);
-
-
-return res.json({ success: true });
-} catch (err) {
-  console.error("VERIFY CRASHED:", err);
-  return res.status(500).json({ error: "Verification failed" });
-}
-});
-
 
 export default router;

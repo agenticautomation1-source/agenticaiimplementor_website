@@ -112,16 +112,7 @@ useEffect(() => {
   }, []);
 
   // ================= LOGOUT HANDLER =================
-  const handleLogout = async () => {
-  await supabase.auth.signOut();
-
-  // 🔴 CRITICAL: clear any remembered redirect
-  sessionStorage.removeItem("dashboard_from");
-
-  // 🔴 FORCE hard reload to kill Supabase cache
-  navigate("/", { replace: true });
-};
-
+  
 
   // ================= RAZORPAY ENROLL HANDLER =================
   const handleEnroll = async (programId) => {
@@ -216,16 +207,10 @@ const options = {
         return;
       }
 
-    // This and below line temporarily commented and below line added  console.log("PAYMENT VERIFIED SUCCESSFULLY");
-    // Delete this permanently  window.location.replace("/dashboard");
+    console.log("PAYMENT VERIFIED SUCCESSFULLY");
 
-console.log("PAYMENT VERIFIED SUCCESSFULLY");
-
-const enrolled = await fetchEnrollments(user.id);
-setEnrolledPrograms(enrolled);
-
-// TEMP: do not navigate yet
-alert("Payment verified. Check backend logs and Supabase.");
+// Hard reload dashboard to guarantee fresh state
+window.location.href = "/dashboard";
 
 
     } catch (err) {
