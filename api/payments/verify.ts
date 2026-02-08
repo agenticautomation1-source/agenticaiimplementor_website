@@ -23,10 +23,10 @@ export default async function handler(
 ) {
   try {
     /**
-     * Razorpay REDIRECT flow:
-     * - Method can be POST
-     * - Data ALWAYS comes in query params
-     * - Body is useless → ignore it completely
+     * ✅ HARD GUARD
+     * If Razorpay params are missing,
+     * this is NOT a valid payment callback.
+     * Never crash. Never verify. Just exit safely.
      */
     const {
       razorpay_order_id,
@@ -36,19 +36,16 @@ export default async function handler(
       programSlug,
     } = req.query;
 
-    // 🔒 Validate required params
     if (
       !razorpay_order_id ||
       !razorpay_payment_id ||
-      !razorpay_signature ||
-      !userId ||
-      !programSlug
+      !razorpay_signature
     ) {
-      console.error("Missing Razorpay params", req.query);
-      return res.status(400).send("Missing payment details");
+      console.warn("Verify called without Razorpay params", req.query);
+      return res.redirect(302, "/dashboard");
     }
 
-    // 🔐 Verify signature
+    // 🔐 Signature verification
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
@@ -56,11 +53,8 @@ export default async function handler(
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
-      console.error("Signature mismatch", {
-        expectedSignature,
-        razorpay_signature,
-      });
-      return res.status(400).send("Invalid signature");
+      console.error("Signature mismatch");
+      return res.redirect(302, "/dashboard");
     }
 
     // 💳 Fetch payment from Razorpay
@@ -69,8 +63,8 @@ export default async function handler(
     );
 
     if (payment.status !== "captured") {
-      console.error("Payment not captured", payment.status);
-      return res.status(400).send("Payment not captured");
+      console.error("Payment not captured:", payment.status);
+      return res.redirect(302, "/dashboard");
     }
 
     // 🧾 Store payment
@@ -94,10 +88,10 @@ export default async function handler(
       { onConflict: "user_id,program_id" }
     );
 
-    // ✅ Final redirect after Razorpay success screen
+    // ✅ SUCCESS PATH
     return res.redirect(302, "/dashboard");
-  } catch (err) {
-    console.error("VERIFY FUNCTION CRASHED", err);
-    return res.status(500).send("Verification failed");
+  } catch (error) {
+    console.error("VERIFY FUNCTION HARD FAILURE", error);
+    return res.redirect(302, "/dashboard");
   }
 }
