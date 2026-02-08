@@ -33,7 +33,7 @@ export default async function handler(
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
-  }
+  } 
 
   if (!req.body || typeof req.body !== "object") {
     return res.status(400).json({ error: "Invalid request body" });
@@ -68,12 +68,16 @@ export default async function handler(
       return res.status(400).json({ error: "Invalid signature" });
     }
 
-    // Verify order with Razorpay
-    const order = await razorpay.orders.fetch(razorpay_order_id);
+	// ✅ Verify payment with Razorpay (CORRECT ENTITY)
+const payment = await razorpay.payments.fetch(razorpay_payment_id);
 
-    if (order.status !== "created" && order.status !== "paid") {
-      return res.status(400).json({ error: "Invalid order status" });
-    }
+if (payment.status !== "captured") {
+  return res.status(400).json({
+    error: "Payment not captured",
+    status: payment.status,
+  });
+}
+    
 
     await supabase.from("payments").insert({
       user_id: userId,
