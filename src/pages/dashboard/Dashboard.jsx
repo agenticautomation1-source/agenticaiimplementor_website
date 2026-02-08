@@ -157,10 +157,9 @@ const options = {
   name: "Masterstroke Program",
   description: programId.replaceAll("-", " "),
   order_id: data.id,
+callback_url: `/api/payments/verify?userId=${user.id}&programSlug=${programId}`,
+redirect: true,
 
-
-  // 🔴 CRITICAL: prevent Razorpay redirect flow
-  redirect: false,
 
   prefill: {
     email: user.email,
@@ -179,48 +178,7 @@ const options = {
       paymentHandledRef.current = false;
     },
   },
-
-  handler: async (response) => {
-    console.log("RAZORPAY HANDLER FIRED", response);
- 
-    setPaymentInProgress(false);
-    document.documentElement.classList.remove("razorpay-open");
-
-    try {
-      const verifyRes = await fetch("/api/payments/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            userId: user.id,
-            programSlug: programId,
-          }),
-        }
-      );
-
-      if (!verifyRes.ok) {
-        const err = await verifyRes.json();
-        console.error("VERIFY FAILED", err);
-        paymentHandledRef.current = false;
-        alert("Payment verification failed on server.");
-        return;
-      }
-
-    console.log("PAYMENT VERIFIED SUCCESSFULLY");
-
-// Hard reload dashboard to guarantee fresh state
-window.location.href = "/dashboard";
-
-
-    } catch (err) {
-      console.error("Verification request crashed", err);
-      paymentHandledRef.current = false;
-      alert("Payment verification failed.");
-    }
-  },
-};
+  
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {

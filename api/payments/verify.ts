@@ -21,32 +21,26 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
-  // ✅ ADD THESE LINES
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-  // ⬆️ END ADD
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  } 
-
-  if (!req.body || typeof req.body !== "object") {
-    return res.status(400).json({ error: "Invalid request body" });
-  }
+ 
 
   try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      userId,
-      programSlug,
-    } = req.body;
+if (req.method !== "POST" && req.method !== "GET") {
+  return res.status(405).json({ error: "Method not allowed" });
+}
+
+const source = req.method === "POST" ? req.body : req.query;
+
+if (!source || typeof source !== "object") {
+  return res.status(400).json({ error: "Invalid request payload" });
+}
+
+const {
+  razorpay_order_id,
+  razorpay_payment_id,
+  razorpay_signature,
+  userId,
+  programSlug,
+} = source;
 
     if (
       !razorpay_order_id ||
@@ -80,13 +74,13 @@ if (payment.status !== "captured") {
     
 
     await supabase.from("payments").insert({
-      user_id: userId,
-      program_id: programSlug,
-      razorpay_order_id,
-      razorpay_payment_id,
-      status: "paid",
-      raw_payload: req.body,
-    });
+  user_id: userId,
+  program_id: programSlug,
+  razorpay_order_id,
+  razorpay_payment_id,
+  status: "paid",
+  raw_payload: source,
+});
 
     await supabase.from("enrollments").upsert(
       {
@@ -98,7 +92,8 @@ if (payment.status !== "captured") {
       { onConflict: "user_id,program_id" }
     );
 
-    return res.status(200).json({ success: true });
+    return res.redirect(302, "/dashboard");
+
   } catch (err) {
     console.error("Verify failed:", err);
     return res.status(500).json({ error: "Verification failed" });
