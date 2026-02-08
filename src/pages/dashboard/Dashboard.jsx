@@ -115,23 +115,22 @@ useEffect(() => {
 
   // ================= RAZORPAY ENROLL HANDLER =================
   const handleEnroll = async (programId) => {
+  console.log("ENROLL CLICKED", { paymentInProgress, razorpayReady, user });
   // 🛑 GUARD: user must be ready
   if (!user) {
     alert("Session not ready yet. Please wait 1–2 seconds and try again.");
     return;
   }
 
-  if (paymentInProgress) {
-    console.warn("Payment already in progress, blocking duplicate call");
-    return;
-  }
+  
+
+
     if (!razorpayReady) {
       alert("Payment system is still loading. Please try again.");
       return;
     }
 
 console.log("ENROLL CLICKED");
-console.log("API_BASE (VITE_API_BASE_URL):", API_BASE);
 
     try {
       const res = await fetch("/api/payments/create-order", {
@@ -188,7 +187,7 @@ const options = {
     document.documentElement.classList.remove("razorpay-open");
 
     try {
-      const verifyRes = await fetch(`${API_BASE}/payments/verify`, {
+      const verifyRes = await fetch("/api/payments/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -295,7 +294,8 @@ if (authLoading) {
 
           {/* ================= AGENTIC AI SYSTEMS ENGINEER — ACTIVE ================= */}
           <div className="relative rounded-2xl border border-cyan-400/40 bg-white/[0.02] overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(0,220,246,0.18),transparent_62%)]" />
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_left,rgba(0,220,246,0.18),transparent_62%)]" />
+
 
             <div className="relative flex flex-col lg:flex-row lg:items-center justify-between p-8 gap-8">
               <div className="flex items-start gap-6">
@@ -365,7 +365,8 @@ if (authLoading) {
 
           {/* ================= GENAI PLATFORM ARCHITECT ================= */}
           <div className="relative rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(234,179,8,0.15),transparent_62%)]" />
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_left,rgba(234,179,8,0.15),transparent_62%)]" />
+
 
             <div className="relative flex items-center justify-between p-8">
               <div className="flex items-start gap-6">
@@ -430,7 +431,8 @@ if (authLoading) {
 
           {/* ================= AI VALIDATION & GOVERNANCE ENGINEER ================= */}
           <div className="relative rounded-2xl border border-red-500/30 bg-white/[0.02] overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(220,38,38,0.18),transparent_62%)]" />
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_left,rgba(220,38,38,0.18),transparent_62%)]" />
+
 
             <div className="relative flex items-center justify-between p-8">
               <div className="flex items-start gap-6">
