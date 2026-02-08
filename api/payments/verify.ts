@@ -17,9 +17,15 @@ export default async function handler(
   res: VercelResponse
 ) {
   try {
-    // ✅ INIT SUPABASE SAFELY
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      console.error("Supabase env vars missing");
+    // ------------------------------------------------------------------
+    // 1. HARD ENV GUARD
+    // ------------------------------------------------------------------
+    if (
+      !process.env.SUPABASE_URL ||
+      !process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      !process.env.RAZORPAY_KEY_SECRET
+    ) {
+      console.error("Missing critical env vars");
       return res.redirect(302, "/dashboard");
     }
 
@@ -28,6 +34,9 @@ export default async function handler(
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
+    // ------------------------------------------------------------------
+    // 2. EXTRACT QUERY PARAMS
+    // ------------------------------------------------------------------
     const {
       razorpay_order_id,
       razorpay_payment_id,
@@ -36,55 +45,106 @@ export default async function handler(
       programSlug,
     } = req.query;
 
-    // ✅ HARD GUARD — browser safe
+    // Browser-safe hard guard
     if (
-      !razorpay_order_id ||
-      !razorpay_payment_id ||
-      !razorpay_signature
+      typeof razorpay_order_id !== "string" ||
+      typeof razorpay_payment_id !== "string" ||
+      typeof razorpay_signature !== "string" ||
+      typeof userId !== "string" ||
+      typeof programSlug !== "string"
     ) {
       return res.redirect(302, "/dashboard");
     }
 
+    // ------------------------------------------------------------------
+    // 3. VERIFY SIGNATURE
+    // ------------------------------------------------------------------
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(body)
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
+      console.error("Razorpay signature mismatch");
       return res.redirect(302, "/dashboard");
     }
 
-    const payment = await razorpay.payments.fetch(
-      razorpay_payment_id as string
-    );
+    // ------------------------------------------------------------------
+    // 4. VERIFY PAYMENT STATUS FROM RAZORPAY
+    // ------------------------------------------------------------------
+    const payment = await razorpay.payments.fetch(razorpay_payment_id);
 
     if (payment.status !== "captured") {
+      console.error("Payment not captured:", payment.status);
       return res.redirect(302, "/dashboard");
     }
 
-    await supabase.from("payments").insert({
-      user_id: userId,
-      program_id: programSlug,
-      razorpay_order_id,
-      razorpay_payment_id,
-      status: "paid",
-      raw_payload: req.query,
-    });
-
-    await supabase.from("enrollments").upsert(
+    // ------------------------------------------------------------------
+    // 5. RECORD PAYMENT (IDEMPOTENT SAFE)
+    // ------------------------------------------------------------------
+    await supabase.from("payments").upsert(
       {
         user_id: userId,
         program_id: programSlug,
-        status: "active",
+        razorpay_order_id,
+        razorpay_payment_id,
+        status: "paid",
+        raw_payload: payment,
         updated_at: new Date().toISOString(),
       },
-      { onConflict: "user_id,program_id" }
+      {
+        onConflict: "razorpay_payment_id",
+      }
     );
 
+    // ------------------------------------------------------------------
+    // 6. UPSERT ENROLLMENT (THIS WAS THE ROOT CAUSE)
+    // ------------------------------------------------------------------
+    const { error: enrollmentError } = await supabase
+      .from("enrollments")
+      .upsert(
+        {
+          user_id: userId,
+          program_id: programSlug,
+          status: "active",
+          razorpay_order_id,
+          razorpay_payment_id,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "user_id,program_id",
+        }
+      );
+
+    if (enrollmentError) {
+      console.error("Enrollment upsert failed", enrollmentError);
+      return res.redirect(302, "/dashboard");
+    }
+
+    // ------------------------------------------------------------------
+    // 7. FINAL GUARANTEE CHECK (NO SILENT FAILURES)
+    // ------------------------------------------------------------------
+    const { data: enrollment } = await supabase
+      .from("enrollments")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("program_id", programSlug)
+      .eq("status", "active")
+      .single();
+
+    if (!enrollment) {
+      console.error("Enrollment missing after successful payment");
+      return res.redirect(302, "/dashboard");
+    }
+
+    // ------------------------------------------------------------------
+    // 8. SUCCESS → DASHBOARD
+    // ------------------------------------------------------------------
     return res.redirect(302, "/dashboard");
   } catch (err) {
-    console.error("VERIFY FAILED HARD", err);
+    console.error("PAYMENT VERIFY FAILED HARD", err);
     return res.redirect(302, "/dashboard");
   }
 }
