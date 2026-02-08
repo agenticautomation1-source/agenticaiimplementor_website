@@ -21,27 +21,22 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
- 
-
   try {
-if (req.method !== "POST" && req.method !== "GET") {
-  return res.status(405).json({ error: "Method not allowed" });
-}
+    /**
+     * Razorpay REDIRECT flow:
+     * - Method can be POST
+     * - Data ALWAYS comes in query params
+     * - Body is useless → ignore it completely
+     */
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      userId,
+      programSlug,
+    } = req.query;
 
-const source = req.method === "POST" ? req.body : req.query;
-
-if (!source || typeof source !== "object") {
-  return res.status(400).json({ error: "Invalid request payload" });
-}
-
-const {
-  razorpay_order_id,
-  razorpay_payment_id,
-  razorpay_signature,
-  userId,
-  programSlug,
-} = source;
-
+    // 🔒 Validate required params
     if (
       !razorpay_order_id ||
       !razorpay_payment_id ||
@@ -49,9 +44,11 @@ const {
       !userId ||
       !programSlug
     ) {
-      return res.status(400).json({ error: "Missing payment details" });
+      console.error("Missing Razorpay params", req.query);
+      return res.status(400).send("Missing payment details");
     }
 
+    // 🔐 Verify signature
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
@@ -59,29 +56,34 @@ const {
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
-      return res.status(400).json({ error: "Invalid signature" });
+      console.error("Signature mismatch", {
+        expectedSignature,
+        razorpay_signature,
+      });
+      return res.status(400).send("Invalid signature");
     }
 
-	// ✅ Verify payment with Razorpay (CORRECT ENTITY)
-const payment = await razorpay.payments.fetch(razorpay_payment_id);
+    // 💳 Fetch payment from Razorpay
+    const payment = await razorpay.payments.fetch(
+      razorpay_payment_id as string
+    );
 
-if (payment.status !== "captured") {
-  return res.status(400).json({
-    error: "Payment not captured",
-    status: payment.status,
-  });
-}
-    
+    if (payment.status !== "captured") {
+      console.error("Payment not captured", payment.status);
+      return res.status(400).send("Payment not captured");
+    }
 
+    // 🧾 Store payment
     await supabase.from("payments").insert({
-  user_id: userId,
-  program_id: programSlug,
-  razorpay_order_id,
-  razorpay_payment_id,
-  status: "paid",
-  raw_payload: source,
-});
+      user_id: userId,
+      program_id: programSlug,
+      razorpay_order_id,
+      razorpay_payment_id,
+      status: "paid",
+      raw_payload: req.query,
+    });
 
+    // 🎓 Activate enrollment
     await supabase.from("enrollments").upsert(
       {
         user_id: userId,
@@ -92,10 +94,10 @@ if (payment.status !== "captured") {
       { onConflict: "user_id,program_id" }
     );
 
+    // ✅ Final redirect after Razorpay success screen
     return res.redirect(302, "/dashboard");
-
   } catch (err) {
-    console.error("Verify failed:", err);
-    return res.status(500).json({ error: "Verification failed" });
+    console.error("VERIFY FUNCTION CRASHED", err);
+    return res.status(500).send("Verification failed");
   }
 }
