@@ -9,7 +9,6 @@ const PROGRAMS = {
   GOVERNANCE: "ai-validation-governance-engineer",
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function Dashboard() {
 const navigate = useNavigate();
@@ -135,14 +134,14 @@ console.log("ENROLL CLICKED");
 console.log("API_BASE (VITE_API_BASE_URL):", API_BASE);
 
     try {
-      const res = await fetch(`${API_BASE}/payments/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          programSlug: programId,
-          userId: user.id,
-        }),
-      });
+      const res = await fetch("/api/payments/create-order", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    programSlug: programId,
+    userId: user.id,
+  }),
+});
 
       if (!res.ok) throw new Error("Order creation failed");
 

@@ -9,6 +9,16 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
+  // ✅ ADD THESE LINES
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  // ⬆️ END ADD
+
   console.log("CREATE-ORDER FUNCTION HIT");
 
   if (req.method !== "POST") {
@@ -61,9 +71,10 @@ export default async function handler(
     console.log("ORDER CREATED:", order.id);
 
     return res.status(200).json({
-      success: true,
-      order,
-    });
+  id: order.id,
+  amount: order.amount,
+  currency: order.currency,
+});
   } catch (err: any) {
     console.error("CREATE ORDER FAILED:", err);
 
