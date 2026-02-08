@@ -1,4 +1,9 @@
+export const config = {
+  runtime: "nodejs",
+};
+
 import crypto from "crypto";
+import Razorpay from "razorpay";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@supabase/supabase-js";
 
@@ -7,12 +12,21 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID!,
+  key_secret: process.env.RAZORPAY_KEY_SECRET!,
+});
+
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  if (!req.body || typeof req.body !== "object") {
+    return res.status(400).json({ error: "Invalid request body" });
   }
 
   try {
@@ -42,6 +56,13 @@ export default async function handler(
 
     if (expectedSignature !== razorpay_signature) {
       return res.status(400).json({ error: "Invalid signature" });
+    }
+
+    // Verify order with Razorpay
+    const order = await razorpay.orders.fetch(razorpay_order_id);
+
+    if (order.status !== "created" && order.status !== "paid") {
+      return res.status(400).json({ error: "Invalid order status" });
     }
 
     await supabase.from("payments").insert({
