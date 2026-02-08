@@ -179,6 +179,8 @@ redirect: true,
     },
   },
   
+};
+
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
