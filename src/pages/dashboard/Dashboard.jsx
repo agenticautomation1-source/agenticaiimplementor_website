@@ -157,9 +157,8 @@ const options = {
   name: "Masterstroke Program",
   description: programId.replaceAll("-", " "),
   order_id: data.id,
-callback_url: `/api/payments/verify?userId=${user.id}&programSlug=${programId}`,
+callback_url: `${window.location.origin}/api/payments/verify?userId=${user.id}&programSlug=${programId}`,
 redirect: true,
-
 
   prefill: {
     email: user.email,
