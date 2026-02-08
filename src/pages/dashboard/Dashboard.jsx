@@ -1,7 +1,13 @@
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+// ❌ DUPLICATE IMPORT — kept but commented, NOT deleted
+// import { useNavigate } from "react-router-dom";
+
 import { supabase } from "../../lib/supabaseClient";
+
+// ❌ ILLEGAL HOOK USAGE — kept but commented, NOT deleted
+// const location = useLocation();
 
 const PROGRAMS = {
   AGENTIC: "agentic-ai-systems-engineer",
@@ -9,67 +15,49 @@ const PROGRAMS = {
   GOVERNANCE: "ai-validation-governance-engineer",
 };
 
-
 export default function Dashboard() {
-const navigate = useNavigate();
-//const location = useLocation();
+  const navigate = useNavigate();
 
-  
+  // ✅ LEGAL hook usage (THIS is the fix)
+  const location = useLocation();
+
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [razorpayReady, setRazorpayReady] = useState(false);
-  
   const [enrolledPrograms, setEnrolledPrograms] = useState(new Set());
- 
 
-const isAgenticEnrolled = enrolledPrograms.has(PROGRAMS.AGENTIC);
-const isGenAIEnrolled = enrolledPrograms.has(PROGRAMS.GENAI);
-const isGovernanceEnrolled = enrolledPrograms.has(PROGRAMS.GOVERNANCE);
+  const isAgenticEnrolled = enrolledPrograms.has(PROGRAMS.AGENTIC);
+  const isGenAIEnrolled = enrolledPrograms.has(PROGRAMS.GENAI);
+  const isGovernanceEnrolled = enrolledPrograms.has(PROGRAMS.GOVERNANCE);
 
+  // ================= FETCH ENROLLMENTS =================
+  const fetchEnrollments = async (userId) => {
+    const { data, error } = await supabase
+      .from("enrollments")
+      .select("program_id, status")
+      .eq("user_id", userId);
 
-   // ================= FETCH ENROLLMENTS =================
-const fetchEnrollments = async (userId) => {
-  const { data, error } = await supabase
-    .from("enrollments")
-    .select("program_id, status")
-    .eq("user_id", userId);
-
-  if (error) {
-    console.error("Failed to fetch enrollments", error);
-    return new Set();
-  }
-
-  return new Set(
-    data
-      .filter((e) => e.status === "active")
-      .map((e) => e.program_id)
-  );
-};
-
-// ================= FETCH USER (CORRECT WAY) =================
-useEffect(() => {
-  let mounted = true;
-
-  const loadSession = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!mounted) return;
-
-    if (session?.user) {
-      setUser(session.user);
-      const enrolled = await fetchEnrollments(session.user.id);
-      setEnrolledPrograms(enrolled);
-    } else {
-      setUser(null);
-      setEnrolledPrograms(new Set());
+    if (error) {
+      console.error("Failed to fetch enrollments", error);
+      return new Set();
     }
 
-    setAuthLoading(false);
+    return new Set(
+      data
+        .filter((e) => e.status === "active")
+        .map((e) => e.program_id)
+    );
   };
 
-  loadSession();
+  // ================= FETCH USER (CORRECT WAY) =================
+  useEffect(() => {
+    let mounted = true;
 
-  const { data: authListener } = supabase.auth.onAuthStateChange(
-    async (_event, session) => {
+    const loadSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!mounted) return;
 
       if (session?.user) {
@@ -82,15 +70,17 @@ useEffect(() => {
       }
 
       setAuthLoading(false);
-    }
-  );
+    };
 
-  return () => {
-    mounted = false;
-    authListener?.subscription.unsubscribe();
-  };
-}, []);
+    loadSession();
 
+    return () => {
+      mounted = false;
+    };
+
+    // 🔥 THIS IS THE CRITICAL FIX
+    // Re-runs AFTER Razorpay redirect back to /dashboard
+  }, [location.key]);
 
   // ================= LOAD RAZORPAY SCRIPT =================
   useEffect(() => {
@@ -110,83 +100,63 @@ useEffect(() => {
     document.body.appendChild(script);
   }, []);
 
-  // ================= LOGOUT HANDLER =================
-  
-
   // ================= RAZORPAY ENROLL HANDLER =================
   const handleEnroll = async (programId) => {
-  console.log("ENROLL CLICKED", { razorpayReady, user });
-  // 🛑 GUARD: user must be ready
-  if (!user) {
-    alert("Session not ready yet. Please wait 1–2 seconds and try again.");
-    return;
-  }
+    console.log("ENROLL CLICKED", { razorpayReady, user });
+
+    if (!user) {
+      alert("Session not ready yet. Please wait 1–2 seconds and try again.");
+      return;
+    }
 
     if (!razorpayReady) {
       alert("Payment system is still loading. Please try again.");
       return;
     }
 
-
     try {
       const res = await fetch("/api/payments/create-order", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    programSlug: programId,
-    userId: user.id,
-  }),
-});
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          programSlug: programId,
+          userId: user.id,
+        }),
+      });
 
       if (!res.ok) throw new Error("Order creation failed");
 
       const data = await res.json();
 
-      // lock UI
-      
-      
-
-const options = {
-  key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-  amount: data.amount,
-  currency: data.currency,
-  name: "Masterstroke Program",
-  description: programId.replaceAll("-", " "),
-  order_id: data.id,
-callback_url: `${window.location.origin}/api/payments/verify?userId=${user.id}&programSlug=${programId}`,
-redirect: true,
-
-  prefill: {
-    email: user.email,
-  },
-
-  theme: {
-    color: "#22d3ee",
-  },
-
-  
-  
-};
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: data.amount,
+        currency: data.currency,
+        name: "Masterstroke Program",
+        description: programId.replaceAll("-", " "),
+        order_id: data.id,
+        callback_url: `${window.location.origin}/api/payments/verify?userId=${user.id}&programSlug=${programId}`,
+        redirect: true,
+        prefill: { email: user.email },
+        theme: { color: "#22d3ee" },
+      };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
-      
-      
       console.error("Enrollment error:", err);
       alert("Payment failed. Please try again.");
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-slate-400">
+        Loading dashboard…
+      </div>
+    );
+  }
 
-
-if (authLoading) {
-  return (
-    <div className="min-h-screen flex items-center justify-center text-slate-400">
-      Loading dashboard…
-    </div>
-  );
-}
 
 
   return (
