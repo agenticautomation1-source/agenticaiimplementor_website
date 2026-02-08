@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from "react";
-//import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 
@@ -18,9 +18,9 @@ const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [razorpayReady, setRazorpayReady] = useState(false);
-  const [paymentInProgress, setPaymentInProgress] = useState(false);
+  
   const [enrolledPrograms, setEnrolledPrograms] = useState(new Set());
- const paymentHandledRef = useRef(false);
+ 
 
 const isAgenticEnrolled = enrolledPrograms.has(PROGRAMS.AGENTIC);
 const isGenAIEnrolled = enrolledPrograms.has(PROGRAMS.GENAI);
@@ -115,22 +115,18 @@ useEffect(() => {
 
   // ================= RAZORPAY ENROLL HANDLER =================
   const handleEnroll = async (programId) => {
-  console.log("ENROLL CLICKED", { paymentInProgress, razorpayReady, user });
+  console.log("ENROLL CLICKED", { razorpayReady, user });
   // 🛑 GUARD: user must be ready
   if (!user) {
     alert("Session not ready yet. Please wait 1–2 seconds and try again.");
     return;
   }
 
-  
-
-
     if (!razorpayReady) {
       alert("Payment system is still loading. Please try again.");
       return;
     }
 
-console.log("ENROLL CLICKED");
 
     try {
       const res = await fetch("/api/payments/create-order", {
@@ -147,8 +143,8 @@ console.log("ENROLL CLICKED");
       const data = await res.json();
 
       // lock UI
-      document.documentElement.classList.add("razorpay-open");
-      setPaymentInProgress(true);
+      
+      
 
 const options = {
   key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -168,23 +164,15 @@ redirect: true,
     color: "#22d3ee",
   },
 
-  modal: {
-    backdropclose: false,
-    escape: false,
-    ondismiss: () => {
-      setPaymentInProgress(false);
-      document.documentElement.classList.remove("razorpay-open");
-      paymentHandledRef.current = false;
-    },
-  },
+  
   
 };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
-      setPaymentInProgress(false);
-      document.documentElement.classList.remove("razorpay-open");
+      
+      
       console.error("Enrollment error:", err);
       alert("Payment failed. Please try again.");
     }
