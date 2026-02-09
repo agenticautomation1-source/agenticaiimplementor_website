@@ -72,9 +72,14 @@ export default async function handler(
     const payment = await razorpay.payments.fetch(razorpay_payment_id);
 const order = await razorpay.orders.fetch(razorpay_order_id);
 
-const userIdFromOrder = order.notes?.userId;
-const programSlugFromOrder = order.notes?.programSlug;
+const userIdFromOrder =
+  typeof order.notes?.userId === "string" ? order.notes.userId : null;
 
+const programSlugFromOrder =
+  typeof order.notes?.programSlug === "string"
+    ? order.notes.programSlug
+    : null;
+	
 if (!userIdFromOrder || !programSlugFromOrder) {
   console.error("Missing order notes", order.notes);
   return res.redirect(302, "/dashboard");
@@ -87,26 +92,32 @@ if (!userIdFromOrder || !programSlugFromOrder) {
     // ------------------------------------------------------------------
     // 5. RECORD PAYMENT (IDEMPOTENT SAFE)
     // ------------------------------------------------------------------
-    await supabase.from("payments").upsert(
-  {
-    user_id: userIdFromOrder,
-    program_id: programSlugFromOrder,
-    razorpay_order_id,
-    razorpay_payment_id,
-    status: "paid",
-    raw_payload: payment,
-    updated_at: new Date().toISOString(),
-  },
-  {
-    onConflict: "razorpay_payment_id",
-  }
-);
+    const { error: paymentError } = await supabase
+  .from("payments")
+  .upsert(
+    {
+      user_id: userIdFromOrder,
+      program_id: programSlugFromOrder,
+      razorpay_order_id,
+      razorpay_payment_id,
+      status: "paid",
+      raw_payload: payment,
+      updated_at: new Date().toISOString(),
+    },
+    {
+      onConflict: "razorpay_payment_id",
+    }
+  );
 
+if (paymentError) {
+  console.error("Payment upsert failed", paymentError);
+  return res.redirect(302, "/dashboard");
+}
 
-    // ------------------------------------------------------------------
-    // 6. UPSERT ENROLLMENT (THIS WAS THE ROOT CAUSE)
-    // ------------------------------------------------------------------
-await supabase
+// ------------------------------------------------------------------
+// 6. UPSERT ENROLLMENT (SINGLE SOURCE OF TRUTH)
+// ------------------------------------------------------------------
+const { error: enrollmentError } = await supabase
   .from("enrollments")
   .upsert(
     {
@@ -120,32 +131,34 @@ await supabase
     {
       onConflict: "user_id,program_id",
     }
-  )
-    if (enrollmentError) {
-      console.error("Enrollment upsert failed", enrollmentError);
-      return res.redirect(302, "/dashboard");
-    }
+  );
 
-    // ------------------------------------------------------------------
-    // 7. FINAL GUARANTEE CHECK (NO SILENT FAILURES)
-    // ------------------------------------------------------------------
-    const { data: enrollment } = await supabase
-      .from("enrollments")
-      .select("id")
-    .eq("user_id", userIdFromOrder)
-	.eq("program_id", programSlugFromOrder)
-      .eq("status", "active")
-      .single();
+if (enrollmentError) {
+  console.error("Enrollment upsert failed", enrollmentError);
+  return res.redirect(302, "/dashboard");
+}
 
-    if (!enrollment) {
-      console.error("Enrollment missing after successful payment");
-      return res.redirect(302, "/dashboard");
-    }
+// ------------------------------------------------------------------
+// 7. FINAL GUARANTEE CHECK (READ, NOT WRITE)
+// ------------------------------------------------------------------
+const { data: enrollment } = await supabase
+  .from("enrollments")
+  .select("id, status")
+  .eq("user_id", userIdFromOrder)
+  .eq("program_id", programSlugFromOrder)
+  .eq("status", "active")
+  .single();
+
+if (!enrollment) {
+  console.error("Enrollment missing after successful payment");
+  return res.redirect(302, "/dashboard");
+}
 
     // ------------------------------------------------------------------
     // 8. SUCCESS → DASHBOARD
     // ------------------------------------------------------------------
-    return res.redirect(302, "/dashboard");
+    res.setHeader("Cache-Control", "no-store");
+return res.redirect(302, "/dashboard");
   } catch (err) {
     console.error("PAYMENT VERIFY FAILED HARD", err);
     return res.redirect(302, "/dashboard");

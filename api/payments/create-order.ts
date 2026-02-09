@@ -59,14 +59,14 @@ export default async function handler(
 
     // 🔥 THIS IS THE CRITICAL FIX
     const order = await razorpay.orders.create({
-      amount,
-      currency: "INR",
-      receipt: `rcpt_${Date.now()}`,
-      notes: {
-        userId,
-        programSlug,
-      },
-    });
+  amount,
+  currency: "INR",
+  receipt: `rcpt_${Date.now()}`,
+  notes: {
+    userId,
+    programSlug,
+  },
+});
 
     return res.status(200).json({
       id: order.id,
