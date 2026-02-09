@@ -9,7 +9,7 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
-  // ✅ ADD THESE LINES
+  // CORS (fine as-is)
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -17,9 +17,6 @@ export default async function handler(
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
-  // ⬆️ END ADD
-
-  console.log("CREATE-ORDER FUNCTION HIT");
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -34,8 +31,6 @@ export default async function handler(
     }
 
     const { programSlug, userId } = req.body ?? {};
-
-    console.log("REQUEST BODY:", { programSlug, userId });
 
     if (!programSlug || !userId) {
       return res.status(400).json({
@@ -62,24 +57,26 @@ export default async function handler(
       key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
+    // 🔥 THIS IS THE CRITICAL FIX
     const order = await razorpay.orders.create({
       amount,
       currency: "INR",
       receipt: `rcpt_${Date.now()}`,
+      notes: {
+        userId,
+        programSlug,
+      },
     });
 
-    console.log("ORDER CREATED:", order.id);
-
     return res.status(200).json({
-  id: order.id,
-  amount: order.amount,
-  currency: order.currency,
-});
+      id: order.id,
+      amount: order.amount,
+      currency: order.currency,
+    });
   } catch (err: any) {
     console.error("CREATE ORDER FAILED:", err);
 
     return res.status(500).json({
-      success: false,
       error: err?.message || "Create order failed",
     });
   }
