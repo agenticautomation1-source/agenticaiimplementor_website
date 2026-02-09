@@ -156,35 +156,45 @@ if (!cleaned && isReturningFromPayment()) {
   prefill: { email: user.email },
   theme: { color: "#22d3ee" },
 
-  handler: async function (response) {
-    // 🔥 THIS IS THE FIX
-const verifyRes = await fetch("/api/verify", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(payload),
-});
+handler: async function (response) {
+  try {
+    const verifyRes = await fetch("/api/payments/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature,
+        user_id: user.id,
+        program_id: programId,
+      }),
+    });
 
-const result = await verifyRes.json();
+    const result = await verifyRes.json();
 
-if (!verifyRes.ok) {
-  // handle error
-  console.error(result);
-  return;
-}
-    // Force refresh enrollments
+    if (!verifyRes.ok) {
+      console.error("VERIFY API FAILED", result);
+      alert(result.error || "Payment verification failed. Contact support.");
+      return;
+    }
+
+    // Optimistic UI update
+    setEnrolledPrograms((prev) => {
+      const next = new Set(prev);
+      next.add(programId);
+      return next;
+    });
+
+    // Hard re-fetch from DB
     const enrolled = await fetchEnrollments(user.id);
     setEnrolledPrograms(enrolled);
-  },
+  } catch (err) {
+    console.error("VERIFY CALL FAILED", err);
+    alert("Payment verification failed. Please contact support.");
+  }
+},
+
 };
-
-
-
-
-
-
-
 
       const rzp = new window.Razorpay(options);
       rzp.open();
