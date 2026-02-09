@@ -17,15 +17,13 @@ export default async function handler(
   res: VercelResponse
 ) {
   try {
-    // ------------------------------------------------------------------
-    // 1. HARD ENV GUARD
-    // ------------------------------------------------------------------
+    // 1. ENV GUARD
     if (
       !process.env.SUPABASE_URL ||
       !process.env.SUPABASE_SERVICE_ROLE_KEY ||
       !process.env.RAZORPAY_KEY_SECRET
     ) {
-      console.error("Missing critical env vars");
+      console.error("Missing env vars");
       return res.redirect(302, "/dashboard");
     }
 
@@ -34,133 +32,118 @@ export default async function handler(
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    // ------------------------------------------------------------------
-    // 2. EXTRACT QUERY PARAMS
-    // ------------------------------------------------------------------
+    // 2. QUERY PARAMS
     const {
-  razorpay_order_id,
-  razorpay_payment_id,
-  razorpay_signature,
-} = req.query;
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    } = req.query;
 
-    // Browser-safe hard guard
     if (
-  typeof razorpay_order_id !== "string" ||
-  typeof razorpay_payment_id !== "string" ||
-  typeof razorpay_signature !== "string"
-) {
-  return res.redirect(302, "/dashboard");
-}
-    // ------------------------------------------------------------------
-    // 3. VERIFY SIGNATURE
-    // ------------------------------------------------------------------
-    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+      typeof razorpay_order_id !== "string" ||
+      typeof razorpay_payment_id !== "string" ||
+      typeof razorpay_signature !== "string"
+    ) {
+      return res.redirect(302, "/dashboard");
+    }
 
+    // 3. SIGNATURE VERIFY
+    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(body)
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
-      console.error("Razorpay signature mismatch");
+      console.error("Signature mismatch");
       return res.redirect(302, "/dashboard");
     }
 
-    // ------------------------------------------------------------------
-    // 4. VERIFY PAYMENT STATUS FROM RAZORPAY
-    // ------------------------------------------------------------------
+    // 4. FETCH PAYMENT + ORDER
     const payment = await razorpay.payments.fetch(razorpay_payment_id);
-const order = await razorpay.orders.fetch(razorpay_order_id);
+    const order = await razorpay.orders.fetch(razorpay_order_id);
 
-const userIdFromOrder =
-  typeof order.notes?.userId === "string" ? order.notes.userId : null;
+    // 🔥 CRITICAL CONSISTENCY CHECK (THIS WAS MISSING)
+    if (payment.order_id !== razorpay_order_id) {
+      console.error("Payment does not belong to order");
+      return res.redirect(302, "/dashboard");
+    }
 
-const programSlugFromOrder =
-  typeof order.notes?.programSlug === "string"
-    ? order.notes.programSlug
-    : null;
-	
-if (!userIdFromOrder || !programSlugFromOrder) {
-  console.error("Missing order notes", order.notes);
-  return res.redirect(302, "/dashboard");
-}
     if (payment.status !== "captured") {
       console.error("Payment not captured:", payment.status);
       return res.redirect(302, "/dashboard");
     }
 
-    // ------------------------------------------------------------------
-    // 5. RECORD PAYMENT (IDEMPOTENT SAFE)
-    // ------------------------------------------------------------------
+    const userId =
+      typeof order.notes?.userId === "string" ? order.notes.userId : null;
+    const programSlug =
+      typeof order.notes?.programSlug === "string"
+        ? order.notes.programSlug
+        : null;
+
+    if (!userId || !programSlug) {
+      console.error("Missing order notes", order.notes);
+      return res.redirect(302, "/dashboard");
+    }
+
+    // 5. PAYMENT UPSERT
     const { error: paymentError } = await supabase
-  .from("payments")
-  .upsert(
-    {
-      user_id: userIdFromOrder,
-      program_id: programSlugFromOrder,
-      razorpay_order_id,
-      razorpay_payment_id,
-      status: "paid",
-      raw_payload: payment,
-      updated_at: new Date().toISOString(),
-    },
-    {
-      onConflict: "razorpay_payment_id",
+      .from("payments")
+      .upsert(
+        {
+          user_id: userId,
+          program_id: programSlug,
+          razorpay_order_id,
+          razorpay_payment_id,
+          status: "paid",
+          raw_payload: payment,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "razorpay_payment_id" }
+      );
+
+    if (paymentError) {
+      console.error("Payment upsert failed", paymentError);
+      return res.redirect(302, "/dashboard");
     }
-  );
 
-if (paymentError) {
-  console.error("Payment upsert failed", paymentError);
-  return res.redirect(302, "/dashboard");
-}
+    // 6. ENROLLMENT UPSERT
+    const { error: enrollmentError } = await supabase
+      .from("enrollments")
+      .upsert(
+        {
+          user_id: userId,
+          program_id: programSlug,
+          status: "active",
+          razorpay_order_id,
+          razorpay_payment_id,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,program_id" }
+      );
 
-// ------------------------------------------------------------------
-// 6. UPSERT ENROLLMENT (SINGLE SOURCE OF TRUTH)
-// ------------------------------------------------------------------
-const { error: enrollmentError } = await supabase
-  .from("enrollments")
-  .upsert(
-    {
-      user_id: userIdFromOrder,
-      program_id: programSlugFromOrder,
-      status: "active",
-      razorpay_order_id,
-      razorpay_payment_id,
-      updated_at: new Date().toISOString(),
-    },
-    {
-      onConflict: "user_id,program_id",
+    if (enrollmentError) {
+      console.error("Enrollment upsert failed", enrollmentError);
+      return res.redirect(302, "/dashboard");
     }
-  );
 
-if (enrollmentError) {
-  console.error("Enrollment upsert failed", enrollmentError);
-  return res.redirect(302, "/dashboard");
-}
+    // 7. FINAL READ CHECK (NO .single())
+    const { data, error } = await supabase
+      .from("enrollments")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("program_id", programSlug)
+      .eq("status", "active");
 
-// ------------------------------------------------------------------
-// 7. FINAL GUARANTEE CHECK (READ, NOT WRITE)
-// ------------------------------------------------------------------
-const { data: enrollment } = await supabase
-  .from("enrollments")
-  .select("id, status")
-  .eq("user_id", userIdFromOrder)
-  .eq("program_id", programSlugFromOrder)
-  .eq("status", "active")
-  .single();
+    if (error || !data || data.length === 0) {
+      console.error("Enrollment missing after insert", error);
+      return res.redirect(302, "/dashboard");
+    }
 
-if (!enrollment) {
-  console.error("Enrollment missing after successful payment");
-  return res.redirect(302, "/dashboard");
-}
-
-    // ------------------------------------------------------------------
-    // 8. SUCCESS → DASHBOARD
-    // ------------------------------------------------------------------
     res.setHeader("Cache-Control", "no-store");
-return res.redirect(302, "/dashboard");
+    return res.redirect(302, "/dashboard");
   } catch (err) {
-    console.error("PAYMENT VERIFY FAILED HARD", err);
+    console.error("VERIFY FAILED HARD", err);
     return res.redirect(302, "/dashboard");
   }
 }
