@@ -38,24 +38,19 @@ export default async function handler(
     // 2. EXTRACT QUERY PARAMS
     // ------------------------------------------------------------------
     const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      userId,
-      programSlug,
-    } = req.query;
+  razorpay_order_id,
+  razorpay_payment_id,
+  razorpay_signature,
+} = req.query;
 
     // Browser-safe hard guard
     if (
-      typeof razorpay_order_id !== "string" ||
-      typeof razorpay_payment_id !== "string" ||
-      typeof razorpay_signature !== "string" ||
-      typeof userId !== "string" ||
-      typeof programSlug !== "string"
-    ) {
-      return res.redirect(302, "/dashboard");
-    }
-
+  typeof razorpay_order_id !== "string" ||
+  typeof razorpay_payment_id !== "string" ||
+  typeof razorpay_signature !== "string"
+) {
+  return res.redirect(302, "/dashboard");
+}
     // ------------------------------------------------------------------
     // 3. VERIFY SIGNATURE
     // ------------------------------------------------------------------
@@ -75,7 +70,15 @@ export default async function handler(
     // 4. VERIFY PAYMENT STATUS FROM RAZORPAY
     // ------------------------------------------------------------------
     const payment = await razorpay.payments.fetch(razorpay_payment_id);
+const order = await razorpay.orders.fetch(razorpay_order_id);
 
+const userIdFromOrder = order.notes?.userId;
+const programSlugFromOrder = order.notes?.programSlug;
+
+if (!userIdFromOrder || !programSlugFromOrder) {
+  console.error("Missing order notes", order.notes);
+  return res.redirect(302, "/dashboard");
+}
     if (payment.status !== "captured") {
       console.error("Payment not captured:", payment.status);
       return res.redirect(302, "/dashboard");
@@ -85,39 +88,39 @@ export default async function handler(
     // 5. RECORD PAYMENT (IDEMPOTENT SAFE)
     // ------------------------------------------------------------------
     await supabase.from("payments").upsert(
-      {
-        user_id: userId,
-        program_id: programSlug,
-        razorpay_order_id,
-        razorpay_payment_id,
-        status: "paid",
-        raw_payload: payment,
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "razorpay_payment_id",
-      }
-    );
+  {
+    user_id: userIdFromOrder,
+    program_id: programSlugFromOrder,
+    razorpay_order_id,
+    razorpay_payment_id,
+    status: "paid",
+    raw_payload: payment,
+    updated_at: new Date().toISOString(),
+  },
+  {
+    onConflict: "razorpay_payment_id",
+  }
+);
+
 
     // ------------------------------------------------------------------
     // 6. UPSERT ENROLLMENT (THIS WAS THE ROOT CAUSE)
     // ------------------------------------------------------------------
-    const { error: enrollmentError } = await supabase
-      .from("enrollments")
-      .upsert(
-        {
-          user_id: userId,
-          program_id: programSlug,
-          status: "active",
-          razorpay_order_id,
-          razorpay_payment_id,
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: "user_id,program_id",
-        }
-      );
-
+await supabase
+  .from("enrollments")
+  .upsert(
+    {
+      user_id: userIdFromOrder,
+      program_id: programSlugFromOrder,
+      status: "active",
+      razorpay_order_id,
+      razorpay_payment_id,
+      updated_at: new Date().toISOString(),
+    },
+    {
+      onConflict: "user_id,program_id",
+    }
+  )
     if (enrollmentError) {
       console.error("Enrollment upsert failed", enrollmentError);
       return res.redirect(302, "/dashboard");
@@ -129,8 +132,8 @@ export default async function handler(
     const { data: enrollment } = await supabase
       .from("enrollments")
       .select("id")
-      .eq("user_id", userId)
-      .eq("program_id", programSlug)
+    .eq("user_id", userIdFromOrder)
+	.eq("program_id", programSlugFromOrder)
       .eq("status", "active")
       .single();
 
