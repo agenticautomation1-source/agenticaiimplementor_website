@@ -1,3 +1,11 @@
+export default function LearningPathPage() {
+  return (
+    <div style={{ color: "white", padding: 40 }}>
+      <h1>LEARNING PATH IS RENDERING</h1>
+    </div>
+  );
+}
+{/*
 import "./learning-path.css";
 
 import LPHeader from "./components/LPHeader";
@@ -19,4 +27,6 @@ export default function LearningPathPage() {
     </div>
   );
 }
+
+*/}
 
