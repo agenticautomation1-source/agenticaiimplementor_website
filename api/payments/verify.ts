@@ -57,6 +57,13 @@ export default async function handler(
     }
 
     // 3. VERIFY SIGNATURE
+	
+	console.log("SIGNATURE INPUTS", {
+  razorpay_order_id,
+  razorpay_payment_id,
+  receivedSignature: razorpay_signature,
+});
+
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -85,31 +92,49 @@ export default async function handler(
     }
 
     // 5. UPSERT PAYMENT
-    await supabase.from("payments").upsert(
-      {
-        user_id: userId,
-        program_id: programSlug,
-        razorpay_order_id,
-        razorpay_payment_id,
-        status: "paid",
-        raw_payload: payment,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "razorpay_payment_id" }
-    );
+ const { error: paymentError } = await supabase
+  .from("payments")
+  .upsert(
+    {
+      user_id: userId,
+      program_id: programSlug,
+      razorpay_order_id,
+      razorpay_payment_id,
+      status: "paid",
+      raw_payload: payment,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "razorpay_payment_id" }
+  );
+
+console.log("PAYMENTS UPSERT RESULT", paymentError);
+
+if (paymentError) {
+  console.error("PAYMENTS UPSERT FAILED", paymentError);
+  return res.status(500).json({ error: "Payment DB write failed" });
+}
 
     // 6. UPSERT ENROLLMENT
-    await supabase.from("enrollments").upsert(
-      {
-        user_id: userId,
-        program_id: programSlug,
-        status: "active",
-        razorpay_order_id,
-        razorpay_payment_id,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "user_id,program_id" }
-    );
+const { error: enrollmentError } = await supabase
+  .from("enrollments")
+  .upsert(
+    {
+      user_id: userId,
+      program_id: programSlug,
+      status: "active",
+      razorpay_order_id,
+      razorpay_payment_id,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,program_id" }
+  );
+
+console.log("ENROLLMENTS UPSERT RESULT", enrollmentError);
+
+if (enrollmentError) {
+  console.error("ENROLLMENT UPSERT FAILED", enrollmentError);
+  return res.status(500).json({ error: "Enrollment DB write failed" });
+}
 
     // 7. DONE
     return res.status(200).json({ success: true });

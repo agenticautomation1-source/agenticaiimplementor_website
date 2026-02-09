@@ -1,7 +1,8 @@
+import LearningPathPage from "@/pages/learning-path/LearningPath.page";
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 import Courses from "./pages/Courses";
 import Programs from "./pages/Programs";
-import LearningPaths from "./pages/LearningPaths";
+// import LearningPaths from "./pages/LearningPaths"; - OLD ONE
 import React, { useState } from "react";
 import AuthCallback from "./pages/AuthCallback";
 
@@ -87,8 +88,8 @@ const App: React.FC = () => {
 
     {/* PROGRAMS */}
     <Route path="/programs" element={<Programs />} />
-    <Route path="/learning-paths" element={<LearningPaths />} />
-
+//    <Route path="/learning-paths" element={<LearningPaths />} /> - OLD ONE
+	<Route path="/learning-path" element={<LearningPathPage />} />
     {/* POLICY */}
     <Route path="/refund-policy" element={<RefundPolicy />} />
     <Route path="/disclaimer" element={<Disclaimer />} />
