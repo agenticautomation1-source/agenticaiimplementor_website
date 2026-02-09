@@ -50,37 +50,53 @@ export default function Dashboard() {
   };
 
   // ================= FETCH USER (CORRECT WAY) =================
+  const isReturningFromPayment = () => {
+  const params = new URLSearchParams(window.location.search);
+  return (
+    params.has("razorpay_payment_id") ||
+    params.has("razorpay_order_id")
+  );
+};
+  
   useEffect(() => {
-    let mounted = true;
+  let mounted = true;
 
-    const loadSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+  const loadSessionAndEnrollments = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-      if (!mounted) return;
+    if (!mounted) return;
 
-      if (session?.user) {
-        setUser(session.user);
-        const enrolled = await fetchEnrollments(session.user.id);
-        setEnrolledPrograms(enrolled);
-      } else {
-        setUser(null);
-        setEnrolledPrograms(new Set());
-      }
-
+    if (!session?.user) {
+      setUser(null);
+      setEnrolledPrograms(new Set());
       setAuthLoading(false);
-    };
+      return;
+    }
 
-    loadSession();
+    setUser(session.user);
 
-    return () => {
-      mounted = false;
-    };
+    // 🔥 FORCE REFRESH AFTER PAYMENT
+    const enrolled = await fetchEnrollments(session.user.id);
+    setEnrolledPrograms(enrolled);
 
-    // 🔥 THIS IS THE CRITICAL FIX
-    // Re-runs AFTER Razorpay redirect back to /dashboard
-  }, [location.key]);
+    setAuthLoading(false);
+
+    // 🔥 CLEAN URL AFTER FIRST POST-PAYMENT LOAD
+if (!cleaned) {
+  window.history.replaceState({}, "", "/dashboard");
+  setCleaned(true);
+}
+  };
+
+  loadSessionAndEnrollments();
+
+  return () => {
+    mounted = false;
+  };
+}, [location.key]);
+
 
   // ================= LOAD RAZORPAY SCRIPT =================
   useEffect(() => {

@@ -7,21 +7,17 @@ export default function CourseCard({ course }) {
   const [loading, setLoading] = useState(false);
 
   const handleEnrollClick = () => {
-    if (!course?.enrollUrl) {
-      console.error(
-        "[CourseCard] Missing enrollUrl for course:",
-        course?.title
-      );
-      return;
-    }
+  if (!course?.enrollUrl) {
+    console.error("Missing enrollUrl", course);
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    setTimeout(() => {
-      window.open(course.enrollUrl, "_blank", "noopener,noreferrer");
-      setLoading(false);
-    }, 250);
-  };
+  // IMPORTANT: same tab redirect
+  window.location.href = course.enrollUrl;
+};
+
 
   return (
     <div className="group rounded-2xl border border-white/10 bg-gradient-to-b from-[#0b1220] to-[#05070c] overflow-hidden hover:border-primary/40 transition-all duration-300">

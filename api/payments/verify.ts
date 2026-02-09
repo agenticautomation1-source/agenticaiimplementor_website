@@ -122,26 +122,15 @@ export default async function handler(
         { onConflict: "user_id,program_id" }
       );
 
-    if (enrollmentError) {
+ if (enrollmentError) {
       console.error("Enrollment upsert failed", enrollmentError);
       return res.redirect(302, "/dashboard");
     }
 
-    // 7. FINAL READ CHECK (NO .single())
-    const { data, error } = await supabase
-      .from("enrollments")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("program_id", programSlug)
-      .eq("status", "active");
-
-    if (error || !data || data.length === 0) {
-      console.error("Enrollment missing after insert", error);
-      return res.redirect(302, "/dashboard");
-    }
-
+    // 7. SUCCESS RESPONSE
     res.setHeader("Cache-Control", "no-store");
     return res.redirect(302, "/dashboard");
+
   } catch (err) {
     console.error("VERIFY FAILED HARD", err);
     return res.redirect(302, "/dashboard");
