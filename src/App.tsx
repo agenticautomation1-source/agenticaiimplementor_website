@@ -1,4 +1,4 @@
-import LearningPathPage from "@/pages/learning-path/LearningPath.page";
+import LearningPathPage from "./pages/learning-path/LearningPath.page";
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 import Courses from "./pages/Courses";
 import Programs from "./pages/Programs";
