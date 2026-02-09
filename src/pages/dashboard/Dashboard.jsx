@@ -158,25 +158,21 @@ if (!cleaned && isReturningFromPayment()) {
 
   handler: async function (response) {
     // 🔥 THIS IS THE FIX
-    const verifyRes = await fetch("/api/payments/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-  razorpay_order_id: response.razorpay_order_id,
-  razorpay_payment_id: response.razorpay_payment_id,
-  razorpay_signature: response.razorpay_signature,
-  user_id: user.id,
-  program_id: programId,
-}),
+const verifyRes = await fetch("/api/verify", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(payload),
+});
 
-    const result = await verifyRes.json();
+const result = await verifyRes.json();
 
 if (!verifyRes.ok) {
-  console.error("VERIFY API FAILED", result);
-  alert(result.error || "Payment verification failed. Contact support.");
+  // handle error
+  console.error(result);
   return;
 }
-
     // Force refresh enrollments
     const enrolled = await fetchEnrollments(user.id);
     setEnrolledPrograms(enrolled);
