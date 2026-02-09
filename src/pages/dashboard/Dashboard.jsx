@@ -21,6 +21,8 @@ export default function Dashboard() {
   // ✅ LEGAL hook usage (THIS is the fix)
   const location = useLocation();
 
+const [cleaned, setCleaned] = useState(false);
+
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [razorpayReady, setRazorpayReady] = useState(false);
@@ -84,7 +86,7 @@ export default function Dashboard() {
     setAuthLoading(false);
 
     // 🔥 CLEAN URL AFTER FIRST POST-PAYMENT LOAD
-if (!cleaned) {
+if (!cleaned && isReturningFromPayment()) {
   window.history.replaceState({}, "", "/dashboard");
   setCleaned(true);
 }
@@ -145,17 +147,44 @@ if (!cleaned) {
       const data = await res.json();
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: data.amount,
-        currency: data.currency,
-        name: "Masterstroke Program",
-        description: programId.replaceAll("-", " "),
-        order_id: data.id,
-        callback_url: `${window.location.origin}/api/payments/verify?userId=${user.id}&programSlug=${programId}`,
-        redirect: true,
-        prefill: { email: user.email },
-        theme: { color: "#22d3ee" },
-      };
+  key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+  amount: data.amount,
+  currency: data.currency,
+  name: "Masterstroke Program",
+  description: programId.replaceAll("-", " "),
+  order_id: data.id,
+  prefill: { email: user.email },
+  theme: { color: "#22d3ee" },
+
+  handler: async function (response) {
+    // 🔥 THIS IS THE FIX
+    const verifyRes = await fetch("/api/payments/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature,
+      }),
+    });
+
+    if (!verifyRes.ok) {
+      alert("Payment verification failed");
+      return;
+    }
+
+    // Force refresh enrollments
+    const enrolled = await fetchEnrollments(user.id);
+    setEnrolledPrograms(enrolled);
+  },
+};
+
+
+
+
+
+
+
 
       const rzp = new window.Razorpay(options);
       rzp.open();

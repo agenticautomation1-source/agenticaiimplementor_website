@@ -17,15 +17,18 @@ export default async function handler(
   res: VercelResponse
 ) {
   try {
+	  if (req.method !== "POST") {
+  return res.status(405).json({ error: "Method not allowed" });
+}
     // 1. ENV GUARD
-    if (
-      !process.env.SUPABASE_URL ||
-      !process.env.SUPABASE_SERVICE_ROLE_KEY ||
-      !process.env.RAZORPAY_KEY_SECRET
-    ) {
-      console.error("Missing env vars");
-      return res.redirect(302, "/dashboard");
-    }
+ if (
+  !process.env.SUPABASE_URL ||
+  !process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  !process.env.RAZORPAY_KEY_SECRET
+) {
+  console.error("Missing env vars");
+  return res.status(500).json({ error: "Server misconfigured" });
+}
 
     const supabase = createClient(
       process.env.SUPABASE_URL,
@@ -33,19 +36,21 @@ export default async function handler(
     );
 
     // 2. QUERY PARAMS
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-    } = req.query;
+// 2. BODY PARAMS (POST)
+const {
+  razorpay_order_id,
+  razorpay_payment_id,
+  razorpay_signature,
+} = req.body;
 
-    if (
-      typeof razorpay_order_id !== "string" ||
-      typeof razorpay_payment_id !== "string" ||
-      typeof razorpay_signature !== "string"
-    ) {
-      return res.redirect(302, "/dashboard");
-    }
+if (
+  !razorpay_order_id ||
+  !razorpay_payment_id ||
+  !razorpay_signature
+) {
+  console.error("Missing payment verification body", req.body);
+  return res.status(400).json({ error: "Invalid payment payload" });
+}
 
     // 3. SIGNATURE VERIFY
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
@@ -55,9 +60,9 @@ export default async function handler(
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
-      console.error("Signature mismatch");
-      return res.redirect(302, "/dashboard");
-    }
+  console.error("Signature mismatch");
+  return res.status(400).json({ error: "Signature mismatch" });
+}
 
     // 4. FETCH PAYMENT + ORDER
     const payment = await razorpay.payments.fetch(razorpay_payment_id);
@@ -65,14 +70,14 @@ export default async function handler(
 
     // 🔥 CRITICAL CONSISTENCY CHECK (THIS WAS MISSING)
     if (payment.order_id !== razorpay_order_id) {
-      console.error("Payment does not belong to order");
-      return res.redirect(302, "/dashboard");
-    }
+  console.error("Payment does not belong to order");
+  return res.status(400).json({ error: "Order mismatch" });
+}
 
-    if (payment.status !== "captured") {
-      console.error("Payment not captured:", payment.status);
-      return res.redirect(302, "/dashboard");
-    }
+if (payment.status !== "captured") {
+  console.error("Payment not captured:", payment.status);
+  return res.status(400).json({ error: "Payment not captured" });
+}
 
     const userId =
       typeof order.notes?.userId === "string" ? order.notes.userId : null;
@@ -82,9 +87,9 @@ export default async function handler(
         : null;
 
     if (!userId || !programSlug) {
-      console.error("Missing order notes", order.notes);
-      return res.redirect(302, "/dashboard");
-    }
+  console.error("Missing order notes", order.notes);
+  return res.status(400).json({ error: "Missing order notes" });
+}
 
     // 5. PAYMENT UPSERT
     const { error: paymentError } = await supabase
@@ -103,9 +108,9 @@ export default async function handler(
       );
 
     if (paymentError) {
-      console.error("Payment upsert failed", paymentError);
-      return res.redirect(302, "/dashboard");
-    }
+  console.error("Payment upsert failed", paymentError);
+  return res.status(500).json({ error: "Payment upsert failed" });
+}
 
     // 6. ENROLLMENT UPSERT
     const { error: enrollmentError } = await supabase
@@ -123,16 +128,16 @@ export default async function handler(
       );
 
  if (enrollmentError) {
-      console.error("Enrollment upsert failed", enrollmentError);
-      return res.redirect(302, "/dashboard");
-    }
+  console.error("Enrollment upsert failed", enrollmentError);
+  return res.status(500).json({ error: "Enrollment upsert failed" });
+}
 
     // 7. SUCCESS RESPONSE
     res.setHeader("Cache-Control", "no-store");
-    return res.redirect(302, "/dashboard");
+return res.status(200).json({ success: true });
 
   } catch (err) {
-    console.error("VERIFY FAILED HARD", err);
-    return res.redirect(302, "/dashboard");
-  }
+  console.error("VERIFY FAILED HARD", err);
+  return res.status(500).json({ error: "Verification failed" });
+}
 }
