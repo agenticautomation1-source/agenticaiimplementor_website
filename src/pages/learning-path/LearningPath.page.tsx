@@ -3,13 +3,16 @@ export default function LearningPathPage() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#111",
+        background: "red",
         color: "white",
-        padding: "40px",
-        fontSize: "24px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "32px",
+        zIndex: 9999,
       }}
     >
-      ✅ LEARNING PATH PAGE IS RENDERING
+      LEARNING PATH PAGE IS MOUNTING
     </div>
   );
 }
