@@ -67,6 +67,9 @@ export default async function handler(
 
     // ================= UPSERT PAYMENT =================
 // 5. UPSERT PAYMENT  ✅ FIXED
+const amount = req.body.amount;      // paise
+const currency = req.body.currency;  // INR
+
 const { error: paymentError } = await supabase
   .from("payments")
   .upsert(
@@ -75,8 +78,8 @@ const { error: paymentError } = await supabase
       program_id,
       razorpay_order_id,
       razorpay_payment_id,
-      amount: req.body.amount ?? 4999,       // REQUIRED
-      currency: req.body.currency ?? "INR",  // REQUIRED
+      amount,
+      currency,
       status: "paid",
       raw_payload: req.body,
       updated_at: new Date().toISOString(),
