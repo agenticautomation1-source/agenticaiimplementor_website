@@ -203,7 +203,7 @@ handler: async function (response) {
     // Optimistic UI update
     setEnrolledPrograms((prev) => {
   const next = new Set(prev);
-  next.add(PROGRAM_MAP[programId].id);
+  next.add(programId);
   return next;
 });
 
