@@ -80,7 +80,7 @@ const {
       return res.status(400).json({ error: "Signature mismatch" });
     }
 
-if (!/^[a-z0-9-]+$/.test(program_id)) {
+if (!/^[a-z0-9_]+$/.test(program_id)) {
   console.error("❌ Malformed program_id", program_id);
   return res.status(400).json({ error: "Invalid program_id format" });
 }
