@@ -186,3 +186,35 @@ iframe[src*="razorpay"],
 .razorpay-container {
   z-index: 2147483647 !important;
 }
+
+@layer base {
+  body {
+    @apply bg-[#050505] text-slate-100 font-display;
+  }
+}
+
+.glow-border {
+  box-shadow: 0 0 15px rgba(0, 245, 255, 0.1);
+  border: 1px solid rgba(0, 245, 255, 0.2);
+}
+
+.glow-text {
+  text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+}
+
+.blueprint-grid {
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 245, 255, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 30px 30px;
+}
+
+.node-line {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 245, 255, 0.5) 0%,
+    rgba(0, 245, 255, 0) 100%
+  );
+}
