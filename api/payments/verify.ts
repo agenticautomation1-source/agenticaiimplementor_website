@@ -1,8 +1,10 @@
+
 export const config = {
   runtime: "nodejs",
 };
 
 import crypto from "crypto";
+import Razorpay from "razorpay";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@supabase/supabase-js";
 
@@ -18,21 +20,34 @@ export default async function handler(
 
   try {
     // ================= ENV =================
-    const {
-      SUPABASE_URL,
-      SUPABASE_SERVICE_ROLE_KEY,
-      RAZORPAY_KEY_SECRET,
-    } = process.env;
+const {
+  SUPABASE_URL,
+  SUPABASE_SERVICE_ROLE_KEY,
+  RAZORPAY_KEY_SECRET,
+  RAZORPAY_KEY_ID,
+} = process.env;
 
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !RAZORPAY_KEY_SECRET) {
-      console.error("❌ Missing env vars");
-      return res.status(500).json({ error: "Server misconfigured" });
-    }
+    if (
+  !SUPABASE_URL ||
+  !SUPABASE_SERVICE_ROLE_KEY ||
+  !RAZORPAY_KEY_SECRET ||
+  !RAZORPAY_KEY_ID
+) {
+  console.error("❌ Missing env vars");
+  return res.status(500).json({ error: "Server misconfigured" });
+}
 
     const supabase = createClient(
       SUPABASE_URL,
       SUPABASE_SERVICE_ROLE_KEY
     );
+	
+	const razorpay = new Razorpay({
+  key_id: RAZORPAY_KEY_ID,
+  key_secret: RAZORPAY_KEY_SECRET,
+});
+
+
 
     // ================= BODY =================
     const {
@@ -65,6 +80,12 @@ export default async function handler(
       return res.status(400).json({ error: "Signature mismatch" });
     }
 
+if (!/^[a-z0-9-]+$/.test(program_id)) {
+  console.error("❌ Malformed program_id", program_id);
+  return res.status(400).json({ error: "Invalid program_id format" });
+}
+
+
     // ================= FETCH PROGRAM FROM DB =================
 const { data: program, error: programError } = await supabase
   .from("programs")
@@ -80,7 +101,17 @@ if (programError || !program) {
 
 const amount = program.price_paise; // paise (INTEGER)
 
+// ================= VERIFY ORDER AMOUNT (SAFE) =================
+// Do NOT trust client payload. Verify using Razorpay order.
+const order = await razorpay.orders.fetch(razorpay_order_id);
 
+if (!order || order.amount !== amount) {
+  console.error("❌ Razorpay order amount mismatch", {
+    expected: amount,
+    razorpay: order?.amount,
+  });
+  return res.status(400).json({ error: "Amount mismatch" });
+}
 
 const { data: existingPayment, error: existingPaymentError } =
   await supabase
