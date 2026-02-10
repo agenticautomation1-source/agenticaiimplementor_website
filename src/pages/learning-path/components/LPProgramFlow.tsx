@@ -61,18 +61,18 @@ titleClass: "text-yellow-400",
       <div className="max-w-[1440px] mx-auto space-y-24">
 
         {/* HEADER */}
-        <div>
-          <p className="text-xs uppercase tracking-widest text-accent-cyan font-bold mb-2">
-            Ecosystem Architecture
-          </p>
-          <h2 className="text-4xl font-bold mb-4">
-            Masterstroke Program Flow
-          </h2>
-          <p className="text-slate-500 max-w-2xl">
-            A technical visualization of foundational engineering tracks feeding
-            into specialized mastery paths.
-          </p>
-        </div>
+<div>
+  <p className="text-xs uppercase tracking-widest text-accent-cyan font-bold mb-2">
+    Who This Is For
+  </p>
+  <h2 className="text-4xl font-bold mb-4">
+    Professional Entry Pathways into the Masterstroke
+  </h2>
+  <p className="text-slate-500 max-w-2xl">
+    See how different professional backgrounds map to each Masterstroke
+    specialization based on experience and career stage.
+  </p>
+</div>
 
         {/* TRACK GROUPS */}
         {tracks.map((track, idx) => (
