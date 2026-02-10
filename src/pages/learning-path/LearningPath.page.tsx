@@ -1,3 +1,4 @@
+import LPProgramFlow from "./components/LPProgramFlow";
 export default function LearningPathPage() {
   return (
     <div className="dark bg-obsidian text-slate-100 font-display min-h-screen">
@@ -138,6 +139,9 @@ export default function LearningPathPage() {
         </div>
       </section>
 
+      {/* MASTERSTROKE PROGRAM FLOW (MISSING MIDDLE SECTION) */}
+      <LPProgramFlow />
+	  
       {/* CTA */}
       <section className="px-6 lg:px-20 py-20">
         <div className="max-w-4xl mx-auto bg-gradient-to-br from-charcoal to-obsidian border border-slate-800 p-12 rounded-3xl text-center relative overflow-hidden">
