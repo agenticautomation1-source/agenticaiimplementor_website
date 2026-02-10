@@ -81,10 +81,10 @@ const {
     }
 
 // ✅ program_id must match DB id (underscores allowed)
-if (!/^[a-z0-9_]+$/.test(program_id)) {
-  console.error("❌ Malformed program_id", program_id);
-  return res.status(400).json({ error: "Invalid program_id format" });
-}
+
+
+
+
 
 
     // ================= FETCH PROGRAM FROM DB =================
