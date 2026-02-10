@@ -100,10 +100,9 @@ titleClass: "text-yellow-400",
   />
 </div>
             {/* RIGHT — MASTERSTROKE CARD */}
-           <div
-  className={`h-[132px] flex flex-col justify-center p-6 rounded-xl bg-slate-panel border ${
-    track.borderClass'} 
->
+<div
+  className={`h-[132px] flex flex-col justify-center p-6 rounded-xl bg-slate-panel border ${track.borderClass}`}
+>         
               <p
                 className={`text-xs uppercase tracking-widest mb-2 ${track.titleClass}`}
               >
