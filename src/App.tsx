@@ -103,7 +103,7 @@ const App: React.FC = () => {
     <Route path="/test-auth" element={<TestAuth />} />
 
     {/* FALLBACK */}
-    <Route path="*" element={<Navigate to="/" replace />} />
+    {/* <Route path="*" element={<Navigate to="/" replace />} /> */}✅ CHANGE TO (temporary)
   </Routes>
 </main>
 
