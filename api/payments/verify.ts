@@ -27,7 +27,15 @@ export default async function handler(
       !process.env.RAZORPAY_KEY_ID
     ) {
       console.error("Missing env vars");
-      return res.status(500).json({ error: "Server misconfigured" });
+      return res.status(500).json({
+  error: "Server misconfigured",
+  missing: {
+    SUPABASE_URL: !process.env.SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY: !process.env.SUPABASE_SERVICE_ROLE_KEY,
+    RAZORPAY_KEY_ID: !process.env.RAZORPAY_KEY_ID,
+    RAZORPAY_KEY_SECRET: !process.env.RAZORPAY_KEY_SECRET,
+  },
+});
     }
 
     const supabase = createClient(
