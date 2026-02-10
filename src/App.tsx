@@ -1,5 +1,5 @@
 import LearningPathPage from "./pages/learning-path/LearningPath.page";
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import Courses from "./pages/Courses";
 import Programs from "./pages/Programs";
 // import LearningPaths from "./pages/LearningPaths"; - OLD ONE
@@ -26,6 +26,8 @@ import TermsConditions from "./pages/TermsAndConditions";
 
 
 const App: React.FC = () => {
+	const location = useLocation();
+  const isLearningPath = location.pathname === "/learning-path";
 
   const [paymentOpen, setPaymentOpen] = useState(false);
 
@@ -37,7 +39,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background-dark text-slate-100 pointer-events-auto">
       {/* AUTH-AWARE NAVBAR */}
-      <Navbar />
+ {!isLearningPath && <Navbar />}
 
  <main className="flex-1 min-h-screen">
   <Routes>
@@ -107,7 +109,8 @@ const App: React.FC = () => {
 
 
       {/* ================= FOOTER ================= */}
-      <footer className="border-t border-white/5 bg-charcoal/50 py-20">
+      {!isLearningPath && (
+  <footer className="border-t border-white/5 bg-charcoal/50 py-20">
         <div className="relative pl-20 pr-6 md:pr-8 w-full">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             {/* BRAND */}
@@ -222,7 +225,7 @@ const App: React.FC = () => {
         </div>
       </footer>
 
-      {!paymentOpen && <AIAdvisor />}
+      {!isLearningPath && !paymentOpen && <AIAdvisor />}
     </div>
   );
 };
