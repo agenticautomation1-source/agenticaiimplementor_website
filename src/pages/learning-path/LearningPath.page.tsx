@@ -1,7 +1,15 @@
 export default function LearningPathPage() {
   return (
-    <div style={{ color: "white", padding: 40 }}>
-      <h1>LEARNING PATH IS RENDERING</h1>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#111",
+        color: "white",
+        padding: "40px",
+        fontSize: "24px",
+      }}
+    >
+      ✅ LEARNING PATH PAGE IS RENDERING
     </div>
   );
 }
