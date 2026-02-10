@@ -65,18 +65,22 @@ export default async function handler(
       return res.status(400).json({ error: "Signature mismatch" });
     }
 
-    // ================= TRUST BACKEND PRICE =================
-    // NEVER trust client for amount
-    const PROGRAM_PRICE_MAP: Record<string, number> = {
-      masterstroke: 499900, // paise
-    };
+    // ================= FETCH PROGRAM FROM DB =================
+const { data: program, error: programError } = await supabase
+  .from("programs")
+  .select("id, name, price_paise")
+  .eq("id", program_id)
+  .eq("is_active", true)
+  .single();
 
-    const amount = PROGRAM_PRICE_MAP[program_id];
-
-if (!amount) {
-  console.error("❌ Invalid program_id", program_id);
-  return res.status(400).json({ error: "Invalid program_id" });
+if (programError || !program) {
+  console.error("❌ Invalid or inactive program", program_id, programError);
+  return res.status(400).json({ error: "Invalid program" });
 }
+
+const amount = program.price_paise; // paise (INTEGER)
+
+
 
 const { data: existingPayment, error: existingPaymentError } =
   await supabase
