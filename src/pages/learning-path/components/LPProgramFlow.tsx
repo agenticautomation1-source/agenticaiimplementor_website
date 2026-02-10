@@ -76,10 +76,10 @@ titleClass: "text-yellow-400",
 
         {/* TRACK GROUPS */}
         {tracks.map((track, idx) => (
-          <div
-            key={idx}
-            className="grid grid-cols-1 lg:grid-cols-[420px_1fr_520px] items-center gap-10"
-          >
+         <div
+  key={idx}
+  className="grid grid-cols-1 lg:grid-cols-[420px_1fr_520px] items-stretch gap-10"
+>
             {/* LEFT — PERSONAS */}
             <div className="space-y-3">
               {track.personas.map((p) => (
@@ -92,16 +92,15 @@ titleClass: "text-yellow-400",
               ))}
             </div>
 
-            {/* CENTER — CONNECTOR */}
-            <div className="hidden lg:flex items-center relative">
-              <div
-                className={`h-px w-full bg-gradient-to-r ${track.lineClass}`}
-              />
-              <div
-                className={`absolute left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 ${track.diamondClass} shadow-lg`}
-              />
-            </div>
-
+{/* CENTER — CONNECTOR */}
+<div className="hidden lg:flex items-center relative min-h-full">
+  <div
+    className={`h-[2px] w-full bg-gradient-to-r ${track.lineClass}`}
+  />
+  <div
+    className={`absolute left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 ${track.diamondClass}`}
+  />
+</div>
             {/* RIGHT — MASTERSTROKE CARD */}
             <div
               className={`p-8 rounded-xl bg-slate-panel border ${track.borderClass}`}
