@@ -58,7 +58,7 @@ titleClass: "text-yellow-400",
 
   return (
     <section className="px-6 lg:px-20 py-24 bg-charcoal/50">
-      <div className="max-w-[1440px] mx-auto space-y-24">
+      <div className="max-w-[1440px] mx-auto flex flex-col gap-24">
 
         {/* HEADER */}
 <div>
@@ -78,7 +78,7 @@ titleClass: "text-yellow-400",
         {tracks.map((track, idx) => (
          <div
   key={idx}
-  className="grid grid-cols-1 lg:grid-cols-[420px_1fr_520px] items-stretch gap-10"
+  className="grid grid-cols-1 lg:grid-cols-[420px_1fr_520px] items-start gap-10"
 >
             {/* LEFT — PERSONAS */}
             <div className="space-y-3">
