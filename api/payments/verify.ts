@@ -104,11 +104,11 @@ export default async function handler(
   .upsert(
     {
       user_id,
-	  program_id,
+      program_id,
       razorpay_order_id,
       razorpay_payment_id,
       status: "paid",
-      raw_payload: payment,
+      raw_payload: req.body,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "razorpay_payment_id" }
