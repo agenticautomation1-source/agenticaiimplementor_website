@@ -148,7 +148,7 @@ export default function LearningPathPage() {
           <div className="absolute inset-0 bg-accent-cyan opacity-[0.02]"></div>
 
           <h2 className="text-4xl font-bold mb-6">
-            Define the Future of AI.
+            Define Your Future With AI.
           </h2>
 
           <p className="text-slate-400 mb-10 text-lg">
