@@ -93,18 +93,18 @@ titleClass: "text-yellow-400",
             </div>
 
 {/* CENTER — CONNECTOR */}
-<div className="hidden lg:flex items-center relative min-h-full">
+<div className="hidden lg:flex items-center relative min-h-[72px]">
+  <div className={`h-px w-full bg-gradient-to-r ${track.lineClass}`} />
   <div
-    className={`h-[2px] w-full bg-gradient-to-r ${track.lineClass}`}
-  />
-  <div
-    className={`absolute left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 ${track.diamondClass}`}
+    className={`absolute left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 ${track.diamondClass} shadow-lg`}
   />
 </div>
             {/* RIGHT — MASTERSTROKE CARD */}
-            <div
-              className={`h-[132px] flex flex-col justify-center p-6 rounded-xl bg-slate-panel border ${track.borderClass}`}
-            >
+           <div
+  className={`h-[132px] flex flex-col justify-center p-6 rounded-xl bg-slate-panel border ${
+    track.borderClass
+  } ${idx === 0 ? "mt-6" : ""}`}
+>
               <p
                 className={`text-xs uppercase tracking-widest mb-2 ${track.titleClass}`}
               >
