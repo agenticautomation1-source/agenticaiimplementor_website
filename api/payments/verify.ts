@@ -10,14 +10,12 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
-  console.log("VERIFY FUNCTION HIT", req.method, req.body);
-
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    // ================= ENV CHECK =================
+    // ================= ENV =================
     const {
       SUPABASE_URL,
       SUPABASE_SERVICE_ROLE_KEY,
@@ -25,32 +23,41 @@ export default async function handler(
     } = process.env;
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !RAZORPAY_KEY_SECRET) {
-      console.error("Missing env vars");
+      console.error("❌ Missing env vars");
       return res.status(500).json({ error: "Server misconfigured" });
     }
 
     const supabase = createClient(
       SUPABASE_URL,
-      SUPABASE_SERVICE_ROLE_KEY
+      SUPABASE_SERVICE_ROLE_KEY,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      }
     );
 
-    // ================= READ BODY =================
+    // ================= BODY =================
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
       user_id,
       program_id,
-    } = req.body || {};
+      amount,
+      currency,
+    } = req.body ?? {};
 
     if (
       !razorpay_order_id ||
       !razorpay_payment_id ||
       !razorpay_signature ||
       !user_id ||
-      !program_id
+      !program_id ||
+      !amount
     ) {
-      console.error("Invalid payload", req.body);
+      console.error("❌ Invalid payload", req.body);
       return res.status(400).json({ error: "Invalid payload" });
     }
 
@@ -61,62 +68,63 @@ export default async function handler(
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
-      console.error("Signature mismatch");
+      console.error("❌ Signature mismatch");
       return res.status(400).json({ error: "Signature mismatch" });
     }
 
-    // ================= UPSERT PAYMENT =================
-// 5. UPSERT PAYMENT  ✅ FIXED
-const amount = req.body.amount;      // paise
-const currency = req.body.currency;  // INR
-
-const { error: paymentError } = await supabase
-  .from("payments")
-  .upsert(
-    {
-      user_id,
-      program_id,
-      razorpay_order_id,
-      razorpay_payment_id,
-      amount,
-      currency,
-      status: "paid",
-      raw_payload: req.body,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "razorpay_payment_id" }
-  );
-
+    // ================= PAYMENT UPSERT =================
+    const { data: payment, error: paymentError } = await supabase
+      .from("payments")
+      .upsert(
+        {
+          user_id,
+          program_id,
+          razorpay_order_id,
+          razorpay_payment_id,
+          amount,
+          currency: currency || "INR",
+          status: "paid",
+          raw_payload: req.body,
+        },
+        {
+          onConflict: "razorpay_payment_id",
+        }
+      )
+      .select()
+      .single();
 
     if (paymentError) {
-      console.error("PAYMENTS UPSERT FAILED", paymentError);
+      console.error("❌ PAYMENT UPSERT FAILED", paymentError);
       return res.status(500).json({ error: "Payment DB write failed" });
     }
 
-    // ================= UPSERT ENROLLMENT =================
+    // ================= ENROLLMENT UPSERT =================
     const { error: enrollmentError } = await supabase
       .from("enrollments")
       .upsert(
         {
           user_id,
           program_id,
+          payment_id: payment.id,
           status: "active",
-          razorpay_order_id,
-          razorpay_payment_id,
-          updated_at: new Date().toISOString(),
         },
-        { onConflict: "user_id,program_id" }
+        {
+          onConflict: "user_id,program_id",
+        }
       );
 
     if (enrollmentError) {
-      console.error("ENROLLMENT UPSERT FAILED", enrollmentError);
+      console.error("❌ ENROLLMENT UPSERT FAILED", enrollmentError);
       return res.status(500).json({ error: "Enrollment DB write failed" });
     }
 
     // ================= SUCCESS =================
-    return res.status(200).json({ success: true });
+    return res.status(200).json({
+      success: true,
+      payment_id: payment.id,
+    });
   } catch (err) {
-    console.error("VERIFY FAILED HARD", err);
+    console.error("🔥 VERIFY FAILED HARD", err);
     return res.status(500).json({ error: "Verification failed" });
   }
 }
