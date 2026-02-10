@@ -50,10 +50,12 @@ export default async function handler(
 
     // 2. READ BODY (POST)
     const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-    } = req.body || {};
+  razorpay_order_id,
+  razorpay_payment_id,
+  razorpay_signature,
+  user_id,
+  program_id,
+} = req.body || {};
 
     if (
       !razorpay_order_id ||
@@ -83,29 +85,26 @@ export default async function handler(
     }
 
     // 4. FETCH PAYMENT + ORDER
-    const payment = await razorpay.payments.fetch(razorpay_payment_id);
-    const order = await razorpay.orders.fetch(razorpay_order_id);
+   //  const payment = await razorpay.payments.fetch(razorpay_payment_id);
+   // const order = await razorpay.orders.fetch(razorpay_order_id);
 
-    if (payment.status !== "captured") {
-      console.error("Payment not captured", payment.status);
-      return res.status(400).json({ error: "Payment not captured" });
-    }
+  //  if (payment.status !== "captured") {
+  //    console.error("Payment not captured", payment.status);
+  //    return res.status(400).json({ error: "Payment not captured" });
+  //  }
 
-    const userId = order.notes?.userId;
-    const programSlug = order.notes?.programSlug;
-
-    if (!userId || !programSlug) {
-      console.error("Missing order notes", order.notes);
-      return res.status(400).json({ error: "Missing order notes" });
-    }
+    if (!user_id || !program_id) {
+  console.error("Missing user or program in body", req.body);
+  return res.status(400).json({ error: "Missing enrollment data" });
+}
 
     // 5. UPSERT PAYMENT
  const { error: paymentError } = await supabase
   .from("payments")
   .upsert(
     {
-      user_id: userId,
-      program_id: programSlug,
+      user_id,
+	  program_id,
       razorpay_order_id,
       razorpay_payment_id,
       status: "paid",
@@ -127,8 +126,8 @@ const { error: enrollmentError } = await supabase
   .from("enrollments")
   .upsert(
     {
-      user_id: userId,
-      program_id: programSlug,
+      user_id,
+	  program_id,
       status: "active",
       razorpay_order_id,
       razorpay_payment_id,
