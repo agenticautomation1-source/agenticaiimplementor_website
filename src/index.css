@@ -5,6 +5,8 @@
 /* =========================
    Global resets & base
    ========================= */
+
+/* =========================
 html,
 body,
 #root {
@@ -14,7 +16,8 @@ body,
   padding: 0;
   background-color: #020203;
 }
-
+   ========================= */
+   
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -158,9 +161,17 @@ body {
 
 /* ✅ FINAL, CORRECT Razorpay fix */
 
+
 /* Disable ALL app interaction when Razorpay is open */
+/* Commenting to test resolving of black screen due to learning path page page display
 html.razorpay-open body * {
   pointer-events: none !important;
+}
+*/
+
+/* Disable interaction ONLY on main app container when Razorpay is open */ ✅ REPLACED (Testing) WITH THIS SAFE VERSION
+html.razorpay-open #root {
+  pointer-events: none;
 }
 
 /* Explicitly re-enable Razorpay iframe + container */
