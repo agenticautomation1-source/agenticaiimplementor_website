@@ -1,114 +1,110 @@
-import LearningPathPage from "./pages/learning-path/LearningPath.page";
+import React, { useState } from "react";
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+
+import LearningPathPage from "./pages/learning-path/LearningPath.page";
+
 import Courses from "./pages/Courses";
 import Programs from "./pages/Programs";
-// import LearningPaths from "./pages/LearningPaths"; - OLD ONE
-import React, { useState } from "react";
 import AuthCallback from "./pages/AuthCallback";
-
 import TestAuth from "./pages/TestAuth";
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequireAuth from "./components/RequireAuth";
+
 import SystemsEngineer from "./pages/courses/SystemsEngineer";
 import PlatformArchitect from "./pages/courses/PlatformArchitect";
 import GovernanceEngineer from "./pages/courses/GovernanceEngineer";
+
 import CookiePolicy from "./pages/CookiePolicy";
 import Contact from "./pages/Contact";
+import RefundPolicy from "./pages/RefundPolicy";
+import Disclaimer from "./pages/Disclaimer";
+import TermsConditions from "./pages/TermsAndConditions";
+
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import LogoMarquee from "./components/LogoMarquee";
 import WhyMasterstroke from "./components/WhyMasterstroke";
 import Curriculum from "./components/Curriculum";
 import AIAdvisor from "./components/AIAdvisor";
-import RefundPolicy from "./pages/RefundPolicy";
-import Disclaimer from "./pages/Disclaimer";
-import TermsConditions from "./pages/TermsAndConditions";
-
 
 const App: React.FC = () => {
-	const location = useLocation();
+  const location = useLocation();
   const isLearningPath = location.pathname === "/learning-path";
 
-  const [paymentOpen, setPaymentOpen] = useState(false);
-
-
-  // ⚠️ LEGACY UI STATE — NOT USED FOR AUTH
-  
-
+  const [paymentOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col bg-background-dark text-slate-100 pointer-events-auto">
-      {/* AUTH-AWARE NAVBAR */}
- {!isLearningPath && <Navbar />}
+      {/* NAVBAR */}
+      {!isLearningPath && <Navbar />}
 
- <main className="flex-1 min-h-screen">
-  <Routes>
-    {/* AUTH CALLBACK */}
-    <Route path="/auth/callback" element={<AuthCallback />} />
+      <main className="flex-1 min-h-screen">
+        <Routes>
+          {/* AUTH CALLBACK */}
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
-    {/* DASHBOARD (PROTECTED) */}
-    <Route
-      path="/dashboard"
-      element={
-        <RequireAuth>
-          <Dashboard />
-        </RequireAuth>
-      }
-    />
+          {/* DASHBOARD */}
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            }
+          />
 
-    {/* HOME */}
-    <Route
-      path="/"
-      element={
-        <>
-          <Hero />
-          <LogoMarquee />
+          {/* HOME */}
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero />
+                <LogoMarquee />
+                <div id="curriculum">
+                  <Curriculum />
+                </div>
+                <WhyMasterstroke />
+              </>
+            }
+          />
 
-          <div id="curriculum">
-            <Curriculum />
-          </div>
+          {/* COURSES */}
+          <Route path="/courses" element={<Courses />} />
+          <Route
+            path="/courses/agentic-ai-systems-engineer"
+            element={<SystemsEngineer />}
+          />
+          <Route
+            path="/courses/genai-platform-architect"
+            element={<PlatformArchitect />}
+          />
+          <Route
+            path="/courses/ai-validation-governance-engineer"
+            element={<GovernanceEngineer />}
+          />
 
-          <WhyMasterstroke />
-        </>
-      }
-    />
+          {/* PROGRAMS */}
+          <Route path="/programs" element={<Programs />} />
 
-    {/* COURSES */}
-    <Route path="/courses" element={<Courses />} />
-    <Route
-      path="/courses/agentic-ai-systems-engineer"
-      element={<SystemsEngineer />}
-    />
-    <Route
-      path="/courses/genai-platform-architect"
-      element={<PlatformArchitect />}
-    />
-    <Route
-      path="/courses/ai-validation-governance-engineer"
-      element={<GovernanceEngineer />}
-    />
+          {/* LEARNING PATH */}
+          <Route path="/learning-path" element={<LearningPathPage />} />
 
-    {/* PROGRAMS */}
-    <Route path="/programs" element={<Programs />} />
-//    <Route path="/learning-paths" element={<LearningPaths />} /> - OLD ONE
-	<Route path="/learning-path" element={<LearningPathPage />} />
-    {/* POLICY */}
-    <Route path="/refund-policy" element={<RefundPolicy />} />
-    <Route path="/disclaimer" element={<Disclaimer />} />
-    <Route path="/terms-and-conditions" element={<TermsConditions />} />
-    <Route path="/cookie-policy" element={<CookiePolicy />} />
-    <Route path="/contact" element={<Contact />} />
+          {/* POLICIES */}
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
+          <Route path="/terms-and-conditions" element={<TermsConditions />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/contact" element={<Contact />} />
 
-    {/* TEST */}
-    <Route path="/test-auth" element={<TestAuth />} />
+          {/* TEST */}
+          <Route path="/test-auth" element={<TestAuth />} />
 
-    {/* FALLBACK */}
-    {/* <Route path="*" element={<Navigate to="/" replace />} /> */}✅ CHANGE TO (temporary)
-  </Routes>
-</main>
+          {/* FALLBACK */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
 
-
-      {/* ================= FOOTER ================= */}
+      {/* FOOTER */}
       {!isLearningPath && (
         <footer className="border-t border-white/5 bg-charcoal/50 py-20">
           <div className="relative pl-20 pr-6 md:pr-8 w-full">
@@ -173,12 +169,6 @@ const App: React.FC = () => {
                   Network
                 </h4>
                 <Link
-                  to="/about"
-                  className="text-slate-500 hover:text-primary text-sm"
-                >
-                  About
-                </Link>
-                <Link
                   to="/contact"
                   className="text-slate-500 hover:text-primary text-sm"
                 >
@@ -207,7 +197,7 @@ const App: React.FC = () => {
                   to="/terms-and-conditions"
                   className="text-slate-500 hover:text-primary text-sm"
                 >
-                  Terms &amp; Conditions
+                  Terms & Conditions
                 </Link>
                 <Link
                   to="/cookie-policy"
