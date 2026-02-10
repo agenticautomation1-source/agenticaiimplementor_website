@@ -1,9 +1,29 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
-export default function ProgramEnrollment({
-  programSlug = "agentic-ai-systems-engineer",
-}) {
+const PROGRAMS = {
+  "agentic-ai-systems-engineer": {
+    id: "agentic_ai_engineer",
+    name: "Agentic AI Systems Engineer",
+  },
+  "genai-platform-architect": {
+    id: "genai_platform_architect",
+    name: "GenAI Platform Architect",
+  },
+  "ai-validation-governance-engineer": {
+    id: "ai_validation_governance",
+    name: "AI Validation & Governance Engineer",
+  },
+};
+
+
+export default function ProgramEnrollment({ programSlug }) {
+  const program = PROGRAMS[programSlug];
+
+  if (!program) {
+    console.error("Invalid program slug:", programSlug);
+    return null;
+  }
   const [email, setEmail] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
 

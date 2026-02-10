@@ -15,6 +15,20 @@ const PROGRAMS = {
   GOVERNANCE: "ai-validation-governance-engineer",
 };
 
+const PROGRAM_MAP = {
+  "agentic-ai-systems-engineer": {
+    id: "agentic_ai_engineer",
+  },
+  "genai-platform-architect": {
+    id: "genai_platform_architect",
+  },
+  "ai-validation-governance-engineer": {
+    id: "ai_validation_governance",
+  },
+};
+
+
+
 export default function Dashboard() {
   const navigate = useNavigate();
 
@@ -28,9 +42,17 @@ const [cleaned, setCleaned] = useState(false);
   const [razorpayReady, setRazorpayReady] = useState(false);
   const [enrolledPrograms, setEnrolledPrograms] = useState(new Set());
 
-  const isAgenticEnrolled = enrolledPrograms.has(PROGRAMS.AGENTIC);
-  const isGenAIEnrolled = enrolledPrograms.has(PROGRAMS.GENAI);
-  const isGovernanceEnrolled = enrolledPrograms.has(PROGRAMS.GOVERNANCE);
+  const isAgenticEnrolled = enrolledPrograms.has(
+  PROGRAM_MAP[PROGRAMS.AGENTIC].id
+);
+
+const isGenAIEnrolled = enrolledPrograms.has(
+  PROGRAM_MAP[PROGRAMS.GENAI].id
+);
+
+const isGovernanceEnrolled = enrolledPrograms.has(
+  PROGRAM_MAP[PROGRAMS.GOVERNANCE].id
+);
 
   // ================= FETCH ENROLLMENTS =================
   const fetchEnrollments = async (userId) => {
@@ -166,7 +188,7 @@ handler: async function (response) {
         razorpay_payment_id: response.razorpay_payment_id,
         razorpay_signature: response.razorpay_signature,
         user_id: user.id,
-        program_id: programId,
+        program_id: PROGRAM_MAP[programId].id,
       }),
     });
 
@@ -180,10 +202,10 @@ handler: async function (response) {
 
     // Optimistic UI update
     setEnrolledPrograms((prev) => {
-      const next = new Set(prev);
-      next.add(programId);
-      return next;
-    });
+  const next = new Set(prev);
+  next.add(PROGRAM_MAP[programId].id);
+  return next;
+});
 
     // Hard re-fetch from DB
     const enrolled = await fetchEnrollments(user.id);
