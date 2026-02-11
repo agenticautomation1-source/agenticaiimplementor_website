@@ -49,41 +49,37 @@ const {
 
 
 
-    // ================= BODY =================
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      user_id,
-      program_id,
-    } = req.body || {};
+ // ================= BODY =================
+const {
+  razorpay_order_id,
+  razorpay_payment_id,
+  razorpay_signature,
+  user_id,
+  program_id,
+} = req.body || {};
 
-
-
-  if (
+if (
   !razorpay_order_id ||
   !razorpay_payment_id ||
   !razorpay_signature ||
   !user_id ||
   !program_id
 ) {
-	
-  
   console.error("❌ Invalid payload", req.body);
   return res.status(400).json({ error: "Invalid payload" });
 }
 
-
 // ✅ NORMALIZE PROGRAM ID (slug → DB id)
-const normalizedProgramId = program_id.includes("-")
-  ? program_id.replaceAll("-", "_")
-  : program_id;
-  
-  
-  console.log("PROGRAM ID NORMALIZED", {
+const normalizedProgramId =
+  typeof program_id === "string" && program_id.includes("-")
+    ? program_id.replaceAll("-", "_")
+    : program_id;
+
+console.log("PROGRAM ID DEBUG:", {
   received: program_id,
   normalized: normalizedProgramId,
 });
+
 
     // ================= VERIFY SIGNATURE =================
     const expectedSignature = crypto
@@ -99,28 +95,26 @@ const normalizedProgramId = program_id.includes("-")
 // ✅ program_id must match DB id (underscores allowed)
 
 
-
-
-
-
-    // ================= FETCH PROGRAM FROM DB =================
+// ================= FETCH PROGRAM FROM DB =================
 const { data: program, error: programError } = await supabase
   .from("programs")
-  .select("id, name, price_paise")
-  .eq("id", normalizedProgramId)
-  .eq("is_active", true)
-  .single();
+  .select("*")
+  .eq("id", normalizedProgramId);
 
-if (programError || !program) {
-  console.error("❌ Invalid or inactive program", {
-  received: program_id,
-  normalized: normalizedProgramId,
-  error: programError,
+console.log("PROGRAM LOOKUP RESULT:", {
+  normalizedProgramId,
+  program,
+  programError,
 });
+
+if (!program || program.length === 0) {
+  console.error("❌ Program not found", normalizedProgramId);
   return res.status(400).json({ error: "Invalid program" });
 }
 
-const amount = program.price_paise; // paise (INTEGER)
+const selectedProgram = program[0];
+const amount = selectedProgram.price_paise;
+
 
 // ================= VERIFY ORDER AMOUNT (SAFE) =================
 // Do NOT trust client payload. Verify using Razorpay order.
