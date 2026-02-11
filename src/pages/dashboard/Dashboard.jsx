@@ -159,9 +159,9 @@ if (!cleaned && isReturningFromPayment()) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          programSlug: programId,
-          userId: user.id,
-        }),
+  program_id: PROGRAM_MAP[programId].id,
+  user_id: user.id,
+}),
       });
 
       if (!res.ok) throw new Error("Order creation failed");
@@ -203,7 +203,7 @@ handler: async function (response) {
     // Optimistic UI update
     setEnrolledPrograms((prev) => {
   const next = new Set(prev);
-  next.add(programId);
+  next.add(PROGRAM_MAP[programId].id);
   return next;
 });
 

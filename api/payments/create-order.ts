@@ -1,81 +1,83 @@
+import Razorpay from "razorpay";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { createClient } from "@supabase/supabase-js";
+
 export const config = {
   runtime: "nodejs",
 };
-
-import Razorpay from "razorpay";
-import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
-  // CORS (fine as-is)
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-      console.error("Missing Razorpay env vars");
-      return res.status(500).json({
-        error: "Razorpay credentials not configured",
+    const {
+      SUPABASE_URL,
+      SUPABASE_SERVICE_ROLE_KEY,
+      RAZORPAY_KEY_ID,
+      RAZORPAY_KEY_SECRET,
+    } = process.env;
+
+    if (
+      !SUPABASE_URL ||
+      !SUPABASE_SERVICE_ROLE_KEY ||
+      !RAZORPAY_KEY_ID ||
+      !RAZORPAY_KEY_SECRET
+    ) {
+      return res.status(500).json({ error: "Server misconfigured" });
+    }
+
+    const { program_id, user_id } = req.body ?? {};
+
+    if (!program_id || !user_id) {
+      return res.status(400).json({
+        error: "Missing program_id or user_id",
       });
     }
 
-    const { programSlug, userId } = req.body ?? {};
+    const supabase = createClient(
+      SUPABASE_URL,
+      SUPABASE_SERVICE_ROLE_KEY
+    );
 
-    if (!programSlug || !userId) {
-      return res.status(400).json({
-        error: "Missing programSlug or userId",
-      });
-    }
+    // 🔒 Fetch from DB (SOURCE OF TRUTH)
+    const { data: program, error } = await supabase
+      .from("programs")
+      .select("id, price_paise")
+      .eq("id", program_id)
+      .single();
 
-    const amountMap: Record<string, number> = {
-      "agentic-ai-systems-engineer": 499900,
-      "genai-platform-architect": 499900,
-      "ai-validation-governance-engineer": 399900,
-    };
-
-    const amount = amountMap[programSlug];
-
-    if (!amount) {
-      return res.status(400).json({
-        error: "Invalid programSlug",
-      });
+    if (error || !program) {
+      return res.status(400).json({ error: "Invalid program" });
     }
 
     const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
+      key_id: RAZORPAY_KEY_ID,
+      key_secret: RAZORPAY_KEY_SECRET,
     });
 
-    // 🔥 THIS IS THE CRITICAL FIX
     const order = await razorpay.orders.create({
-  amount,
-  currency: "INR",
-  receipt: `rcpt_${Date.now()}`,
-  notes: {
-    userId,
-    programSlug,
-  },
-});
+      amount: program.price_paise,
+      currency: "INR",
+      receipt: `rcpt_${Date.now()}`,
+      notes: {
+        user_id,
+        program_id,
+      },
+    });
 
     return res.status(200).json({
       id: order.id,
       amount: order.amount,
       currency: order.currency,
     });
+
   } catch (err: any) {
     console.error("CREATE ORDER FAILED:", err);
-
     return res.status(500).json({
       error: err?.message || "Create order failed",
     });
