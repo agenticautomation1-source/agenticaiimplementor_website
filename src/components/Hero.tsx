@@ -91,7 +91,7 @@ const Hero: React.FC = () => {
   </div>
 
   <p className="text-sm text-slate-400">
-    Joined by <span className="text-white font-medium">2,400+</span> senior developers
+    Joined by <span className="text-white font-medium">1,200+</span> freshers, senior IT developers and architects
   </p>
 </div>
 
