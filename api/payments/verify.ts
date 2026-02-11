@@ -12,7 +12,7 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
-  console.log("VERIFY FUNCTION HIT", req.method);
+  
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -70,15 +70,8 @@ if (
 }
 
 // ✅ NORMALIZE PROGRAM ID (slug → DB id)
-const normalizedProgramId =
-  typeof program_id === "string" && program_id.includes("-")
-    ? program_id.replaceAll("-", "_")
-    : program_id;
+const normalizedProgramId = program_id;
 
-console.log("PROGRAM ID DEBUG:", {
-  received: program_id,
-  normalized: normalizedProgramId,
-});
 
 
     // ================= VERIFY SIGNATURE =================
@@ -98,29 +91,18 @@ console.log("PROGRAM ID DEBUG:", {
 // ================= FETCH PROGRAM FROM DB =================
 const { data: program, error: programError } = await supabase
   .from("programs")
-  .select("id, name")
-  .eq("id", normalizedProgramId)
-  .limit(5);
+  .select("id, name, price_discounted_paise")
+.eq("id", normalizedProgramId)
+.single();
 
-console.log("PROGRAM LOOKUP DEBUG:", {
-  normalizedProgramId,
-  program,
-  programError,
-});
 
-console.log("PROGRAM LOOKUP RESULT:", {
-  normalizedProgramId,
-  program,
-  programError,
-});
 
-if (!program || program.length === 0) {
+if (programError || !program) {
   console.error("❌ Program not found", normalizedProgramId);
   return res.status(400).json({ error: "Invalid program" });
 }
 
-const selectedProgram = program[0];
-const amount = selectedProgram.price_paise;
+const amount = program.price_discounted_paise;
 
 
 // ================= VERIFY ORDER AMOUNT (SAFE) =================
@@ -143,7 +125,7 @@ const { data: existingPayment, error: existingPaymentError } =
     .maybeSingle();
 
 if (existingPayment) {
-  console.log("ℹ️ Payment already processed");
+  
   return res.status(200).json({ success: true });
 }
 

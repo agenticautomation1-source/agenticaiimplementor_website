@@ -22,12 +22,7 @@ export default async function handler(
   RAZORPAY_KEY_SECRET,
 } = process.env;
 
-console.log("ENV CHECK:", {
-  hasSupabaseUrl: !!SUPABASE_URL,
-  hasServiceKey: !!SUPABASE_SERVICE_ROLE_KEY,
-  hasRazorpayKeyId: !!RAZORPAY_KEY_ID,
-  hasRazorpaySecret: !!RAZORPAY_KEY_SECRET,
-});
+
 
     if (
       !SUPABASE_URL ||
@@ -40,8 +35,7 @@ console.log("ENV CHECK:", {
 
     const { program_id, user_id } = req.body ?? {};
 	
-	console.log("PROGRAM RECEIVED:", program_id);
-console.log("USER RECEIVED:", user_id);
+	
 
 
     if (!program_id || !user_id) {
@@ -58,11 +52,11 @@ console.log("USER RECEIVED:", user_id);
     // 🔒 Fetch from DB (SOURCE OF TRUTH)
     const { data: program, error } = await supabase
       .from("programs")
-      .select("id, price_paise")
+      .select("id, price_discounted_paise")
       .eq("id", program_id)
       .single();
 
-console.log("DB LOOKUP RESULT:", { program, error });
+
 
 
     if (error || !program) {
@@ -75,7 +69,7 @@ console.log("DB LOOKUP RESULT:", { program, error });
     });
 
     const order = await razorpay.orders.create({
-      amount: program.price_paise,
+      amount: program.price_discounted_paise,
       currency: "INR",
       receipt: `rcpt_${Date.now()}`,
       notes: {
