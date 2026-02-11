@@ -69,6 +69,33 @@ const Hero: React.FC = () => {
               Book a Program Consultation Call
             </Link>
           </div>
+		  
+		  {/* SOCIAL PROOF */}
+<div className="flex items-center gap-3 pt-4">
+  <div className="flex -space-x-3">
+    <img
+      src="/avatars/avatar1.jpg"
+      alt=""
+      className="w-8 h-8 rounded-full border border-background-dark"
+    />
+    <img
+      src="/avatars/avatar2.jpg"
+      alt=""
+      className="w-8 h-8 rounded-full border border-background-dark"
+    />
+    <img
+      src="/avatars/avatar3.jpg"
+      alt=""
+      className="w-8 h-8 rounded-full border border-background-dark"
+    />
+  </div>
+
+  <p className="text-sm text-slate-400">
+    Joined by <span className="text-white font-medium">2,400+</span> senior developers
+  </p>
+</div>
+
+		  
         </div>
 
         {/* RIGHT VISUAL */}
