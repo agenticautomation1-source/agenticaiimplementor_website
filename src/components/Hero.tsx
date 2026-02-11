@@ -30,10 +30,19 @@ const Hero: React.FC = () => {
             Build Agentic AI Systems
           </h1>
           <div className="mt-2">
-            <span className="text-4xl md:text-5xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">
-              Masterstroke
-            </span>
-          </div>
+  <span
+    className="
+      text-4xl md:text-5xl
+      font-display font-extrabold
+      text-transparent bg-clip-text
+      bg-gradient-to-r
+      from-blue-500 via-cyan-400 to-blue-400
+      drop-shadow-[0_0_18px_rgba(59,130,246,0.35)]
+    "
+  >
+    Masterstroke
+  </span>
+</div>
 
           {/* SUBTEXT */}
           <p className="font-body text-base md:text-lg text-slate-400 leading-relaxed max-w-xl">
