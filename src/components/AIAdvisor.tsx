@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { getAIAdvisorResponse } from '../services/geminiService';
 import { Message } from '../types';
@@ -12,6 +11,7 @@ const AIAdvisor: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -21,6 +21,8 @@ const AIAdvisor: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
+
+
     const userMsg: Message = { role: 'user', text: input };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
@@ -29,8 +31,16 @@ const AIAdvisor: React.FC = () => {
     try {
       const response = await getAIAdvisorResponse(input, messages);
       setMessages(prev => [...prev, { role: 'model', text: response }]);
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'model', text: "I hit a snag connection-wise. Make sure your API key is set!" }]);
+    } catch (error: any) {
+      console.error("AI ERROR:", error);
+
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'model',
+          text: "I'm temporarily unavailable. Please try again in a moment."
+        }
+      ]);
     } finally {
       setIsLoading(false);
     }
