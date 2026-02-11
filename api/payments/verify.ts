@@ -98,8 +98,15 @@ console.log("PROGRAM ID DEBUG:", {
 // ================= FETCH PROGRAM FROM DB =================
 const { data: program, error: programError } = await supabase
   .from("programs")
-  .select("*")
-  .eq("id", normalizedProgramId);
+  .select("id, name")
+  .eq("id", normalizedProgramId)
+  .limit(5);
+
+console.log("PROGRAM LOOKUP DEBUG:", {
+  normalizedProgramId,
+  program,
+  programError,
+});
 
 console.log("PROGRAM LOOKUP RESULT:", {
   normalizedProgramId,
