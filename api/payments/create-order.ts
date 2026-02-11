@@ -16,11 +16,18 @@ export default async function handler(
 
   try {
     const {
-      SUPABASE_URL,
-      SUPABASE_SERVICE_ROLE_KEY,
-      RAZORPAY_KEY_ID,
-      RAZORPAY_KEY_SECRET,
-    } = process.env;
+  SUPABASE_URL,
+  SUPABASE_SERVICE_ROLE_KEY,
+  RAZORPAY_KEY_ID,
+  RAZORPAY_KEY_SECRET,
+} = process.env;
+
+console.log("ENV CHECK:", {
+  hasSupabaseUrl: !!SUPABASE_URL,
+  hasServiceKey: !!SUPABASE_SERVICE_ROLE_KEY,
+  hasRazorpayKeyId: !!RAZORPAY_KEY_ID,
+  hasRazorpaySecret: !!RAZORPAY_KEY_SECRET,
+});
 
     if (
       !SUPABASE_URL ||
@@ -32,6 +39,10 @@ export default async function handler(
     }
 
     const { program_id, user_id } = req.body ?? {};
+	
+	console.log("PROGRAM RECEIVED:", program_id);
+console.log("USER RECEIVED:", user_id);
+
 
     if (!program_id || !user_id) {
       return res.status(400).json({
@@ -50,6 +61,9 @@ export default async function handler(
       .select("id, price_paise")
       .eq("id", program_id)
       .single();
+
+console.log("DB LOOKUP RESULT:", { program, error });
+
 
     if (error || !program) {
       return res.status(400).json({ error: "Invalid program" });
