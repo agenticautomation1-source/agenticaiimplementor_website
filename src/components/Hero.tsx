@@ -74,17 +74,17 @@ const Hero: React.FC = () => {
 <div className="flex items-center gap-3 pt-4">
   <div className="flex -space-x-3">
     <img
-      src="/avatars/avatar1.jpg"
+      src="/avatars/avatar1.png"
       alt=""
       className="w-8 h-8 rounded-full border border-background-dark"
     />
     <img
-      src="/avatars/avatar2.jpg"
+      src="/avatars/avatar2.png"
       alt=""
       className="w-8 h-8 rounded-full border border-background-dark"
     />
     <img
-      src="/avatars/avatar3.jpg"
+      src="/avatars/avatar3.png"
       alt=""
       className="w-8 h-8 rounded-full border border-background-dark"
     />

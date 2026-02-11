@@ -31,6 +31,7 @@ You MUST reply:
 
 3. Never provide general public AI explanations unless they directly relate to our programs.
 
+If a message is a continuation of a previous relevant question, treat it as part of the same conversation.
 `;
 
 // ===== ALLOWED KEYWORDS FILTER =====
@@ -61,28 +62,35 @@ export default async function handler(
 
   const { message, history, visitorId } = req.body;
 
-  // ===== BASIC VALIDATION =====
   if (!message || typeof message !== "string") {
     return res.status(400).json({
       text: "Invalid request.",
     });
   }
 
-  // ===== MESSAGE LENGTH LIMIT =====
   if (message.length > 1000) {
     return res.status(400).json({
       text: "Query too long. Please keep your question concise.",
     });
   }
 
-  // ===== KEYWORD FILTER =====
   const lowerMessage = message.toLowerCase();
 
-  const isRelevant = allowedKeywords.some((keyword) =>
+  // ===== CONTEXT-AWARE KEYWORD FILTER =====
+  const isRelevantDirect = allowedKeywords.some((keyword) =>
     lowerMessage.includes(keyword)
   );
 
-  if (!isRelevant) {
+  const hasRelevantHistory =
+    Array.isArray(history) &&
+    history.some((h: any) =>
+      typeof h.text === "string" &&
+      allowedKeywords.some((keyword) =>
+        h.text.toLowerCase().includes(keyword)
+      )
+    );
+
+  if (!isRelevantDirect && !hasRelevantHistory) {
     return res.status(200).json({
       text: "I specialize in Masterstroke programs. Please ask about our curriculum or training tracks.",
     });
@@ -144,7 +152,7 @@ export default async function handler(
             : []),
           { role: "user", content: message },
         ],
-        temperature: 0.5,
+        temperature: 0.4,
       });
 
       return res.status(200).json({
@@ -156,7 +164,6 @@ export default async function handler(
     }
   }
 
-  // ===== TOTAL FAILURE =====
   return res.status(200).json({
     text: "I'm temporarily unavailable. Please try again in a moment.",
   });
