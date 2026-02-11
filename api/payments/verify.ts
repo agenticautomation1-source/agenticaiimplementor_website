@@ -58,6 +58,8 @@ const {
       program_id,
     } = req.body || {};
 
+
+
   if (
   !razorpay_order_id ||
   !razorpay_payment_id ||
@@ -65,9 +67,23 @@ const {
   !user_id ||
   !program_id
 ) {
+	
+  
   console.error("❌ Invalid payload", req.body);
   return res.status(400).json({ error: "Invalid payload" });
 }
+
+
+// ✅ NORMALIZE PROGRAM ID (slug → DB id)
+const normalizedProgramId = program_id.includes("-")
+  ? program_id.replaceAll("-", "_")
+  : program_id;
+  
+  
+  console.log("PROGRAM ID NORMALIZED", {
+  received: program_id,
+  normalized: normalizedProgramId,
+});
 
     // ================= VERIFY SIGNATURE =================
     const expectedSignature = crypto
@@ -91,12 +107,16 @@ const {
 const { data: program, error: programError } = await supabase
   .from("programs")
   .select("id, name, price_paise")
-  .eq("id", program_id)
+  .eq("id", normalizedProgramId)
   .eq("is_active", true)
   .single();
 
 if (programError || !program) {
-  console.error("❌ Invalid or inactive program", program_id, programError);
+  console.error("❌ Invalid or inactive program", {
+  received: program_id,
+  normalized: normalizedProgramId,
+  error: programError,
+});
   return res.status(400).json({ error: "Invalid program" });
 }
 
@@ -132,7 +152,7 @@ if (existingPayment) {
       .upsert(
         {
           user_id,
-          program_id,
+          program_id: normalizedProgramId,
           razorpay_order_id,
           razorpay_payment_id,
           amount,
@@ -155,7 +175,7 @@ if (existingPayment) {
       .upsert(
         {
           user_id,
-          program_id,
+          program_id: normalizedProgramId,
           status: "active",
           razorpay_order_id,
           razorpay_payment_id,
