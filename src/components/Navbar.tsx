@@ -5,7 +5,7 @@ import { hardLogout } from "../lib/logout";
 
 const Navbar: React.FC = () => {
   const [session, setSession] = useState<any>(null);
-  
+  const [mobileOpen, setMobileOpen] = useState(false); 
 
   useEffect(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -84,10 +84,46 @@ const Navbar: React.FC = () => {
 
         {/* NAV + CTA — RIGHT EDGE DISTRIBUTED */}
         <div className="flex items-center gap-4 md:gap-8">
+		
+		<div className="flex items-center gap-4 md:gap-8">
+
+  {/* Mobile Hamburger */}
+  <button
+    onClick={() => setMobileOpen(!mobileOpen)}
+    className="lg:hidden text-white focus:outline-none"
+  >
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      {mobileOpen ? (
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M6 18L18 6M6 6l12 12"
+        />
+      ) : (
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+      )}
+    </svg>
+  </button>
+
+  <nav className="hidden lg:flex items-center gap-6">
+		
           <nav className="hidden lg:flex items-center gap-6">
             <Link to="/programs" className="nav-link">Programs</Link>
 			<Link to="/learning-path" className="nav-link">Learning Paths</Link>
             <Link to="/courses" className="nav-link">Courses</Link>
+			<Link to="/sample-certificate" className="hover:text-white transition">Certificates</Link>
+			
             <Link to="/about" className="nav-link">About</Link>
             <Link to="/contact" className="nav-link">Contact</Link>
           </nav>
@@ -137,6 +173,33 @@ const Navbar: React.FC = () => {
           )}
         </div>
       </header>
+	  
+	  {/* Mobile Dropdown */}
+{mobileOpen && (
+  <div className="lg:hidden mt-2 bg-background-dark/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl p-6 space-y-4 pointer-events-auto">
+    <Link to="/programs" onClick={() => setMobileOpen(false)} className="block nav-link">
+      Programs
+    </Link>
+    <Link to="/learning-path" onClick={() => setMobileOpen(false)} className="block nav-link">
+      Learning Paths
+    </Link>
+    <Link to="/courses" onClick={() => setMobileOpen(false)} className="block nav-link">
+      Courses
+    </Link>
+    <Link to="/sample-certificate" onClick={() => setMobileOpen(false)} className="block nav-link">
+      Certificates
+    </Link>
+    <Link to="/about" onClick={() => setMobileOpen(false)} className="block nav-link">
+      About
+    </Link>
+    <Link to="/contact" onClick={() => setMobileOpen(false)} className="block nav-link">
+      Contact
+    </Link>
+  </div>
+)}
+
+	  
+	  
     </div>
   );
 };
