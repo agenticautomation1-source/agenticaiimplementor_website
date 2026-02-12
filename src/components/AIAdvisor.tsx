@@ -1,3 +1,4 @@
+import ReactMarkdown from "react-markdown";
 import React, { useState, useRef, useEffect } from 'react';
 import { getAIAdvisorResponse } from '../services/geminiService';
 import { Message } from '../types';
@@ -11,7 +12,6 @@ const AIAdvisor: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -21,16 +21,19 @@ const AIAdvisor: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
-
-
     const userMsg: Message = { role: 'user', text: input };
+
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsLoading(true);
 
     try {
       const response = await getAIAdvisorResponse(input, messages);
-      setMessages(prev => [...prev, { role: 'model', text: response }]);
+
+      setMessages(prev => [
+        ...prev,
+        { role: 'model', text: response }
+      ]);
     } catch (error: any) {
       console.error("AI ERROR:", error);
 
@@ -50,12 +53,15 @@ const AIAdvisor: React.FC = () => {
     <div className="fixed bottom-6 right-6 z-[100]">
       {isOpen ? (
         <div className="w-[90vw] md:w-[400px] h-[500px] glass-card rounded-2xl flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
+          
           <div className="p-4 border-b border-white/10 bg-primary/10 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <div className="size-8 bg-primary rounded-full flex items-center justify-center">
                 <span className="material-symbols-outlined text-white text-sm">smart_toy</span>
               </div>
-              <span className="text-white font-bold font-display">Masterstroke Elite AI Advisor</span>
+              <span className="text-white font-bold font-display">
+                Masterstroke Elite AI Advisor
+              </span>
             </div>
             <button 
               onClick={() => setIsOpen(false)}
@@ -68,15 +74,28 @@ const AIAdvisor: React.FC = () => {
           <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto space-y-4">
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                
                 <div className={`max-w-[80%] p-3 rounded-xl text-sm ${
                   m.role === 'user' 
                   ? 'bg-primary text-white' 
                   : 'bg-white/5 border border-white/10 text-slate-300'
                 }`}>
-                  {m.text}
+                  
+                  {/* 🔥 Markdown Rendering Fix */}
+                  {m.role === 'user' ? (
+                    m.text
+                  ) : (
+                    <div className="prose prose-invert max-w-none break-words">
+                      <ReactMarkdown>
+                        {m.text}
+                      </ReactMarkdown>
+                    </div>
+                  )}
+
                 </div>
               </div>
             ))}
+
             {isLoading && (
               <div className="flex justify-start">
                 <div className="bg-white/5 border border-white/10 p-3 rounded-xl animate-pulse">
@@ -88,6 +107,7 @@ const AIAdvisor: React.FC = () => {
                 </div>
               </div>
             )}
+
           </div>
 
           <div className="p-4 border-t border-white/10 bg-black/40">
@@ -109,6 +129,7 @@ const AIAdvisor: React.FC = () => {
               </button>
             </div>
           </div>
+
         </div>
       ) : (
         <button 
