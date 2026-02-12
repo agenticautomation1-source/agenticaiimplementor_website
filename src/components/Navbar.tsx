@@ -86,7 +86,8 @@ const Navbar: React.FC = () => {
         <div className="flex items-center gap-4 md:gap-8">
           <nav className="hidden lg:flex items-center gap-6">
             <Link to="/programs" className="nav-link">Programs</Link>
-            <Link to="/learning-paths" className="nav-link">Learning Paths</Link>
+//            <Link to="/learning-paths" className="nav-link">Learning Paths</Link>
+			<Link to="/learning-path" className="nav-link">Learning Paths</Link>
             <Link to="/courses" className="nav-link">Courses</Link>
             <Link to="/about" className="nav-link">About</Link>
             <Link to="/contact" className="nav-link">Contact</Link>
