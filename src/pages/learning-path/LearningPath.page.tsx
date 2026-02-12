@@ -72,40 +72,51 @@ export default function LearningPathPage() {
       <section className="px-6 lg:px-20 py-12">
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
           {[
-            {
-              icon: "memory",
-              title: "Systems Focus",
-              steps: [
-                ["Foundation", "Automation Engineer"],
-                ["Specialization", "Agentic AI Systems Engineer", true],
-                ["Mastery", "Multi-Agent Orchestrator"],
-              ],
-            },
-            {
-              icon: "account_tree",
-              title: "Architect Focus",
-              steps: [
-                ["Foundation", "Senior Engineer"],
-                ["Specialization", "GenAI Platform Architect", true],
-                ["Mastery", "Enterprise AI Strategist"],
-              ],
-            },
-            {
-              icon: "verified_user",
-              title: "Governance Focus",
-              steps: [
-                ["Foundation", "Security / ML Engineer"],
-                ["Specialization", "AI Validation & Governance", true],
-                ["Mastery", "Chief AI Trust Officer"],
-              ],
-            },
-          ].map((col, i) => (
+  {
+    icon: "memory",
+    title: "Systems Focus",
+    accent: "cyan",
+    steps: [
+      ["Foundation", "Automation Engineer"],
+      ["Specialization", "Agentic AI Systems Engineer", true],
+      ["Mastery", "Multi-Agent Orchestrator"],
+    ],
+  },
+  {
+    icon: "account_tree",
+    title: "Architect Focus",
+    accent: "yellow",
+    steps: [
+      ["Foundation", "Senior Engineer"],
+      ["Specialization", "GenAI Platform Architect", true],
+      ["Mastery", "Enterprise AI Strategist"],
+    ],
+  },
+  {
+    icon: "verified_user",
+    title: "Governance Focus",
+    accent: "red",
+    steps: [
+      ["Foundation", "Security / ML Engineer"],
+      ["Specialization", "AI Validation & Governance", true],
+      ["Mastery", "Chief AI Trust Officer"],
+    ],
+  },
+].map((col, i) => (
             <div
               key={i}
               className="bg-charcoal p-8 rounded-xl border border-slate-800 hover:border-accent-cyan/40 transition-all group"
             >
               <div className="flex items-center gap-3 mb-8">
-                <span className="material-symbols-outlined text-accent-cyan">
+                <span
+  className={`material-symbols-outlined ${
+    col.accent === "yellow"
+      ? "text-yellow-400"
+      : col.accent === "red"
+      ? "text-red-500"
+      : "text-accent-cyan"
+  }`}
+>
                   {col.icon}
                 </span>
                 <h3 className="text-sm font-bold uppercase tracking-widest">
@@ -121,13 +132,23 @@ export default function LearningPathPage() {
                     <div
                       className={`absolute left-2.5 top-1 size-3 rounded-full ${
                         active
-                          ? "bg-accent-cyan glow-border"
+                          ? col.accent === "yellow"
+    ? "bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.6)]"
+    : col.accent === "red"
+    ? "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.6)]"
+    : "bg-accent-cyan glow-border"
                           : "bg-slate-700 border-2 border-charcoal"
                       }`}
                     ></div>
                     <p
                       className={`text-xs font-bold mb-1 uppercase ${
-                        active ? "text-accent-cyan" : "text-slate-500"
+                        active
+  ? col.accent === "yellow"
+    ? "text-yellow-400"
+    : col.accent === "red"
+    ? "text-red-500"
+    : "text-accent-cyan"
+  : "text-slate-500"
                       }`}
                     >
                       {label}
