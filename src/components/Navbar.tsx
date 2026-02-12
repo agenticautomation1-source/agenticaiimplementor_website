@@ -85,8 +85,6 @@ const Navbar: React.FC = () => {
         {/* NAV + CTA — RIGHT EDGE DISTRIBUTED */}
         <div className="flex items-center gap-4 md:gap-8">
 		
-		<div className="flex items-center gap-4 md:gap-8">
-
   {/* Mobile Hamburger */}
   <button
     onClick={() => setMobileOpen(!mobileOpen)}
