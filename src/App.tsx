@@ -1,3 +1,5 @@
+import VerifyCertificate from "./pages/VerifyCertificate";
+import SampleCertificate from "./pages/SampleCertificate";
 import React, { useState } from "react";
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 
@@ -95,7 +97,8 @@ const App: React.FC = () => {
           <Route path="/terms-and-conditions" element={<TermsConditions />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="/contact" element={<Contact />} />
-
+		  <Route path="/sample-certificate" element={<SampleCertificate />} />
+		  <Route path="/verify/:id" element={<VerifyCertificate />} />
           {/* TEST */}
           <Route path="/test-auth" element={<TestAuth />} />
 
