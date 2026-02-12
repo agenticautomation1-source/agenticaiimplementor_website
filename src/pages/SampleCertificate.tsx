@@ -15,7 +15,7 @@ const SampleCertificate: React.FC = () => {
   }, [verificationUrl]);
 
   return (
-    <div className="min-h-screen bg-[#071A18] text-white py-20 px-6">
+    <div className="py-20 px-6">
       
       {/* PAGE TITLE */}
       <div className="text-center mb-14">
