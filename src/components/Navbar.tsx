@@ -116,7 +116,7 @@ const Navbar: React.FC = () => {
 
   <nav className="hidden lg:flex items-center gap-6">
 		
-          <nav className="hidden lg:flex items-center gap-6">
+          
             <Link to="/programs" className="nav-link">Programs</Link>
 			<Link to="/learning-path" className="nav-link">Learning Paths</Link>
             <Link to="/courses" className="nav-link">Courses</Link>
@@ -196,7 +196,6 @@ const Navbar: React.FC = () => {
   </div>
 )}
 
-	  
 	  
     </div>
   );
