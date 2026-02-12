@@ -9,7 +9,7 @@ export default {
     extend: {
       colors: {
         /* === Stitch design tokens === */
-        primary: "#00f5ff",
+        primary: "#14b8c4",
 		'accent-cyan': '#14b8c4',
         obsidian: "#050505",
         charcoal: "#0f1115",

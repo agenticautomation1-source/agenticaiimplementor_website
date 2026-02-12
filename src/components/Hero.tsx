@@ -20,7 +20,7 @@ const Hero: React.FC = () => {
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
             </span>
 
-            <span className="font-mono text-[11px] uppercase tracking-widest text-slate-400">
+            <span className="font-mono text-[11px] uppercase tracking-widest text-primary/80">
               Status: Live · Multi-Agent Systems Coordinated
             </span>
           </div>
