@@ -15,7 +15,7 @@
     "@vercel/node": "^5.5.33",
     "openai": "^4.0.0",
     "puppeteer": "^24.36.0",
-    "qrcode.react": "^4.2.0",
+    "qrcode": "^1.5.4",
     "razorpay": "^2.9.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

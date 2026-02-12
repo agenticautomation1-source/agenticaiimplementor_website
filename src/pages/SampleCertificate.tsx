@@ -1,10 +1,18 @@
-import React from "react";
-import QRCode from "qrcode.react";
+import React, { useEffect, useState } from "react";
+import QRCode from "qrcode";
 import { Link } from "react-router-dom";
 
 const SampleCertificate: React.FC = () => {
   const verificationUrl =
     "https://www.agenticaiimplementors.com/verify/AGENT-AI-9928-VX";
+
+  const [qrCode, setQrCode] = useState("");
+
+  useEffect(() => {
+    QRCode.toDataURL(verificationUrl)
+      .then(setQrCode)
+      .catch(console.error);
+  }, [verificationUrl]);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white py-16 px-6">
@@ -65,7 +73,14 @@ const SampleCertificate: React.FC = () => {
         {/* QR + Verification */}
         <div className="mt-16 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="bg-white p-3 rounded-lg">
-            <QRCode value={verificationUrl} size={120} />
+            {qrCode && (
+              <img
+                src={qrCode}
+                alt="QR Code"
+                width={120}
+                height={120}
+              />
+            )}
           </div>
 
           <div className="text-sm text-neutral-400 text-center md:text-left">
