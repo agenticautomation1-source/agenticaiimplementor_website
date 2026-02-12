@@ -36,7 +36,7 @@ const Hero: React.FC = () => {
       font-display font-extrabold
       text-transparent bg-clip-text
       bg-gradient-to-r
-      from-blue-500 via-cyan-400 to-blue-400
+      from-blue-500 via-cyan-200 to-blue-400
       drop-shadow-[0_0_18px_rgba(59,130,246,0.35)]
     "
   >
