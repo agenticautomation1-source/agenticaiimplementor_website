@@ -1,6 +1,5 @@
 import ReactMarkdown from "react-markdown";
 import React, { useState, useRef, useEffect } from 'react';
-import { getAIAdvisorResponse } from '../services/geminiService';
 import { Message } from '../types';
 
 const AIAdvisor: React.FC = () => {
@@ -22,18 +21,32 @@ const AIAdvisor: React.FC = () => {
     if (!input.trim() || isLoading) return;
 
     const userMsg: Message = { role: 'user', text: input };
+    const updatedMessages = [...messages, userMsg];
 
-    setMessages(prev => [...prev, userMsg]);
+    setMessages(updatedMessages);
     setInput('');
     setIsLoading(true);
 
     try {
-      const response = await getAIAdvisorResponse(input, messages);
+      const res = await fetch('/api/ai-advisor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: input,
+          history: messages.map(m => ({
+            role: m.role === 'model' ? 'assistant' : m.role,
+            text: m.text
+          }))
+        })
+      });
+
+      const data = await res.json();
 
       setMessages(prev => [
         ...prev,
-        { role: 'model', text: response }
+        { role: 'model', text: data.text }
       ]);
+
     } catch (error: any) {
       console.error("AI ERROR:", error);
 
@@ -41,7 +54,7 @@ const AIAdvisor: React.FC = () => {
         ...prev,
         {
           role: 'model',
-          text: "I'm temporarily unavailable. Please try again in a moment."
+          text: "I'm temporarily unavailable. Please try again shortly."
         }
       ]);
     } finally {
@@ -74,14 +87,11 @@ const AIAdvisor: React.FC = () => {
           <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto space-y-4">
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                
                 <div className={`max-w-[80%] p-3 rounded-xl text-sm ${
                   m.role === 'user' 
                   ? 'bg-primary text-white' 
                   : 'bg-white/5 border border-white/10 text-slate-300'
                 }`}>
-                  
-                  {/* 🔥 Markdown Rendering Fix */}
                   {m.role === 'user' ? (
                     m.text
                   ) : (
@@ -91,7 +101,6 @@ const AIAdvisor: React.FC = () => {
                       </ReactMarkdown>
                     </div>
                   )}
-
                 </div>
               </div>
             ))}
@@ -107,7 +116,6 @@ const AIAdvisor: React.FC = () => {
                 </div>
               </div>
             )}
-
           </div>
 
           <div className="p-4 border-t border-white/10 bg-black/40">
