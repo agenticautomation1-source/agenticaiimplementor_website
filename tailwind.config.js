@@ -10,7 +10,7 @@ export default {
       colors: {
         /* === Stitch design tokens === */
         primary: "#00f5ff",
-        'accent-cyan': '#14b8a6', // teal-500 toned, premium
+ 'accent-cyan': '#0ea5a4'
         obsidian: "#050505",
         charcoal: "#0f1115",
         "slate-panel": "#1a1d23",
