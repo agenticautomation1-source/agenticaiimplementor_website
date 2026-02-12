@@ -117,9 +117,9 @@ const Navbar: React.FC = () => {
   <nav className="hidden lg:flex items-center gap-6">
 		
           
-            <Link to="/programs" className="nav-link">Programs</Link>
+            <Link to="/" className="nav-link">Home</Link>
 			<Link to="/learning-path" className="nav-link">Learning Paths</Link>
-            <Link to="/courses" className="nav-link">Courses</Link>
+            <Link to="/courses" className="nav-link">Program</Link>
 			<Link to="/sample-certificate" className="hover:text-white transition">Certificates</Link>
 			
             <Link to="/about" className="nav-link">About</Link>
@@ -175,15 +175,15 @@ const Navbar: React.FC = () => {
 	  {/* Mobile Dropdown */}
 {mobileOpen && (
   <div className="lg:hidden mt-2 bg-background-dark/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl p-6 space-y-4 pointer-events-auto">
-    <Link to="/programs" onClick={() => setMobileOpen(false)} className="block nav-link">
-      Programs
-    </Link>
+    <Link to="/" onClick={() => setMobileOpen(false)} className="block nav-link">
+	Home
+	</Link>
     <Link to="/learning-path" onClick={() => setMobileOpen(false)} className="block nav-link">
       Learning Paths
     </Link>
     <Link to="/courses" onClick={() => setMobileOpen(false)} className="block nav-link">
-      Courses
-    </Link>
+  Program
+</Link>
     <Link to="/sample-certificate" onClick={() => setMobileOpen(false)} className="block nav-link">
       Certificates
     </Link>
