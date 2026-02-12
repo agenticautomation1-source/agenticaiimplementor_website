@@ -143,7 +143,7 @@ export default function LearningPathPage() {
       <LPProgramFlow />
 	  
       {/* CTA */}
-      <section className="px-6 lg:px-20 py-20">
+      <section className="px-6 lg:px-20 py-12">
         <div className="max-w-4xl mx-auto bg-gradient-to-br from-charcoal to-obsidian border border-slate-800 p-12 rounded-3xl text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-accent-cyan opacity-[0.02]"></div>
 
