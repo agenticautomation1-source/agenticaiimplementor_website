@@ -139,14 +139,32 @@ const AIAdvisor: React.FC = () => {
           </div>
 
         </div>
-      ) : (
-        <button 
-          onClick={() => setIsOpen(true)}
-          className="size-14 bg-primary text-white rounded-full flex items-center justify-center shadow-2xl glow-accent hover:scale-110 transition-transform active:scale-95"
-        >
-          <span className="material-symbols-outlined text-3xl">smart_toy</span>
-        </button>
-      )}
+     ) : (
+  <div className="relative flex flex-col items-end gap-2">
+
+    {/* Tooltip */}
+    <div className="animate-fade-in-up bg-white text-black text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
+      Ask about your GenAI career path
+    </div>
+
+    {/* Pulsing Button Wrapper */}
+    <div className="relative">
+      
+      {/* Pulse Ring */}
+      <span className="absolute inset-0 rounded-full bg-primary opacity-30 animate-ping"></span>
+
+      <button 
+        onClick={() => setIsOpen(true)}
+        className="relative size-14 bg-primary text-white rounded-full flex items-center justify-center shadow-2xl glow-accent hover:scale-110 transition-transform active:scale-95"
+      >
+        <span className="material-symbols-outlined text-3xl">smart_toy</span>
+      </button>
+
+    </div>
+  </div>
+)}
+
+
     </div>
   );
 };
