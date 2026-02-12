@@ -40,7 +40,7 @@ const App: React.FC = () => {
       {/* NAVBAR */}
       <Navbar />
 
-      <main className="flex-1 min-h-screen">
+      <main className="flex-1 w-full">
         <Routes>
           {/* AUTH CALLBACK */}
           <Route path="/auth/callback" element={<AuthCallback />} />
