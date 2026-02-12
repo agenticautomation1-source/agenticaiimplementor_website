@@ -1,7 +1,8 @@
 import LPProgramFlow from "./components/LPProgramFlow";
 export default function LearningPathPage() {
   return (
-    <div className="dark bg-obsidian text-slate-100 font-display min-h-screen">
+  {/*<div className="dark bg-obsidian text-slate-100 font-display min-h-screen"> */}
+  <div className="dark bg-obsidian text-slate-100 font-display">
       {/* HEADER */}
  {/*      <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-obsidian/80 backdrop-blur-md px-6 lg:px-20 py-4">
         <div className="flex items-center justify-between max-w-[1440px] mx-auto">
