@@ -106,7 +106,7 @@ const App: React.FC = () => {
 
       {/* FOOTER */}
       
-        <footer className="border-t border-white/5 bg-charcoal/50 py-20">
+        <footer className="border-t border-white/5 bg-charcoal/50 py-12">
           <div className="relative pl-20 pr-6 md:pr-8 w-full">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
               {/* BRAND */}
