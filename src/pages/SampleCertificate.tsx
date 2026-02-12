@@ -15,98 +15,157 @@ const SampleCertificate: React.FC = () => {
   }, [verificationUrl]);
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white py-16 px-6">
-      {/* Header Section */}
-      <div className="max-w-5xl mx-auto text-center mb-16">
-        <h1 className="text-4xl font-bold mb-4">
-          Industry-Grade Digital Credential
+    <div className="min-h-screen bg-[#071A18] text-white py-20 px-6">
+      
+      {/* PAGE TITLE */}
+      <div className="text-center mb-14">
+        <h1 className="text-4xl font-semibold tracking-tight">
+          Secure Credential View
         </h1>
-        <p className="text-neutral-400 max-w-2xl mx-auto">
-          Official recognition for mastery in Agentic AI systems architecture,
-          governance, and autonomous workflow implementation.
+        <p className="text-sm text-emerald-300 mt-2 tracking-wider">
+          ID: AGENT-AI-9928-VX | Verified on Ethereum Mainnet
         </p>
       </div>
 
-      {/* Certificate Card */}
-      <div className="max-w-5xl mx-auto bg-neutral-900 border border-neutral-800 rounded-2xl p-12 shadow-2xl relative">
-        {/* Sample Watermark */}
-        <div className="absolute top-6 right-6 text-xs text-neutral-500 tracking-widest">
-          SAMPLE CREDENTIAL — DEMONSTRATION ONLY
-        </div>
+      {/* CERTIFICATE CONTAINER */}
+      <div className="max-w-6xl mx-auto rounded-2xl overflow-hidden border border-emerald-900 shadow-2xl">
 
-        <div className="text-center mb-10">
-          <h2 className="text-2xl font-semibold mb-2">
-            Agentic AI Implementor Certification
-          </h2>
-          <p className="text-neutral-400">
-            This certifies that
-          </p>
-        </div>
+        {/* GRADIENT SPLIT BACKGROUND */}
+        <div className="relative bg-gradient-to-br from-[#0b2c28] via-[#102f2a] to-[#1a332f] p-14">
 
-        <div className="text-center mb-10">
-          <h3 className="text-3xl font-bold tracking-wide">
-            Alexander Vance
-          </h3>
-        </div>
+          {/* LEFT ACCENT BAR */}
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-400"></div>
 
-        <div className="text-center mb-10 text-neutral-300">
-          has successfully demonstrated architectural mastery in autonomous AI
-          system deployment, governance frameworks, and advanced workflow orchestration.
-        </div>
-
-        {/* Metadata Section */}
-        <div className="grid md:grid-cols-3 gap-6 text-sm text-neutral-400 mt-12">
-          <div>
-            <p className="text-neutral-500">Credential ID</p>
-            <p className="font-medium text-white">AGENT-AI-9928-VX</p>
-          </div>
-          <div>
-            <p className="text-neutral-500">Issue Date</p>
-            <p className="font-medium text-white">February 2026</p>
-          </div>
-          <div>
-            <p className="text-neutral-500">Status</p>
-            <p className="font-medium text-green-400">Active</p>
-          </div>
-        </div>
-
-        {/* QR + Verification */}
-        <div className="mt-16 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="bg-white p-3 rounded-lg">
-            {qrCode && (
-              <img
-                src={qrCode}
-                alt="QR Code"
-                width={120}
-                height={120}
-              />
-            )}
+          {/* SAMPLE WATERMARK */}
+          <div className="absolute top-6 right-8 text-xs tracking-widest text-emerald-200 opacity-50">
+            MASTERSTROKE
           </div>
 
-          <div className="text-sm text-neutral-400 text-center md:text-left">
-            <p className="mb-2 text-white font-medium">
-              Public Verification
+          {/* HEADER */}
+          <div className="mb-14">
+            <p className="text-xs tracking-[0.4em] text-emerald-400 mb-2">
+              SECURITY CLEARANCE LEVEL 4
             </p>
-            <p>
-              Scan the QR code or visit:
+            <p className="text-sm tracking-[0.3em] text-emerald-200">
+              CERTIFICATE OF ARCHITECTURAL MASTERY
             </p>
-            <p className="text-blue-400 break-all mt-1">
-              {verificationUrl}
+          </div>
+
+          {/* MAIN CONTENT */}
+          <div className="text-center mb-14">
+            <p className="text-sm text-emerald-200 tracking-widest mb-6">
+              THIS DIGITAL RECORD CONFIRMS THE ACHIEVEMENT OF
             </p>
+
+            <h2 className="text-6xl md:text-7xl font-extrabold tracking-[0.15em] mb-6">
+              ALEXANDER VANCE
+            </h2>
+
+            <div className="w-24 h-[2px] bg-emerald-400 mx-auto mb-8"></div>
+
+            <p className="text-lg text-emerald-100">
+              Systems Engineer: Governance & Autonomous Systems
+            </p>
+
+            <p className="text-sm text-emerald-300 mt-4 max-w-2xl mx-auto">
+              Validated through the Agentic AI Framework for excellence in large-scale 
+              autonomous deployment and ethical governance protocols.
+            </p>
+          </div>
+
+          {/* FOOTER ROW */}
+          <div className="flex flex-col md:flex-row justify-between items-end gap-10">
+
+            {/* LEFT META */}
+            <div className="flex flex-col gap-6 text-sm text-emerald-200">
+              <div>
+                <p className="uppercase tracking-widest text-xs text-emerald-400">
+                  Issue Date
+                </p>
+                <p>October 24, 2023</p>
+              </div>
+
+              <div>
+                <p className="uppercase tracking-widest text-xs text-emerald-400">
+                  Architect Signature
+                </p>
+                <p className="italic">S. Sterling</p>
+              </div>
+            </div>
+
+            {/* RIGHT QR */}
+            <div className="bg-[#0f2421] border border-emerald-800 rounded-xl p-6 flex items-center gap-6">
+              {qrCode && (
+                <img
+                  src={qrCode}
+                  alt="QR Code"
+                  width={90}
+                  height={90}
+                  className="bg-white p-2 rounded"
+                />
+              )}
+              <div className="text-xs text-emerald-300">
+                <p className="text-emerald-400 font-semibold mb-2">
+                  SECURE PROTOCOL
+                </p>
+                <p>Scan to verify</p>
+                <p>on-chain identity</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className="max-w-5xl mx-auto text-center mt-20">
-        <h3 className="text-2xl font-semibold mb-6">
-          Earn Your Credential
-        </h3>
+      {/* LOWER DETAILS SECTION */}
+      <div className="max-w-6xl mx-auto mt-16 grid md:grid-cols-2 gap-8">
+
+        {/* DETAILS CARD */}
+        <div className="bg-[#0f2421] border border-emerald-900 rounded-xl p-8">
+          <h3 className="text-emerald-400 font-semibold mb-6">
+            Credential Details
+          </h3>
+
+          <div className="space-y-4 text-sm">
+            <div className="flex justify-between">
+              <span className="text-emerald-300">Status</span>
+              <span className="text-emerald-400 font-medium">
+                Active / Verified
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-emerald-300">Track</span>
+              <span>Systems Engineer – Lvl 4</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-emerald-300">Blockchain Hash</span>
+              <span>0x71C...4e1F</span>
+            </div>
+          </div>
+        </div>
+
+        {/* DOWNLOAD CARD */}
+        <div className="bg-[#0f2421] border border-emerald-900 rounded-xl p-8">
+          <h3 className="text-emerald-400 font-semibold mb-6">
+            Download Options
+          </h3>
+
+          <p className="text-sm text-emerald-300 mb-8">
+            Export high-resolution secure PDF with metadata for LinkedIn and professional portfolios.
+          </p>
+
+          <button className="w-full bg-emerald-400 text-[#06221f] font-semibold py-3 rounded-lg hover:brightness-110 transition">
+            Download PDF Credential
+          </button>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div className="text-center mt-20">
         <Link
-          to="/apply"
-          className="inline-block bg-blue-600 hover:bg-blue-700 transition px-8 py-3 rounded-lg font-medium"
+          to="/"
+          className="text-emerald-400 hover:text-white transition text-sm tracking-widest uppercase"
         >
-          Apply for Certification
+          ← Back to Home
         </Link>
       </div>
     </div>
