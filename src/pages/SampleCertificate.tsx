@@ -58,7 +58,7 @@ const SampleCertificate: React.FC = () => {
             </p>
 
             <h2 className="text-6xl md:text-7xl font-extrabold tracking-[0.15em] mb-6">
-              ALEXANDER VANCE
+              DANIEL FERNANDES
             </h2>
 
             <div className="w-24 h-[2px] bg-emerald-400 mx-auto mb-8"></div>
