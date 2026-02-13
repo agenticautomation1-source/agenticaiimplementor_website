@@ -215,8 +215,13 @@ const LMS = () => {
 
   const [loading, setLoading] = useState(true);
   const [openIndex, setOpenIndex] = useState(null);
+  const [liveSession, setLiveSession] = useState(null);
+  
   const [progressMap, setProgressMap] = useState({});
   const [user, setUser] = useState(null);
+
+
+
 
   useEffect(() => {
     const init = async () => {
@@ -250,7 +255,22 @@ const LMS = () => {
       });
 
       setProgressMap(map);
-      setLoading(false);
+
+// 🔥 FETCH ACTIVE LIVE SESSION
+const { data: live } = await supabase
+  .from("live_sessions")
+  .select("*")
+  .eq("program_id", internalId)
+  .eq("is_active", true)
+  .order("session_date", { ascending: true })
+  .limit(1)
+  .single();
+
+if (live) {
+  setLiveSession(live);
+}
+
+setLoading(false);
     };
 
     init();
@@ -302,6 +322,34 @@ const LMS = () => {
         <p className="text-cyan-400 text-sm uppercase tracking-widest mb-6">
           {program.intensity}
         </p>
+
+{/* LIVE SESSION BLOCK */}
+{liveSession && (
+  <div className="mb-12 p-6 rounded-2xl border border-cyan-400/40 bg-cyan-400/5">
+    <h2 className="text-lg font-semibold mb-2">
+      Live Session: {liveSession.title}
+    </h2>
+
+    <p className="text-sm text-slate-300 mb-4">
+      {new Date(liveSession.session_date).toLocaleString()}
+    </p>
+
+    <a
+      href={liveSession.zoom_link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-block px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
+    >
+      Join Live Session
+    </a>
+
+    <div className="mt-4 text-xs bg-white/5 p-3 rounded-lg border border-white/10">
+      Sessions run in 40-minute structured blocks. Rejoin using the same link after reset.
+    </div>
+  </div>
+)}
+
+
 
         {/* PROGRESS BAR */}
         <div className="mb-12">
