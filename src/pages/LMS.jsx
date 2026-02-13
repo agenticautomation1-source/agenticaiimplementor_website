@@ -370,5 +370,3 @@ const LMS = () => {
     </div>
   );
 };
-
-export default LMS;
