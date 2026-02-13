@@ -282,34 +282,6 @@ setLoading(false);
   
   // ⬇️ ADD NEW useEffect RIGHT HERE
 
-No.
-It’s not okay.
-
-Your second useEffect is broken again. You forgot to close the updateCountdown function.
-
-Right now your structure is:
-
-const updateCountdown = () => {
-  ...
-  setTimeLeft(...)
-  
-  updateCountdown();
-  const interval = setInterval(...)
-
-
-See the problem?
-You never closed updateCountdown with };
-
-So everything after setTimeLeft(...) is still inside that function.
-
-That’s why build fails.
-
-EXACT FIX — DO THIS
-
-Go to your second useEffect.
-
-Replace the entire block with this:
-
 useEffect(() => {
   if (!liveSession) return;
 
@@ -324,18 +296,18 @@ useEffect(() => {
     }
 
     const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    setTimeLeft(`${hours}h ${minutes}m ${seconds}s remaining`);
-  };   // ← YOU WERE MISSING THIS
-
+setTimeLeft(`${hours}h ${minutes}m ${seconds}s remaining`);
+}; 
   updateCountdown();
   const interval = setInterval(updateCountdown, 1000);
 
   return () => clearInterval(interval);
 
-}, [liveSession]);  
+}, [liveSession]);
+  
 
   if (loading) {
     return (
