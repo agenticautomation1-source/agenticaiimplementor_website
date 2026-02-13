@@ -212,31 +212,48 @@ const LMS_CONTENT = {
 const LMS = () => {
   const { programId } = useParams();
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [openIndex, setOpenIndex] = useState(null);
+  const [progressMap, setProgressMap] = useState({});
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const checkEnrollment = async () => {
+    const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session?.user) return navigate("/dashboard");
 
+      setUser(session.user);
+
       const internalId = PROGRAM_MAP[programId];
       if (!internalId) return navigate("/dashboard");
 
-      const { data } = await supabase
+      const { data: enrollment } = await supabase
         .from("enrollments")
         .select("program_id")
         .eq("user_id", session.user.id)
         .eq("program_id", internalId)
         .single();
 
-      if (!data) return navigate("/dashboard");
+      if (!enrollment) return navigate("/dashboard");
 
+      const { data: progress } = await supabase
+        .from("lesson_progress")
+        .select("lesson_key, completed")
+        .eq("user_id", session.user.id)
+        .eq("program_id", internalId);
+
+      const map = {};
+      progress?.forEach(p => {
+        map[p.lesson_key] = p.completed;
+      });
+
+      setProgressMap(map);
       setLoading(false);
     };
 
-    checkEnrollment();
+    init();
   }, [programId, navigate]);
 
   if (loading) {
@@ -248,20 +265,65 @@ const LMS = () => {
   }
 
   const program = LMS_CONTENT[programId];
+  const internalId = PROGRAM_MAP[programId];
+
+  const allLessons = program.modules.flatMap((module, mIndex) =>
+    module.lessons.map((_, lIndex) => `${mIndex}-${lIndex}`)
+  );
+
+  const completedCount = allLessons.filter(key => progressMap[key]).length;
+  const progressPercent = Math.round(
+    (completedCount / allLessons.length) * 100
+  );
+
+  const toggleLesson = async (lessonKey) => {
+    const newValue = !progressMap[lessonKey];
+
+    setProgressMap(prev => ({
+      ...prev,
+      [lessonKey]: newValue,
+    }));
+
+    await supabase
+      .from("lesson_progress")
+      .upsert({
+        user_id: user.id,
+        program_id: internalId,
+        lesson_key: lessonKey,
+        completed: newValue,
+      });
+  };
 
   return (
     <div className="min-h-screen bg-[#050608] text-white px-6 py-20">
       <div className="max-w-6xl mx-auto">
+
         <h1 className="text-4xl font-bold mb-3">{program.title}</h1>
-        <p className="text-cyan-400 text-sm uppercase tracking-widest mb-12">
+        <p className="text-cyan-400 text-sm uppercase tracking-widest mb-6">
           {program.intensity}
         </p>
 
+        {/* PROGRESS BAR */}
+        <div className="mb-12">
+          <div className="flex justify-between text-sm mb-2">
+            <span>Progress</span>
+            <span>{progressPercent}%</span>
+          </div>
+          <div className="w-full bg-white/10 rounded-full h-3">
+            <div
+              className="bg-cyan-400 h-3 rounded-full transition-all"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
+
         <div className="space-y-6">
-          {program.modules.map((module, index) => (
-            <div key={index} className="border border-white/10 rounded-2xl bg-white/[0.02]">
+          {program.modules.map((module, mIndex) => (
+            <div key={mIndex} className="border border-white/10 rounded-2xl bg-white/[0.02]">
               <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                onClick={() =>
+                  setOpenIndex(openIndex === mIndex ? null : mIndex)
+                }
                 className="w-full text-left p-6 flex justify-between items-center"
               >
                 <span className="font-semibold">{module.title}</span>
@@ -270,16 +332,34 @@ const LMS = () => {
                 </span>
               </button>
 
-              {openIndex === index && (
+              {openIndex === mIndex && (
                 <div className="px-6 pb-6 space-y-3 text-sm text-slate-300">
-                  {module.lessons.map((lesson, i) => (
-                    <div
-                      key={i}
-                      className="border-b border-white/5 pb-2"
-                    >
-                      {lesson}
-                    </div>
-                  ))}
+                  {module.lessons.map((lesson, lIndex) => {
+                    const lessonKey = `${mIndex}-${lIndex}`;
+                    const completed = progressMap[lessonKey];
+
+                    return (
+                      <div
+                        key={lessonKey}
+                        className="flex justify-between items-center border-b border-white/5 pb-2"
+                      >
+                        <span className={completed ? "text-cyan-400" : ""}>
+                          {lesson}
+                        </span>
+
+                        <button
+                          onClick={() => toggleLesson(lessonKey)}
+                          className={`text-xs px-3 py-1 rounded ${
+                            completed
+                              ? "bg-cyan-400 text-black"
+                              : "bg-white/10 text-slate-300"
+                          }`}
+                        >
+                          {completed ? "Completed" : "Mark Complete"}
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
