@@ -13,12 +13,66 @@ const LMS_CONTENT = {
     title: "Agentic AI Systems Engineer",
     intensity: "96 Hour Comprehensive Engineering Track",
     modules: [
-      { title: "Phase 01 – Foundations of Agentic Systems", hours: "12 Hours", desc: "State-aware design, autonomous loops, theory of LLM agency." },
-      { title: "Phase 02 – Logic Layer & n8n Orchestration", hours: "24 Hours", desc: "Advanced workflows, API integrations, conditional logic." },
-      { title: "Phase 03 – Multi-Agent Architectures", hours: "18 Hours", desc: "Coordination strategies, supervision, CrewAI patterns." },
-      { title: "Phase 04 – Memory & Planning Loops", hours: "14 Hours", desc: "Vector memory systems, recursive planning modules." },
-      { title: "Phase 05 – Production Hardening & Safety", hours: "12 Hours", desc: "Deterministic execution, governance protocols." },
-      { title: "Advanced Module – LangGraph Mastery", hours: "16 Hours", desc: "Complex state machines & custom agent logic." },
+      {
+        title: "Phase 01 – Foundations of Agentic Systems",
+        hours: "12 Hours",
+        lessons: [
+          "State-aware Design Principles",
+          "Autonomous Agent Loops",
+          "LLM Agency Theory",
+          "Prompt Contracts & Control"
+        ],
+      },
+      {
+        title: "Phase 02 – Logic Layer & n8n Orchestration",
+        hours: "24 Hours",
+        lessons: [
+          "Advanced Workflow Design",
+          "API Integrations",
+          "Conditional Logic & Branching",
+          "Failure Handling Strategies"
+        ],
+      },
+      {
+        title: "Phase 03 – Multi-Agent Architectures",
+        hours: "18 Hours",
+        lessons: [
+          "Agent Coordination Patterns",
+          "Supervisor Agents",
+          "CrewAI Patterns",
+          "Delegation & Task Routing"
+        ],
+      },
+      {
+        title: "Phase 04 – Memory & Planning Loops",
+        hours: "14 Hours",
+        lessons: [
+          "Vector Memory Systems",
+          "Short vs Long-Term Memory",
+          "Recursive Planning",
+          "Execution Graph Design"
+        ],
+      },
+      {
+        title: "Phase 05 – Production Hardening & Safety",
+        hours: "12 Hours",
+        lessons: [
+          "Deterministic Execution",
+          "Guardrails & Governance",
+          "Rate Limiting & Cost Control",
+          "Production Monitoring"
+        ],
+      },
+      {
+        title: "Advanced Module – LangGraph Mastery",
+        hours: "16 Hours",
+        lessons: [
+          "State Machines with LangGraph",
+          "Custom Agent Graphs",
+          "Advanced Orchestration",
+          "Enterprise Deployment Patterns"
+        ],
+      },
     ],
   },
 
@@ -26,13 +80,70 @@ const LMS_CONTENT = {
     title: "AI Validation & Governance Engineer",
     intensity: "96 Hour Enterprise Validation Track",
     modules: [
-      { title: "Phase 01 – Foundations of AI Validation", hours: "12 Hours", desc: "AI failure modes, validation philosophy, enterprise risk surfaces." },
-      { title: "Phase 02 – Model, Prompt & Output Testing", hours: "16 Hours", desc: "Deterministic testing, prompt validation, regression testing." },
-      { title: "Phase 03 – Bias, Fairness & Hallucination Detection", hours: "14 Hours", desc: "Bias testing, fairness metrics, hallucination detection." },
-      { title: "Phase 04 – Human-in-the-Loop Systems", hours: "12 Hours", desc: "Review workflows, escalation paths, approval systems." },
-      { title: "Phase 05 – Governance, Auditability & Compliance", hours: "16 Hours", desc: "Audit trails, ISO/SOC2 alignment, regulatory mapping." },
-      { title: "Phase 06 – Production Monitoring & Incident Response", hours: "14 Hours", desc: "Drift detection, incident workflows, rollback strategies." },
-      { title: "Capstone – Enterprise Governance Framework", hours: "12 Hours", desc: "Design and defend a complete AI governance system." },
+      {
+        title: "Phase 01 – Foundations of AI Validation",
+        hours: "12 Hours",
+        lessons: [
+          "AI Failure Modes",
+          "Validation Philosophy",
+          "Enterprise Risk Surfaces"
+        ],
+      },
+      {
+        title: "Phase 02 – Model, Prompt & Output Testing",
+        hours: "16 Hours",
+        lessons: [
+          "Deterministic Testing",
+          "Prompt Validation",
+          "Regression Testing",
+          "Output Constraints"
+        ],
+      },
+      {
+        title: "Phase 03 – Bias, Fairness & Hallucination Detection",
+        hours: "14 Hours",
+        lessons: [
+          "Bias Testing Techniques",
+          "Fairness Metrics",
+          "Hallucination Detection"
+        ],
+      },
+      {
+        title: "Phase 04 – Human-in-the-Loop Systems",
+        hours: "12 Hours",
+        lessons: [
+          "Review Workflows",
+          "Escalation Paths",
+          "Override Design"
+        ],
+      },
+      {
+        title: "Phase 05 – Governance & Compliance",
+        hours: "16 Hours",
+        lessons: [
+          "Audit Trails",
+          "ISO / SOC2 Alignment",
+          "Regulatory Mapping"
+        ],
+      },
+      {
+        title: "Phase 06 – Production Monitoring",
+        hours: "14 Hours",
+        lessons: [
+          "Drift Detection",
+          "Incident Workflows",
+          "Rollback Strategies"
+        ],
+      },
+      {
+        title: "Capstone – Enterprise Governance Framework",
+        hours: "12 Hours",
+        lessons: [
+          "Design Complete Governance System",
+          "Risk Modeling",
+          "Defense & Architecture Review"
+        ],
+      },
     ],
   },
 
@@ -40,12 +151,60 @@ const LMS_CONTENT = {
     title: "GenAI Platform Architect",
     intensity: "96 Hour Enterprise Architecture Track",
     modules: [
-      { title: "Phase 01 – Enterprise GenAI Foundations", hours: "16 Hours", desc: "Reference architectures, enterprise constraints." },
-      { title: "Phase 02 – Provider Abstraction & Model Routing", hours: "20 Hours", desc: "Multi-provider strategies, fallbacks, cost-aware routing." },
-      { title: "Phase 03 – Multi-Tenant GenAI Platforms", hours: "18 Hours", desc: "Tenant isolation, access control, governance layers." },
-      { title: "Phase 04 – Reliability, Scaling & Cost Control", hours: "14 Hours", desc: "Observability, performance engineering, FinOps." },
-      { title: "Phase 05 – Governance, Security & Compliance", hours: "16 Hours", desc: "Enterprise approvals, auditability, risk controls." },
-      { title: "Capstone – Enterprise Platform Architecture Defense", hours: "12 Hours", desc: "End-to-end architecture design & defense." },
+      {
+        title: "Phase 01 – Enterprise GenAI Foundations",
+        hours: "16 Hours",
+        lessons: [
+          "Reference Architectures",
+          "Enterprise Constraints",
+          "Platform Fundamentals"
+        ],
+      },
+      {
+        title: "Phase 02 – Provider Abstraction & Routing",
+        hours: "20 Hours",
+        lessons: [
+          "Multi-Provider Strategy",
+          "Fallback Systems",
+          "Cost-Aware Routing"
+        ],
+      },
+      {
+        title: "Phase 03 – Multi-Tenant Platforms",
+        hours: "18 Hours",
+        lessons: [
+          "Tenant Isolation",
+          "Access Control",
+          "Governance Layers"
+        ],
+      },
+      {
+        title: "Phase 04 – Reliability & Cost Control",
+        hours: "14 Hours",
+        lessons: [
+          "Observability Systems",
+          "Performance Engineering",
+          "FinOps Strategy"
+        ],
+      },
+      {
+        title: "Phase 05 – Security & Compliance",
+        hours: "16 Hours",
+        lessons: [
+          "Enterprise Approvals",
+          "Auditability",
+          "Risk Controls"
+        ],
+      },
+      {
+        title: "Capstone – Platform Architecture Defense",
+        hours: "12 Hours",
+        lessons: [
+          "End-to-End Architecture",
+          "Tradeoff Analysis",
+          "Defense Review"
+        ],
+      },
     ],
   },
 };
@@ -54,23 +213,16 @@ const LMS = () => {
   const { programId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [openIndex, setOpenIndex] = useState(null);
 
   useEffect(() => {
     const checkEnrollment = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
 
-      if (!session?.user) {
-        navigate("/dashboard");
-        return;
-      }
+      if (!session?.user) return navigate("/dashboard");
 
       const internalId = PROGRAM_MAP[programId];
-      if (!internalId) {
-        navigate("/dashboard");
-        return;
-      }
+      if (!internalId) return navigate("/dashboard");
 
       const { data } = await supabase
         .from("enrollments")
@@ -79,10 +231,7 @@ const LMS = () => {
         .eq("program_id", internalId)
         .single();
 
-      if (!data) {
-        navigate("/dashboard");
-        return;
-      }
+      if (!data) return navigate("/dashboard");
 
       setLoading(false);
     };
@@ -103,29 +252,36 @@ const LMS = () => {
   return (
     <div className="min-h-screen bg-[#050608] text-white px-6 py-20">
       <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold mb-3">{program.title}</h1>
+        <p className="text-cyan-400 text-sm uppercase tracking-widest mb-12">
+          {program.intensity}
+        </p>
 
-        <div className="mb-14">
-          <h1 className="text-4xl font-bold mb-3">{program.title}</h1>
-          <p className="text-cyan-400 text-sm uppercase tracking-widest">
-            {program.intensity}
-          </p>
-        </div>
-
-        <div className="space-y-8">
+        <div className="space-y-6">
           {program.modules.map((module, index) => (
-            <div
-              key={index}
-              className="p-8 rounded-2xl border border-white/10 bg-white/[0.02]"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">{module.title}</h2>
+            <div key={index} className="border border-white/10 rounded-2xl bg-white/[0.02]">
+              <button
+                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                className="w-full text-left p-6 flex justify-between items-center"
+              >
+                <span className="font-semibold">{module.title}</span>
                 <span className="text-xs text-cyan-400 font-bold">
                   {module.hours}
                 </span>
-              </div>
-              <p className="text-slate-400 text-sm">
-                {module.desc}
-              </p>
+              </button>
+
+              {openIndex === index && (
+                <div className="px-6 pb-6 space-y-3 text-sm text-slate-300">
+                  {module.lessons.map((lesson, i) => (
+                    <div
+                      key={i}
+                      className="border-b border-white/5 pb-2"
+                    >
+                      {lesson}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
