@@ -27,8 +27,6 @@ const PROGRAM_MAP = {
   },
 };
 
-
-
 export default function Dashboard() {
   const navigate = useNavigate();
 
@@ -327,7 +325,7 @@ handler: async function (response) {
     </a>
 
     <a
-      href="/lms/courses/masterstroke-agentic-ai-systems-engineer"
+     href="/lms/agentic-ai-systems-engineer"
       className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
     >
       Go to LMS
@@ -397,7 +395,7 @@ handler: async function (response) {
     </a>
 
     <a
-      href="/lms/courses/genai-platform-architect"
+      href="/lms/genai-platform-architect"
       className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
     >
       Go to LMS
@@ -463,7 +461,7 @@ handler: async function (response) {
     </a>
 
     <a
-      href="/lms/courses/ai-validation-governance-engineer"
+      href="/lms/ai-validation-governance-engineer"
       className="px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
     >
       Go to LMS

@@ -1,3 +1,4 @@
+import LMS from "./pages/LMS";
 import VerifyCertificate from "./pages/VerifyCertificate";
 import SampleCertificate from "./pages/SampleCertificate";
 import React, { useState } from "react";
@@ -54,6 +55,17 @@ const App: React.FC = () => {
               </RequireAuth>
             }
           />
+		  
+		  {/*LMS Integration */}
+		  <Route
+  path="/lms/:programId"
+  element={
+    <RequireAuth>
+      <LMS />
+    </RequireAuth>
+  }
+/>
+		  
 
           {/* HOME */}
           <Route
