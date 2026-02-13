@@ -184,18 +184,22 @@ export default function LearningPathPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-				onClick={() => navigate("/dashboard")}
-				className="bg-accent-cyan text-obsidian px-10 py-4 font-bold uppercase tracking-widest text-sm hover:brightness-110 transition-all rounded"
-			>
-				Start Your Journey
-			<a
-				href="/roadmap.pdf"
-				download
-				className="border border-slate-700 px-10 py-4 font-bold uppercase tracking-widest text-sm hover:border-accent-cyan transition-all rounded inline-flex items-center justify-center"
-			>
-				Download Career Roadmap PDF
-			</a>
+         <div className="flex flex-col sm:flex-row gap-4 justify-center">
+  <button
+    onClick={() => navigate("/dashboard")}
+    className="bg-accent-cyan text-obsidian px-10 py-4 font-bold uppercase tracking-widest text-sm hover:brightness-110 transition-all rounded"
+  >
+    Start Your Journey
+  </button>
+
+  <a
+    href="/roadmap.pdf"
+    download
+    className="border border-slate-700 px-10 py-4 font-bold uppercase tracking-widest text-sm hover:border-accent-cyan transition-all rounded inline-flex items-center justify-center"
+  >
+    Download Career Roadmap PDF
+  </a>
+</div>
           </div>
         </div>
       </section>
