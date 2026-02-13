@@ -216,6 +216,7 @@ const LMS = () => {
   const [loading, setLoading] = useState(true);
   const [openIndex, setOpenIndex] = useState(null);
   const [liveSession, setLiveSession] = useState(null);
+  const [timeLeft, setTimeLeft] = useState("");
   
   const [progressMap, setProgressMap] = useState({});
   const [user, setUser] = useState(null);
@@ -249,6 +250,23 @@ const LMS = () => {
         .eq("user_id", session.user.id)
         .eq("program_id", internalId);
 
+// Fetch next live session
+const now = new Date().toISOString();
+
+const { data: sessionData } = await supabase
+  .from("live_sessions")
+  .select("*")
+  .eq("program_id", internalId)
+  .eq("is_active", true)
+  .gte("session_date", now)
+  .order("session_date", { ascending: true })
+  .limit(1)
+  .single();
+
+if (sessionData) {
+  setLiveSession(sessionData);
+}
+
       const map = {};
       progress?.forEach(p => {
         map[p.lesson_key] = p.completed;
@@ -256,25 +274,42 @@ const LMS = () => {
 
       setProgressMap(map);
 
-// 🔥 FETCH ACTIVE LIVE SESSION
-const { data: live } = await supabase
-  .from("live_sessions")
-  .select("*")
-  .eq("program_id", internalId)
-  .eq("is_active", true)
-  .order("session_date", { ascending: true })
-  .limit(1)
-  .single();
-
-if (live) {
-  setLiveSession(live);
-}
-
 setLoading(false);
     };
 
     init();
   }, [programId, navigate]);
+  
+  // ⬇️ ADD NEW useEffect RIGHT HERE
+
+useEffect(() => {
+  if (!liveSession) return;
+
+  const updateCountdown = () => {
+    const nowTime = new Date().getTime();
+    const sessionTime = new Date(liveSession.session_date).getTime();
+    const diff = sessionTime - nowTime;
+
+    if (diff <= 0) {
+      setTimeLeft("Live Now");
+      return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor(
+      (diff % (1000 * 60 * 60)) / (1000 * 60)
+    );
+
+    setTimeLeft(`${hours}h ${minutes}m remaining`);
+  };
+
+  updateCountdown();
+  const interval = setInterval(updateCountdown, 60000);
+
+  return () => clearInterval(interval);
+
+}, [liveSession]);
+  
 
   if (loading) {
     return (
@@ -322,35 +357,37 @@ setLoading(false);
         <p className="text-cyan-400 text-sm uppercase tracking-widest mb-6">
           {program.intensity}
         </p>
-
-{/* LIVE SESSION BLOCK */}
+		
+		
+		{/* LIVE SESSION CARD */}
 {liveSession && (
-  <div className="mb-12 p-6 rounded-2xl border border-cyan-400/40 bg-cyan-400/5">
-    <h2 className="text-lg font-semibold mb-2">
+  <div className="mb-12 p-6 rounded-2xl border border-cyan-500/30 bg-cyan-500/10">
+    <h3 className="text-lg font-semibold mb-2">
       Live Session: {liveSession.title}
-    </h2>
+    </h3>
 
     <p className="text-sm text-slate-300 mb-4">
       {new Date(liveSession.session_date).toLocaleString()}
     </p>
+	
+	{timeLeft && (
+  <p className="text-cyan-400 text-sm mb-3">
+    {timeLeft}
+  </p>
+)}
 
     <a
       href={liveSession.zoom_link}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-block px-6 py-3 bg-cyan-400 text-black rounded-lg font-bold uppercase tracking-widest text-xs"
+      className="inline-block bg-cyan-400 text-black px-4 py-2 rounded font-semibold"
     >
       Join Live Session
     </a>
-
-    <div className="mt-4 text-xs bg-white/5 p-3 rounded-lg border border-white/10">
-      Sessions run in 40-minute structured blocks. Rejoin using the same link after reset.
-    </div>
   </div>
 )}
 
-
-
+		
         {/* PROGRESS BAR */}
         <div className="mb-12">
           <div className="flex justify-between text-sm mb-2">
