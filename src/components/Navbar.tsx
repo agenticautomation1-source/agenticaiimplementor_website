@@ -181,6 +181,15 @@ const Navbar: React.FC = () => {
     <Link to="/learning-path" onClick={() => setMobileOpen(false)} className="block nav-link">
       Learning Paths
     </Link>
+	
+	<Link
+  to="/blog"
+  className="hover:text-primary transition-colors"
+>
+  Blog
+</Link>
+	
+	
     <Link to="/courses" onClick={() => setMobileOpen(false)} className="block nav-link">
   Program
 </Link>
