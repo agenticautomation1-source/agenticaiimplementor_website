@@ -120,12 +120,12 @@ const Navbar: React.FC = () => {
             <Link to="/" className="nav-link">Home</Link>
 			<Link to="/learning-path" className="nav-link">Learning Paths</Link>
 			
-			<Link
-  to="/blog"
+			<a
+  href="https://blog.agenticaiimplementors.com"
   className="nav-link"
 >
   Blog
-</Link>
+</a>
 			
             <Link to="/courses" className="nav-link">Program</Link>
 			<Link to="/sample-certificate" className="hover:text-white transition">Certificates</Link>
@@ -190,12 +190,13 @@ const Navbar: React.FC = () => {
       Learning Paths
     </Link>
 	
-	<Link
-  to="/blog"
-  className="hover:text-primary transition-colors"
+	<a
+  href="https://blog.agenticaiimplementors.com"
+  onClick={() => setMobileOpen(false)}
+  className="block nav-link"
 >
   Blog
-</Link>
+</a>
 	
 	
     <Link to="/courses" onClick={() => setMobileOpen(false)} className="block nav-link">
