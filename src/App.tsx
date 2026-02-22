@@ -1,5 +1,6 @@
-import Blog from "./pages/Blog";
-import WhatIsAgenticAIArchitecture from "./pages/blog/WhatIsAgenticAIArchitecture";
+import BlogPost from "./pages/blog/BlogPost";
+import Blog from "./pages/blog/BlogIndex";
+
 import LMS from "./pages/LMS";
 import VerifyCertificate from "./pages/VerifyCertificate";
 import SampleCertificate from "./pages/SampleCertificate";
@@ -114,8 +115,9 @@ const App: React.FC = () => {
 		  <Route path="/sample-certificate" element={<SampleCertificate />} />
 		  <Route path="/verify/:id" element={<VerifyCertificate />} />
 
-		  <Route path="/blog/what-is-agentic-ai-architecture" element={<WhatIsAgenticAIArchitecture />}/>
+		  
 		  <Route path="/blog" element={<Blog />} />
+<Route path="/blog/:slug" element={<BlogPost />} />
 
           {/* TEST */}
           <Route path="/test-auth" element={<TestAuth />} />
