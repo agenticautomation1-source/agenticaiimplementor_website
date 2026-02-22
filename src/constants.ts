@@ -72,3 +72,4 @@ export const LOGOS = [
   'CAPGEMINI',
   'IGATE'
 ];
+
