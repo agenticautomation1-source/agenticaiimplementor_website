@@ -56,10 +56,19 @@ export const FEATURES: Feature[] = [
 ];
 
 export const LOGOS = [
-  'GOOGLE',
-  'NVIDIA',
-  'MICROSOFT',
-  'ANTHROPIC',
-  'OPENAI',
-  'DATABRICKS'
+  'IBM',
+  'DELOITTE',
+  'ACCENTURE',
+  'MARSH MCLENNAN',
+  'HP',
+  'CGI',
+  'SHARP',
+  'LG SOFT',
+  'MPHASIS',
+  'KYNDRYL',
+  'VIRTUSA',
+  'MERCER',
+  'REVITAS',
+  'CAPGEMINI',
+  'IGATE'
 ];
