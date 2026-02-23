@@ -1,6 +1,6 @@
-import systemsImg from "../assets/courses/agentic-systems-engineer.webP";
-import platformImg from "../assets/courses/genai-platform-architect.webP";
-import governanceImg from "../assets/courses/ai-validation-governance.webP";
+import systemsImg from "../assets/courses/agentic-systems-engineer.webp";
+import platformImg from "../assets/courses/genai-platform-architect.webp";
+import governanceImg from "../assets/courses/ai-validation-governance.webp";
 
 export const MASTERSTROKE_COURSES = {
   systemsEngineer: {
