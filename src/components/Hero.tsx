@@ -110,7 +110,7 @@ const Hero: React.FC = () => {
         {/* RIGHT VISUAL */}
         <div className="lg:w-1/2 relative w-full flex justify-center lg:justify-end overflow-hidden">
           {/* Ambient glow */}
-          <div className="absolute inset-0 bg-primary/10 blur-[140px] rounded-full" />
+          <div className="absolute inset-0 bg-primary/10 blur-[40px] md:blur-[140px] rounded-full" />
 
           <div className="relative w-full max-w-[560px] aspect-[4/5] glass-card rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl">
             {/* BREATHING IMAGE */}
