@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import heroImage from "../assets/hero.png";
+import heroImage from "../assets/hero.webp";
 
 const Hero: React.FC = () => {
   useEffect(() => {
@@ -114,17 +114,13 @@ const Hero: React.FC = () => {
 
           <div className="relative w-full max-w-[560px] aspect-[4/5] glass-card rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl">
             {/* BREATHING IMAGE */}
-            <div
-              className="
-                absolute inset-0
-                bg-cover bg-center
-                opacity-85
-                animate-[hero-breathe_10s_ease-in-out_infinite]
-              "
-              style={{
-                backgroundImage: `url(${heroImage})`,
-              }}
-            />
+ <img
+  src={heroImage}
+  alt="Agentic AI system visualization"
+  className="absolute inset-0 w-full h-full object-cover opacity-85 md:animate-[hero-breathe_10s_ease-in-out_infinite]"
+  loading="eager"
+  fetchPriority="high"
+/>
 
             {/* METALLIC SHIMMER */}
             <div
