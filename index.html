@@ -3,34 +3,57 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-	
-
 
     <title>Agentic AI Implementor | Leading the Autonomous Revolution</title>
-	<meta http-equiv="x-dns-prefetch-control" content="on">
-    <meta
-  name="description"
-  content="Enterprise-grade agentic AI systems, architecture, governance and autonomous implementation for regulated industries and global enterprises."
-/>
 
+    <meta
+      name="description"
+      content="Enterprise-grade agentic AI systems, architecture, governance and autonomous implementation for regulated industries and global enterprises."
+    />
+
+    <link rel="canonical" href="https://www.agenticaiimplementors.com/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Agentic AI Implementors" />
+    <meta
+      property="og:title"
+      content="Agentic AI Implementor | Leading the Autonomous Revolution"
+    />
+    <meta
+      property="og:description"
+      content="Enterprise-grade agentic AI systems, architecture, governance and autonomous implementation for regulated industries and global enterprises."
+    />
+    <meta property="og:url" content="https://www.agenticaiimplementors.com/" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Agentic AI Implementor | Leading the Autonomous Revolution"
+    />
+    <meta
+      name="twitter:description"
+      content="Enterprise-grade agentic AI systems, architecture, governance and autonomous implementation for regulated industries and global enterprises."
+    />
+
+    <!-- Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <!-- Fonts are OK via CDN -->
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
-<noscript>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
-    rel="stylesheet"
-  />
-</noscript>
-
-<link
-  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap"
-  rel="stylesheet"
-/>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
       html,
@@ -49,18 +72,16 @@
   </head>
 
   <body>
+    <div id="root"></div>
 
-  <!-- React mounts ONLY here -->
-  <div id="root"></div>
+    <script>
+      const fontLink = document.createElement("link");
+      fontLink.href =
+        "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap";
+      fontLink.rel = "stylesheet";
+      document.head.appendChild(fontLink);
+    </script>
 
-<script>
-  const fontLink = document.createElement("link");
-  fontLink.href = "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap";
-  fontLink.rel = "stylesheet";
-  document.head.appendChild(fontLink);
-</script>
-
-<script type="module" src="/src/main.tsx"></script>
-
-</body>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

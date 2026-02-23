@@ -1,3 +1,4 @@
+
 import React, { useState, lazy, Suspense } from "react";
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 
@@ -7,6 +8,7 @@ import Hero from "./components/Hero";
 import LogoMarquee from "./components/LogoMarquee";
 import WhyMasterstroke from "./components/WhyMasterstroke";
 import Curriculum from "./components/Curriculum";
+import SEO from "./components/SEO";
 
 /* ===========================
    LAZY LOADED COMPONENTS
@@ -81,19 +83,24 @@ const App: React.FC = () => {
             />
 
             {/* HOME */}
-            <Route
-              path="/"
-              element={
-                <>
-                  <Hero />
-                  <LogoMarquee />
-                  <div id="curriculum">
-                    <Curriculum />
-                  </div>
-                  <WhyMasterstroke />
-                </>
-              }
-            />
+ <Route
+  path="/"
+  element={
+    <>
+      <SEO
+        title="Agentic AI Implementor | Leading the Autonomous Revolution"
+        description="Enterprise-grade agentic AI systems, architecture, governance and autonomous implementation for regulated industries and global enterprises."
+        url="https://www.agenticaiimplementors.com/"
+      />
+      <Hero />
+      <LogoMarquee />
+      <div id="curriculum">
+        <Curriculum />
+      </div>
+      <WhyMasterstroke />
+    </>
+  }
+/>
 
             {/* COURSES */}
             <Route path="/courses" element={<Courses />} />
