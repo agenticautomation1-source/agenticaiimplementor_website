@@ -4,12 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 	
-	<link
-  rel="preload"
-  as="image"
-  href="/assets/hero-j81Nz1e.webp"
-  fetchpriority="high"
-/>
+
 
     <title>Agentic AI Implementor | Leading the Autonomous Revolution</title>
 	<meta http-equiv="x-dns-prefetch-control" content="on">
@@ -24,15 +19,18 @@
     />
 
     <!-- Fonts are OK via CDN -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-      rel="stylesheet"
-    />
+<noscript>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+</noscript>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap"
+  rel="stylesheet"
+/>
 
     <style>
       html,
@@ -51,8 +49,8 @@
   </head>
 
   <body>
-    <div id="root">
 
+  <!-- STATIC HERO (NOT INSIDE ROOT) -->
   <section style="
     max-width:1200px;
     margin:0 auto;
@@ -99,9 +97,15 @@
 
   </section>
 
-</div>
+  <!-- React mounts ONLY here -->
+  <div id="root"></div>
 
-    <!-- Vite entry point (MANDATORY) -->
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<script>
+  const fontLink = document.createElement("link");
+  fontLink.href = "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap";
+  fontLink.rel = "stylesheet";
+  document.head.appendChild(fontLink);
+</script>
+
+</body>
 </html>
