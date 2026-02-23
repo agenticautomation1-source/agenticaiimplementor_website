@@ -1,8 +1,8 @@
 import { Course, Feature } from './types';
 
-import systemsImg from './assets/courses/agentic-systems-engineer.png';
-import platformImg from './assets/courses/genai-platform-architect.png';
-import governanceImg from './assets/courses/ai-validation-governance.png';
+import systemsImg from './assets/courses/agentic-systems-engineer.webP';
+import platformImg from './assets/courses/genai-platform-architect.webP';
+import governanceImg from './assets/courses/ai-validation-governance.webP';
 
 export const COURSES: Course[] = [
   {
