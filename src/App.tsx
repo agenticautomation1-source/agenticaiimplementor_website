@@ -102,6 +102,7 @@ const App: React.FC = () => {
   }
 />
 
+
             {/* COURSES */}
             <Route path="/courses" element={<Courses />} />
             <Route
