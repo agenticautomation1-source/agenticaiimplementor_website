@@ -14,16 +14,30 @@ const PROGRAMS = {
   GENAI: "genai-platform-architect",
   GOVERNANCE: "ai-validation-governance-engineer",
 };
+// For Testing it is blocked and replaced
+//const PROGRAM_MAP = {
+//  "agentic-ai-systems-engineer": {
+//    id: "agentic_ai_engineer",
+//  },
+//  "genai-platform-architect": {
+//    id: "genai_platform_architect",
+//  },
+//  "ai-validation-governance-engineer": {
+//    id: "ai_validation_governance",
+//  },
+//};
 
 const PROGRAM_MAP = {
   "agentic-ai-systems-engineer": {
-    id: "agentic_ai_engineer",
+    id: "b36863cd-0dc3-4360-b8d3-90e849ef153a",
   },
+
   "genai-platform-architect": {
-    id: "genai_platform_architect",
+    id: "e1f01af4-c7c2-49a1-8357-7c783d65c4c9",
   },
+
   "ai-validation-governance-engineer": {
-    id: "ai_validation_governance",
+    id: "c46f7707-3495-47b9-a759-eb6f5b92c642",
   },
 };
 
