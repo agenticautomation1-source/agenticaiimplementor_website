@@ -58,10 +58,20 @@ export default async function handler(
 
 
 
+// Testing temp 
+//    if (error || !program) {
+//      return res.status(400).json({ error: "Invalid program" });
+//    }
 
-    if (error || !program) {
-      return res.status(400).json({ error: "Invalid program" });
-    }
+if (error || !program) {
+  console.error("SUPABASE ERROR:", error);
+  console.error("PROGRAM:", program);
+
+  return res.status(400).json({
+    error: "Invalid program",
+    supabase: error,
+  });
+}
 
     const razorpay = new Razorpay({
       key_id: RAZORPAY_KEY_ID,
