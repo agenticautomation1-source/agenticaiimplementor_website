@@ -54,11 +54,14 @@ export default function RequireAdmin({ children }: Props) {
     console.log("Admin Row:", data);
     console.log("Admin Error:", error);
 
-    setAllowed(
+const role = data?.role?.toLowerCase();
+
+setAllowed(
   !!data &&
   data.active === true &&
-  data.role?.toLowerCase() === "admin"
+  (role === "admin" || role === "super_admin")
 );
+
 
     setLoading(false);
   } catch (err) {
