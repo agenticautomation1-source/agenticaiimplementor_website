@@ -10,6 +10,10 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
+  console.log("========== CREATE ORDER API ==========");
+console.log("METHOD:", req.method);
+console.log("BODY:", req.body);
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
