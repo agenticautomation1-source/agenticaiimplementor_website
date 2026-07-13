@@ -195,26 +195,6 @@ useEffect(() => {
         </div>
 
 
-        <div className="mt-10">
-
-  <h2 className="text-lg font-semibold mb-4">
-    Platform Status
-  </h2>
-
-  <div className="grid md:grid-cols-4 gap-4">
-
-    <Status title="Supabase" value="Connected" />
-
-    <Status title="Authentication" value="Online" />
-
-    <Status title="Payments" value="Operational" />
-
-    <Status title="Platform" value="Healthy" />
-
-  </div>
-
-</div>
-
 
       </div>
     </main>
