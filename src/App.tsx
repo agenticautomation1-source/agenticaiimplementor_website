@@ -4,7 +4,7 @@ import { Routes, Route, Link, Navigate } from "react-router-dom";
 
 import RequireAuth from "./components/RequireAuth";
 
-//import RequireAdmin from "./components/RequireAdmin";
+import RequireAdmin from "./components/RequireAdmin";
 
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -79,7 +79,15 @@ const App: React.FC = () => {
               }
             />
 
-<Route path="/admin" element={<AdminDashboard />} />
+<Route
+  path="/admin"
+  element={
+    <RequireAdmin>
+      <AdminDashboard />
+    </RequireAdmin>
+  }
+/>
+
 
 
             {/* LMS Integration */}

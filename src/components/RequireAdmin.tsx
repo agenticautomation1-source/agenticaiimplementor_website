@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function RequireAdmin({ children }: Props) {
-  console.log("===== REQUIRE ADMIN LOADED =====");
+  console.log("★★★★★ REQUIRE ADMIN V2 LOADED ★★★★★");
 
   const [loading, setLoading] = useState(true);
   const [allowed, setAllowed] = useState(false);
@@ -54,7 +54,12 @@ export default function RequireAdmin({ children }: Props) {
     console.log("Admin Row:", data);
     console.log("Admin Error:", error);
 
-    setAllowed(!!data);
+    setAllowed(
+  !!data &&
+  data.active === true &&
+  data.role?.toLowerCase() === "admin"
+);
+
     setLoading(false);
   } catch (err) {
     console.error("REQUIRE ADMIN CRASHED:", err);
