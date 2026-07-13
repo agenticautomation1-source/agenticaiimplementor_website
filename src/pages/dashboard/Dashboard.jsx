@@ -155,7 +155,7 @@ if (!cleaned && isReturningFromPayment()) {
   // ================= RAZORPAY ENROLL HANDLER =================
   const handleEnroll = async (programId) => {
 
-    alert("handleEnroll started");
+ //   alert("handleEnroll started");
 console.log("handleEnroll started");
 
     const API_BASE =
@@ -164,12 +164,12 @@ console.log("handleEnroll started");
     : "/api";
 
 
-    console.log("API_BASE =", API_BASE);
-console.log("CREATE ORDER URL =", `${API_BASE}/payments/create-order`);
+//    console.log("API_BASE =", API_BASE);
+//console.log("CREATE ORDER URL =", `${API_BASE}/payments/create-order`);
 
 
     
-    console.log("ENROLL CLICKED", { razorpayReady, user });
+//    console.log("ENROLL CLICKED", { razorpayReady, user });
 
     if (!user) {
       alert("Session not ready yet. Please wait 1–2 seconds and try again.");
@@ -207,11 +207,11 @@ console.log("CREATE ORDER URL =", `${API_BASE}/payments/create-order`);
 
 handler: async function (response) {
   try {
-    console.log("USER =", user);
+  //  console.log("USER =", user);
 
-console.log("EMAIL =", user.email);
+// console.log("EMAIL =", user.email);
 
-console.log("METADATA =", user.user_metadata);
+// console.log("METADATA =", user.user_metadata);
 
     const verifyRes = await fetch(`${API_BASE}/payments/verify`, {
       method: "POST",
