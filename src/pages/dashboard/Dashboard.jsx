@@ -154,6 +154,13 @@ if (!cleaned && isReturningFromPayment()) {
 
   // ================= RAZORPAY ENROLL HANDLER =================
   const handleEnroll = async (programId) => {
+
+    const API_BASE =
+  import.meta.env.DEV
+    ? "http://localhost:4000"
+    : "";
+
+    
     console.log("ENROLL CLICKED", { razorpayReady, user });
 
     if (!user) {
@@ -167,7 +174,7 @@ if (!cleaned && isReturningFromPayment()) {
     }
 
     try {
-      const res = await fetch("/api/payments/create-order", {
+      const res = await fetch(`${API_BASE}/payments/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -192,17 +199,41 @@ if (!cleaned && isReturningFromPayment()) {
 
 handler: async function (response) {
   try {
-    const verifyRes = await fetch("/api/payments/verify", {
+    console.log("USER =", user);
+
+console.log("EMAIL =", user.email);
+
+console.log("METADATA =", user.user_metadata);
+
+    const verifyRes = await fetch(`${API_BASE}/payments/verify`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        razorpay_order_id: response.razorpay_order_id,
-        razorpay_payment_id: response.razorpay_payment_id,
-        razorpay_signature: response.razorpay_signature,
-        user_id: user.id,
-        program_id: PROGRAM_MAP[programId].id,
-      }),
-    });
+ // For Testing
+//     body: JSON.stringify({
+ //       razorpay_order_id: response.razorpay_order_id,
+ //       razorpay_payment_id: response.razorpay_payment_id,
+ //       razorpay_signature: response.razorpay_signature,
+ //       user_id: user.id,
+ //       program_id: PROGRAM_MAP[programId].id,
+ //     }),
+  
+body: JSON.stringify({
+  razorpay_order_id: response.razorpay_order_id,
+  razorpay_payment_id: response.razorpay_payment_id,
+  razorpay_signature: response.razorpay_signature,
+
+  user_id: user.id,
+  program_id: PROGRAM_MAP[programId].id,
+
+  student_name:
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    "",
+
+  student_email: user.email,
+}),
+
+});
 
     const result = await verifyRes.json();
 

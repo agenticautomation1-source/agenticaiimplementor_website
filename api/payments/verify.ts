@@ -56,7 +56,15 @@ const {
   razorpay_signature,
   user_id,
   program_id,
+  student_name,
+  student_email,
 } = req.body || {};
+
+console.log("VERIFY REQUEST BODY");
+console.log(req.body);
+console.log("student_name =", student_name);
+console.log("student_email =", student_email);
+
 
 if (
   !razorpay_order_id ||
@@ -142,6 +150,10 @@ if (existingPayment) {
           currency: "INR",
           status: "paid",
           raw_payload: req.body,
+          
+          student_name,
+          student_email,
+          
           updated_at: new Date().toISOString(),
         },
         { onConflict: "razorpay_payment_id" }
@@ -162,6 +174,10 @@ if (existingPayment) {
           status: "active",
           razorpay_order_id,
           razorpay_payment_id,
+          
+          student_name,
+          student_email,
+          
           updated_at: new Date().toISOString(),
         },
         { onConflict: "user_id,program_id" }

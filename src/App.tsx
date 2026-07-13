@@ -3,6 +3,9 @@ import React, { useState, lazy, Suspense } from "react";
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 
 import RequireAuth from "./components/RequireAuth";
+
+//import RequireAdmin from "./components/RequireAdmin";
+
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import LogoMarquee from "./components/LogoMarquee";
@@ -30,6 +33,10 @@ const Programs = lazy(() => import("./pages/Programs"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const TestAuth = lazy(() => import("./pages/TestAuth"));
 const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const AdminDashboard = lazy(
+  () => import("./pages/admin/AdminDashboard")
+);
+
 
 const SystemsEngineer = lazy(() => import("./pages/courses/SystemsEngineer"));
 const PlatformArchitect = lazy(() => import("./pages/courses/PlatformArchitect"));
@@ -71,6 +78,9 @@ const App: React.FC = () => {
                 </RequireAuth>
               }
             />
+
+<Route path="/admin" element={<AdminDashboard />} />
+
 
             {/* LMS Integration */}
             <Route
