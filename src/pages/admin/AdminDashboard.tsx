@@ -10,7 +10,7 @@ useEffect(() => {
 }, []);
 
   return (
-    <main className="min-h-screen bg-[#050608] text-white px-8 py-10">
+    <main className="min-h-screen bg-[#050608] text-white px-8 pt-36 pb-10">
       <div className="max-w-7xl mx-auto">
 
       

@@ -80,9 +80,18 @@ export async function loadDashboardV2() {
       .select("*"),
   ]);
 
+
+  
   if (paymentError) throw paymentError;
   if (enrollmentError) throw enrollmentError;
   if (programError) throw programError;
+
+console.log("====== DASHBOARD DEBUG ======");
+console.log("Payments:", payments);
+console.log("Enrollments:", enrollments);
+console.log("Programs:", programs);
+console.log("Total Enrollments:", totalEnrollments);
+
 
   const successfulPayments =
     payments?.filter((payment) =>
