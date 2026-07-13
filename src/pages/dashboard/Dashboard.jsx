@@ -158,7 +158,12 @@ if (!cleaned && isReturningFromPayment()) {
     const API_BASE =
   import.meta.env.DEV
     ? "http://localhost:4000"
-    : "";
+    : "/api";
+
+    
+    console.log("API_BASE =", API_BASE);
+console.log("CREATE ORDER URL =", `${API_BASE}/payments/create-order`);
+
 
     
     console.log("ENROLL CLICKED", { razorpayReady, user });

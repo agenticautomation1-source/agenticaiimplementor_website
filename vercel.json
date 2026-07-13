@@ -5,6 +5,10 @@
 
   "rewrites": [
     {
+      "source": "/payments/(.*)",
+      "destination": "/api/payments/$1"
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "/sitemap.xml"
     },
